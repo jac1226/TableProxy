@@ -5,7 +5,7 @@
  *
  * TableProxy Apps Script
  * https://github.com/jac1226/TableProxy
- * Thanks to amit@labnol.org for his starter script.
+ * Thanks to amit@labnol.org for his starter script...
  */
 
 const path = require('path');
