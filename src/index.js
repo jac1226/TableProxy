@@ -3,6 +3,6 @@ import './es6';
 
 global.doGet = doGet;
 
-global.sendmail = (email = 'amit@labnol.org') => {
+global.sendmail = (email = 'jcascio1226@gmail.com') => {
   GmailApp.sendEmail(email, 'It works!', 'Hello Google Apps Script');
 };
