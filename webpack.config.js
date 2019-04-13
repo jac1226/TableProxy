@@ -1,10 +1,11 @@
 /**
  * @file webpack.config.js
- * @author Amit Agarwal
- * @email amit@labnol.org
+ * @author jac1226
+ * @email 12jac26@gmail.com
  *
- * Google Apps Script Starter Kit
- * https://github.com/labnol/apps-script-starter
+ * TableProxy Apps Script
+ * https://github.com/jac1226/TableProxy
+ * Thanks to amit@labnol.org for his starter script.
  */
 
 const path = require('path');
