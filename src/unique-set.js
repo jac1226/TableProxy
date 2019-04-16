@@ -29,13 +29,13 @@ export default class UniqueSet {
                     this._dates[item] = Date;
                     break;
                 default:
-                    throw new TypeError('UniqueSet can only store strings, numbers, dates. Received "' + toString.call(item) + '" at index '+item);
+                    throw new TypeError('UniqueSet can only store strings, numbers, dates. Received "' + toString.call(item) + '" at index ' + item);
             }
         });
         return this;
     }
     remove(input) {
-        (toString.call(input) === '[object Array]' ? input : [input]).forEach((item)=>{
+        (toString.call(input) === '[object Array]' ? input : [input]).forEach((item) => {
             switch (toString.call(item)) {
                 case '[object Number]':
                     delete this._numbers[item];
