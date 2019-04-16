@@ -108,3 +108,6 @@ export default class UniqueSet {
         return this.values.length;
     }
 }
+
+const u = new UniqueSet(1, 2, 3, 4, 5, 5, 5, 5, '1');
+Logger.log(JSON.stringify(u));
