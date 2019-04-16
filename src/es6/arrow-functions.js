@@ -16,4 +16,4 @@ let b = [1, 2, 3].map(item => {
   Logger.log(item);
   return item;
 });
-Logger.log(a);
+Logger.log(b);
