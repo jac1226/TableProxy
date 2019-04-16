@@ -19,7 +19,7 @@ export default class UniqueSet {
   }
 
   push(input) {
-    let inputType = toString.call(input);
+    const inputType = toString.call(input);
     (inputType === '[object Array]' ? input : [input]).forEach((item, index) => {
       switch (toString.call(item)) {
         case '[object Number]':
@@ -41,7 +41,7 @@ export default class UniqueSet {
   }
 
   remove(input) {
-    (toString.call(input) === '[object Array]' ? input : [input]).forEach(item => {
+    (toString.call(input) === '[object Array]' ? input : [input]).forEach((item, index) => {
       switch (toString.call(item)) {
         case '[object Number]':
           delete this.numbers[item];
@@ -54,9 +54,7 @@ export default class UniqueSet {
           break;
         default:
           throw new TypeError(
-            'UniqueSet can only store strings, numbers, dates. Received "' +
-              toString.call(item) +
-              '"'
+            `UniqueSet can only store strings, numbers, dates. Received ${inputType} at index ${index}`
           );
       }
     });
@@ -107,14 +105,10 @@ export default class UniqueSet {
   get holds() {
     const returnArray = [];
     const contains = this.contains;
-    if (contains.numbers) {
-      returnArray.push('numbers');
-    }
-    if (contains.strings) {
-      returnArray.push('strings');
-    }
-    if (contains.dates) {
-      returnArray.push('dates');
+    for (let key in contains) {
+      if (contains[key] > 0) {
+        returnArray.push(key);
+      }
     }
     return returnArray;
   }
