@@ -8,13 +8,13 @@
  */
 
 export default class UniqueSet {
-  constructor() {
+  constructor(...args) {
     this.strings = {};
     this.numbers = {};
     this.dates = {};
 
-    Object.keys(...rest).forEach(item => {
-      this.push(arguments[item]);
+    Object.keys(args).forEach(i => {
+      this.push(arguments[i]);
     });
   }
 
