@@ -1,4 +1,3 @@
-
 import { doGet } from './server/webapp';
 import './es6';
 
