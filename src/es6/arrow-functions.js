@@ -12,8 +12,11 @@ const multiply = (value, factor = 2) => value * factor;
 Logger.log(`2*10 = ${multiply(2, 10)}`);
 Logger.log(`3*2 = ${multiply(3, 2)}`);
 
-let b = [1, 2, 3].map(item => {
-  Logger.log(item);
-  return item;
-});
-Logger.log(b);
+const a = {
+  b: [1, 2, 3].map(item => {
+    Logger.log(item);
+    console.log(this);
+    return item;
+  })
+};
+Logger.log(JSON.stringify(a));
