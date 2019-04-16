@@ -19,7 +19,8 @@ export default class UniqueSet {
   }
 
   push(input) {
-    (toString.call(input) === '[object Array]' ? input : [input]).forEach(item => {
+    let inputType = toString.call(input);
+    (inputType === '[object Array]' ? input : [input]).forEach((item, index) => {
       switch (toString.call(item)) {
         case '[object Number]':
           this.numbers[item] = Number;
@@ -32,10 +33,7 @@ export default class UniqueSet {
           break;
         default:
           throw new TypeError(
-            'UniqueSet can only store strings, numbers, dates. Received "' +
-              toString.call(item) +
-              '" at index ' +
-              item
+            `UniqueSet can only store strings, numbers, dates. Received ${inputType} at index ${index}`
           );
       }
     });
