@@ -3,6 +3,8 @@
  * @desc Various utilities
  */
 
+import COLORS from './CONSTANTS';
+
 export const isArray = input => {
   return toString.call(input) === '[object Array]';
 };
@@ -32,9 +34,7 @@ export const inArray = (needle, haystack) => {
 };
 
 export const toBool = value => {
-  value = isString(value) ? value.toLowerCase() : value;
-
-  switch (value) {
+  switch (isString(value) ? value.toLowerCase() : value) {
     case true:
     case 'true':
     case 1:
@@ -52,12 +52,12 @@ export const firstToUpper = string => {
 };
 
 export const getTimeStamp = precision => {
-  var time = new Date().getTime();
+  const time = new Date().getTime();
   return precision ? time.toFixed(precision) : time;
 };
 
 export const getTimeDiff = (oldTime, precision) => {
-  var newTime = getTimeStamp();
+  const newTime = getTimeStamp();
   return precision ? (newTime - oldTime).toFixed(precision) : newTime - oldTime;
 };
 
@@ -66,7 +66,6 @@ export const isValidColor = input => {
     return true;
   } else if (/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(input)) {
     return true;
-  } else {
-    return false;
   }
+  return false;
 };
