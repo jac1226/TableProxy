@@ -1,5 +1,5 @@
 
- import './UniqueSet';
+ import './unique-set';
  import './SheetAccessor';
 
 /**
@@ -9,7 +9,7 @@
   * @desc This is used to better maintain selection state
   * @desc Under current implementation, there should be only be one RowIndexCursor for a TableProxy Instance
   * @constructor RowIndexCursor
-  * @param {Object} sheetRangeRetriever- used for refreshing selected ids (closed)
+  * @param {Object} sheetRangeRetriever
   * @return {RowIndexCursor}
   */
 

@@ -1,5 +1,5 @@
 /**
- * UniqueSet - an object used to speed up handling lists which must be unique
+ * UniqueSet - ac class used to speed up handling lists which must be unique
  * @desc Using indexOf to prevent duplicates is nearly 100 times slower
  * @desc Using Map shim is approximately 300 times slower
  * @desc Handles String, Number, Date - the types that sheets supports
@@ -35,7 +35,7 @@ export default class UniqueSet {
         return this;
     }
     remove(input) {
-        (toString.call(input) === '[object Array]' ? input : [input]).forEach(function (item) {
+        (toString.call(input) === '[object Array]' ? input : [input]).forEach((item)=>{
             switch (toString.call(item)) {
                 case '[object Number]':
                     delete this._numbers[item];

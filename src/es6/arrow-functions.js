@@ -11,3 +11,10 @@ Logger.log(`The bigger of 10 and 12 is ${max(10, 12)}`);
 const multiply = (value, factor = 2) => value * factor;
 Logger.log(`2*10 = ${multiply(2, 10)}`);
 Logger.log(`3*2 = ${multiply(3, 2)}`);
+
+
+var a={
+  b:[1,2,3].forEach((item)=>{
+    Logger.log(this);
+  })
+}
