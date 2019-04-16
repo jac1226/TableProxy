@@ -64,7 +64,8 @@ export const getTimeDiff = (oldTime, precision) => {
 export const isValidColor = input => {
   if (COLORS[input]) {
     return true;
-  } else if (/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(input)) {
+  }
+  if (/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(input)) {
     return true;
   }
   return false;
