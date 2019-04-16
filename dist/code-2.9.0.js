@@ -92,7 +92,7 @@ function sendmail() {
     Logger.log("2*10 = ".concat(multiply(2, 10))), Logger.log("3*2 = ".concat(multiply(3, 2)));
     var a = {
         b: [ 1, 2, 3 ].map(function(item) {
-            return Logger.log(item), console.log(_this), item;
+            return Logger.log(item), Logger.log(Object.keys(_this)), item;
         })
     };
     Logger.log(JSON.stringify(a));
