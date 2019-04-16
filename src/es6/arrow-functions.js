@@ -15,7 +15,7 @@ Logger.log(`3*2 = ${multiply(3, 2)}`);
 const a = {
   b: [1, 2, 3].map(item => {
     Logger.log(item);
-    console.log(this);
+    Logger.log(Object.keys(this));
     return item;
   })
 };
