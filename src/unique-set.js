@@ -13,8 +13,8 @@ export default class UniqueSet {
     this.numbers = {};
     this.dates = {};
 
-    Object.keys(arguments).forEach(item=>{
-        this.push(arguments[i]);
+    Object.keys(...rest).forEach(item=>{
+        this.push(arguments[item]);
     });
   }
 
