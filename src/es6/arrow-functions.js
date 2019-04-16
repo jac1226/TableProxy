@@ -13,8 +13,8 @@ Logger.log(`2*10 = ${multiply(2, 10)}`);
 Logger.log(`3*2 = ${multiply(3, 2)}`);
 
 
-const a={
-  b:[1,2,3].forEach(item=>{
+const a = {
+  b: [1, 2, 3].forEach(item => {
     Logger.log(this);
   })
 }
