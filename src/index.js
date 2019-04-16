@@ -8,5 +8,5 @@ global.sendmail = (email = 'amit@labnol.org') => {
   GmailApp.sendEmail(email, 'It works!', 'Hello Google Apps Script');
 };
 
-let u = new UniqueSet(1, 2, 3, 4, 4, 4, 4);
+const u = new UniqueSet(1, 2, 3, 4, 4, 4, 4);
 Logger.log(JSON.stringify(u));
