@@ -14,7 +14,7 @@ export default class UniqueSet {
     this.dates = {};
 
     Object.keys(args).forEach(i => {
-      this.push(arguments[i]);
+      this.push(args[i]);
     });
   }
 
