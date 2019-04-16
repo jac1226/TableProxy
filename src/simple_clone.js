@@ -19,11 +19,7 @@
 
       // Handle Array
       if (input instanceof Array) {
-          copy = [];
-          for (var i = 0, length = input.length; i < length; i++) {
-              copy[i] = simpleClone(input[i]);
-          }
-          return copy;
+          return input.map((item)=>{return simpleClone(item)});
       }
 
       // Handle Object

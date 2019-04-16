@@ -1,3 +1,8 @@
+  /**
+   * Utils - Utilities
+   * @desc Various utilities
+   */
+
   export const isArray = (input) => {
     return toString.call(input) === '[object Array]';
   }

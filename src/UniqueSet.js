@@ -17,37 +17,37 @@ export default class UniqueSet {
         }
     }
     push(input) {
-        (toString.call(input) === '[object Array]' ? input : [input]).forEach((index) => {
-            switch (toString.call(index)) {
+        (toString.call(input) === '[object Array]' ? input : [input]).forEach((item) => {
+            switch (toString.call(item)) {
                 case '[object Number]':
-                    this._numbers[index] = Number;
+                    this._numbers[item] = Number;
                     break;
                 case '[object String]':
-                    this._strings[index] = String;
+                    this._strings[item] = String;
                     break;
                 case '[object Date]':
-                    this._dates[index] = Date;
+                    this._dates[item] = Date;
                     break;
                 default:
-                    throw new TypeError('UniqueSet can only store strings, numbers, dates. Received "' + toString.call(index) + '" at index '+index);
+                    throw new TypeError('UniqueSet can only store strings, numbers, dates. Received "' + toString.call(item) + '" at index '+item);
             }
         });
         return this;
     }
-    remove() {
-        (toString.call(input) === '[object Array]' ? input : [input]).forEach(function (index) {
-            switch (toString.call(index)) {
+    remove(input) {
+        (toString.call(input) === '[object Array]' ? input : [input]).forEach(function (item) {
+            switch (toString.call(item)) {
                 case '[object Number]':
-                    delete this._numbers[index];
+                    delete this._numbers[item];
                     break;
                 case '[object String]':
-                    delete this._strings[index];
+                    delete this._strings[item];
                     break;
                 case '[object Date]':
-                    delete this._dates[index];
+                    delete this._dates[item];
                     break;
                 default:
-                    throw new TypeError('UniqueSet can only store strings, numbers, dates. Received "' + toString.call(index) + '"');
+                    throw new TypeError('UniqueSet can only store strings, numbers, dates. Received "' + toString.call(item) + '"');
             }
         });
         return this;
@@ -58,23 +58,23 @@ export default class UniqueSet {
         this._dates = {};
         return this;
     }
-    copyIndices(input) {
+    copyItems(uniqueSet) {
         if (input instanceof UniqueSet) {
-            return this.flush().push(input.values);
+            return this.flush().push(uniqueSet.values);
         } else {
             throw new TypeError('copyIndices accepts only UniqueSet input.');
         }
     }
     get values() {
         return []
-            .concat(Object.keys(this._numbers).map((index) => {
-                return this._numbers[index](index);
+            .concat(Object.keys(this._numbers).map((item) => {
+                return this._numbers[item](item);
             }))
-            .concat(Object.keys(this._strings).map((index) => {
-                return this._strings[index](index);
+            .concat(Object.keys(this._strings).map((item) => {
+                return this._strings[item](item);
             }))
-            .concat(Object.keys(this._dates).map((index) => {
-                return this._dates[index](index);
+            .concat(Object.keys(this._dates).map((item) => {
+                return this._dates[item](item);
             }));
     }
     get contains() {

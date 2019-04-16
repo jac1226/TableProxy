@@ -15,7 +15,7 @@
 
   export default class RowIndexCursor {
     constructor(sheetRangeRetriever){
-        if(!(sheetRangeRetriever instanceOf SheetAccessor)){
+        if(!(sheetRangeRetriever instanceof SheetAccessor)){
             throw new TypeError('RowIndexCursor constructor accepts a SheetAccessor instance');
         }
         this._sheetRangeRetriever=sheetRangeRetriever;
