@@ -414,7 +414,7 @@ function sendmail() {
             }
         } ]), UniqueSet;
     }())(1, 2, 3, 4, 5, 5, 5, 5, "1");
-    Logger.log(JSON.stringify(u));
+    Logger.log(JSON.stringify(u)), Logger.log("fuck you");
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
     __webpack_require__(3), __webpack_require__(4);

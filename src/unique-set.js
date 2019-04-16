@@ -132,5 +132,5 @@ export default class UniqueSet {
 }
 
 const u = new UniqueSet(1, 2, 3, 4, 5, 5, 5, 5, '1');
-Logger.log(JSON.stringify(u));
+Logger.log(JSON.stringify(u.values));
 Logger.log('fuck you');
