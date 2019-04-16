@@ -12,11 +12,10 @@ export default class UniqueSet {
     this.strings = {};
     this.numbers = {};
     this.dates = {};
-    for (let i in arguments) {
-      if (i) {
+
+    Object.keys(arguments).forEach(item=>{
         this.push(arguments[i]);
-      }
-    }
+    });
   }
 
   push(input) {
@@ -74,11 +73,10 @@ export default class UniqueSet {
   }
 
   copyItems(uniqueSet) {
-    if (uniqueSet instanceof UniqueSet) {
-      return this.flush().push(uniqueSet.values);
-    } else {
+    if (!(uniqueSet instanceof UniqueSet)) {
       throw new TypeError('copyIndices accepts only UniqueSet input.');
     }
+    return this.flush().push(uniqueSet.values);
   }
 
   get values() {
