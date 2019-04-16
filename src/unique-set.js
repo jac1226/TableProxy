@@ -41,7 +41,8 @@ export default class UniqueSet {
   }
 
   remove(input) {
-    (toString.call(input) === '[object Array]' ? input : [input]).forEach((item, index) => {
+    const inputType = toString.call(input);
+    (inputType === '[object Array]' ? input : [input]).forEach((item, index) => {
       switch (toString.call(item)) {
         case '[object Number]':
           delete this.numbers[item];
@@ -104,11 +105,15 @@ export default class UniqueSet {
 
   get holds() {
     const returnArray = [];
-    const contains = this.contains;
-    for (let key in contains) {
-      if (contains[key] > 0) {
-        returnArray.push(key);
-      }
+    const { numbers, strings, dates } = this.contains;
+    if (numbers > 0) {
+      returnArray.push('numbers');
+    }
+    if (strings > 0) {
+      returnArray.push('strings');
+    }
+    if (dates > 0) {
+      returnArray.push('dates');
     }
     return returnArray;
   }
