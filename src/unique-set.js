@@ -9,24 +9,26 @@
 
 export default class UniqueSet {
   constructor() {
-    this._strings = {};
-    this._numbers = {};
-    this._dates = {};
-    for (var i in arguments) {
-      this.push(arguments[i]);
+    this.strings = {};
+    this.numbers = {};
+    this.dates = {};
+    for (let i in arguments) {
+      if (i) {
+        this.push(arguments[i]);
+      }
     }
   }
   push(input) {
     (toString.call(input) === '[object Array]' ? input : [input]).forEach(item => {
       switch (toString.call(item)) {
         case '[object Number]':
-          this._numbers[item] = Number;
+          this.numbers[item] = Number;
           break;
         case '[object String]':
-          this._strings[item] = String;
+          this.strings[item] = String;
           break;
         case '[object Date]':
-          this._dates[item] = Date;
+          this.dates[item] = Date;
           break;
         default:
           throw new TypeError(
@@ -43,13 +45,13 @@ export default class UniqueSet {
     (toString.call(input) === '[object Array]' ? input : [input]).forEach(item => {
       switch (toString.call(item)) {
         case '[object Number]':
-          delete this._numbers[item];
+          delete this.numbers[item];
           break;
         case '[object String]':
-          delete this._strings[item];
+          delete this.strings[item];
           break;
         case '[object Date]':
-          delete this._dates[item];
+          delete this.dates[item];
           break;
         default:
           throw new TypeError(
@@ -62,9 +64,9 @@ export default class UniqueSet {
     return this;
   }
   flush() {
-    this._strings = {};
-    this._numbers = {};
-    this._dates = {};
+    this.strings = {};
+    this.numbers = {};
+    this.dates = {};
     return this;
   }
   copyItems(uniqueSet) {
@@ -77,31 +79,31 @@ export default class UniqueSet {
   get values() {
     return []
       .concat(
-        Object.keys(this._numbers).map(item => {
-          return this._numbers[item](item);
+        Object.keys(this.numbers).map(item => {
+          return this.numbers[item](item);
         })
       )
       .concat(
-        Object.keys(this._strings).map(item => {
-          return this._strings[item](item);
+        Object.keys(this.strings).map(item => {
+          return this.strings[item](item);
         })
       )
       .concat(
-        Object.keys(this._dates).map(item => {
-          return this._dates[item](item);
+        Object.keys(this.dates).map(item => {
+          return this.dates[item](item);
         })
       );
   }
   get contains() {
     return {
-      numbers: Object.keys(this._numbers).length,
-      strings: Object.keys(this._strings).length,
-      dates: Object.keys(this._dates).length
+      numbers: Object.keys(this.numbers).length,
+      strings: Object.keys(this.strings).length,
+      dates: Object.keys(this.dates).length
     };
   }
   get holds() {
-    var returnArray = [];
-    var contains = this.contains;
+    let returnArray = [];
+    let contains = this.contains;
     if (contains.numbers) {
       returnArray.push('numbers');
     }
