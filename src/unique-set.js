@@ -20,16 +20,16 @@ export default class UniqueSet {
 
   push(input) {
     const inputType = toString.call(input);
-    (inputType === '[object Array]' ? input : [input]).forEach((item, index) => {
-      switch (toString.call(item)) {
+    (inputType === '[object Array]' ? input : [input]).forEach((i, index) => {
+      switch (toString.call(i)) {
         case '[object Number]':
-          this.numbers[item] = Number;
+          this.numbers[i] = Number;
           break;
         case '[object String]':
-          this.strings[item] = String;
+          this.strings[i] = String;
           break;
         case '[object Date]':
-          this.dates[item] = Date;
+          this.dates[i] = Date;
           break;
         default:
           throw new TypeError(
@@ -42,16 +42,16 @@ export default class UniqueSet {
 
   remove(input) {
     const inputType = toString.call(input);
-    (inputType === '[object Array]' ? input : [input]).forEach((item, index) => {
-      switch (toString.call(item)) {
+    (inputType === '[object Array]' ? input : [input]).forEach((i, index) => {
+      switch (toString.call(i)) {
         case '[object Number]':
-          delete this.numbers[item];
+          delete this.numbers[i];
           break;
         case '[object String]':
-          delete this.strings[item];
+          delete this.strings[i];
           break;
         case '[object Date]':
-          delete this.dates[item];
+          delete this.dates[i];
           break;
         default:
           throw new TypeError(
@@ -79,18 +79,18 @@ export default class UniqueSet {
   get values() {
     return []
       .concat(
-        Object.keys(this.numbers).map(item => {
-          return this.numbers[item](item);
+        Object.keys(this.numbers).map(i => {
+          return this.numbers[i](i);
         })
       )
       .concat(
-        Object.keys(this.strings).map(item => {
-          return this.strings[item](item);
+        Object.keys(this.strings).map(i => {
+          return this.strings[i](i);
         })
       )
       .concat(
-        Object.keys(this.dates).map(item => {
-          return this.dates[item](item);
+        Object.keys(this.dates).map(i => {
+          return this.dates[i](i);
         })
       );
   }
@@ -130,7 +130,3 @@ export default class UniqueSet {
     return this.values.length;
   }
 }
-
-const u = new UniqueSet(1, 2, 3, 4, 5, 5, 5, 5, '1');
-Logger.log(JSON.stringify(u.contains));
-Logger.log('fuck you');
