@@ -1,8 +1,5 @@
-import {
-  doGet
-} from './server/webapp';
+import { doGet } from './server/webapp';
 import './es6';
-import UniqueSet from './unique-set';
 
 global.doGet = doGet;
 
