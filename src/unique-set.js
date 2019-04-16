@@ -18,6 +18,7 @@ export default class UniqueSet {
       }
     }
   }
+
   push(input) {
     (toString.call(input) === '[object Array]' ? input : [input]).forEach(item => {
       switch (toString.call(item)) {
@@ -41,6 +42,7 @@ export default class UniqueSet {
     });
     return this;
   }
+
   remove(input) {
     (toString.call(input) === '[object Array]' ? input : [input]).forEach(item => {
       switch (toString.call(item)) {
@@ -63,19 +65,22 @@ export default class UniqueSet {
     });
     return this;
   }
+
   flush() {
     this.strings = {};
     this.numbers = {};
     this.dates = {};
     return this;
   }
+
   copyItems(uniqueSet) {
-    if (input instanceof UniqueSet) {
+    if (uniqueSet instanceof UniqueSet) {
       return this.flush().push(uniqueSet.values);
     } else {
       throw new TypeError('copyIndices accepts only UniqueSet input.');
     }
   }
+
   get values() {
     return []
       .concat(
@@ -94,6 +99,7 @@ export default class UniqueSet {
         })
       );
   }
+
   get contains() {
     return {
       numbers: Object.keys(this.numbers).length,
@@ -101,9 +107,10 @@ export default class UniqueSet {
       dates: Object.keys(this.dates).length
     };
   }
+
   get holds() {
-    let returnArray = [];
-    let contains = this.contains;
+    const returnArray = [];
+    const contains = this.contains;
     if (contains.numbers) {
       returnArray.push('numbers');
     }
@@ -115,12 +122,15 @@ export default class UniqueSet {
     }
     return returnArray;
   }
+
   get pure() {
     return this.holds.length < 2;
   }
+
   get isEmpty() {
     return this.values.length === 0;
   }
+
   get length() {
     return this.values.length;
   }
