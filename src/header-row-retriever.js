@@ -22,7 +22,7 @@ export default class HeaderRowRetriever {
     let anchorRowIndex;
     let anchorColumnIndex;
 
-    for (let row = 0; row < rowCount; row++) {
+    for (let row = 0; row < rowCount; row += 1) {
       if (notesData[row].join('').indexOf(this.headerAnchorToken) !== -1) {
         anchorRowIndex = row;
         break;
@@ -30,7 +30,7 @@ export default class HeaderRowRetriever {
     }
     this.anchorRowIndex = anchorRowIndex === undefined ? 0 : anchorRowIndex;
 
-    for (let column = 0; column < columnCount; column++) {
+    for (let column = 0; column < columnCount; column += 1) {
       if (notesData[anchorRowIndex][column].indexOf(this.headerAnchorToken) !== -1) {
         anchorColumnIndex = column;
         break;
