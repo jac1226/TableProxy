@@ -28,7 +28,6 @@ export default class HeaderRowRetriever {
         break;
       }
     }
-
     this.anchorRowIndex = anchorRowIndex === undefined ? 0 : anchorRowIndex;
 
     for (let column = 0; column < columnCount; column++) {
@@ -37,16 +36,10 @@ export default class HeaderRowRetriever {
         break;
       }
     }
-
     this.anchorColumnIndex = anchorColumnIndex === undefined ? 0 : anchorColumnIndex;
-
   }
 
   getHeaderRow() {
     return this.sheet.getRange(this.anchorRowIndex + 1, 1, 1).getValues()[0];
   }
-
-
 }
-
-const h = new HeaderRowRetriever(sheet);
