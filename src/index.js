@@ -1,20 +1,7 @@
 import { doGet } from './server/webapp';
 import './es6';
 import './unique-set';
-import {
-  isArray,
-  isString,
-  isNumeric,
-  isFunction,
-  isObject,
-  isBoolean,
-  inArray,
-  toBool,
-  firstToUpper,
-  getTimeStamp,
-  getTimeDiff,
-  isValidColor
-} from './utilities';
+import './header-row-retriever';
 
 global.doGet = doGet;
 

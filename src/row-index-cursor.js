@@ -1,6 +1,6 @@
 
  import './unique-set';
- import './SheetAccessor';
+ import './sheet-access';
 
 /**
   * RowIndexCursor - fronts two UniqueIndexer objects

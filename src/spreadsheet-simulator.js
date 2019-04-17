@@ -156,17 +156,6 @@ class Range {
     return this.dataChunk.fontfamilies;
   }
 
-  getFontColors() {
-    return this.dataChunk.notes;
-  }
-
-  setFontColors(input) {
-    this.validateInputShape(input, 'setNotes');
-    this.dataChunk.values = input;
-    this.dataContainer.setChunk('notes', this.dataChunk, this.startRow, this.startColumn);
-    return this;
-  }
-
   setFontFamilies(input) {
     this.validateInputShape(input, 'setFontFamilies');
     this.dataChunk.values = input;
@@ -200,7 +189,7 @@ class Range {
     return this.dataChunk.fontweights;
   }
 
-  getFontWeights(input) {
+  setFontWeights(input) {
     this.validateInputShape(input, 'setFontWeights');
     this.dataChunk.values = input;
     this.dataContainer.setChunk('fontweights', this.dataChunk, this.startRow, this.startColumn);
@@ -353,8 +342,8 @@ const fontcolors = [
   ['#000000', '#000000', '#000000', '#000000', '#000000']
 ];
 const notes = [
-  ['HEADER_ANCHOR', '', '', '', ''],
   ['', '', '', '', ''],
+  ['', '', 'HEADER_ANCHOR', '', ''],
   ['', '', '', '', ''],
   ['', '', '', '', ''],
   ['', '', '', '', ''],
