@@ -3,7 +3,7 @@
  * @desc taken from https://stackoverflow.com/questions/728360/how-do-i-correctly-clone-a-javascript-object
  */
 
-export const simpleClone = (input) => {
+export const simpleClone = input => {
   let copy;
   const toStringType=toString.call(input);
   switch (toStringType) {
@@ -20,11 +20,9 @@ export const simpleClone = (input) => {
       break;
     case '[object Object]':
       copy = {};
-      for (let property in input) {
-        if (input.hasOwnProperty(property)) {
-          copy[property] = simpleClone(input[property]);
-        }
-      }
+      Object.keys(input).forEach(property => {
+        copy[property] = simpleClone(input[property]);
+      });
       break;
     case '[object Date]':
       copy = new Date();
