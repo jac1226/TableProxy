@@ -5,7 +5,7 @@
 
 export const simpleClone = input => {
   let copy;
-  const toStringType=toString.call(input);
+  const toStringType = toString.call(input);
   switch (toStringType) {
     case '[object Undefined]':
     case '[object Null]':
@@ -33,4 +33,3 @@ export const simpleClone = input => {
   }
   return copy;
 };
-  
