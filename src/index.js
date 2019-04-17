@@ -2,6 +2,8 @@ import { doGet } from './server/webapp';
 import './es6';
 import './unique-set';
 import './header-row-retriever';
+import './simple-clone';
+
 
 global.doGet = doGet;
 
