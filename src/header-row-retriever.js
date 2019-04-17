@@ -1,7 +1,8 @@
 /**
-* HeaderRowRetriever
-* @constructor HeaderRowRetriever
-*/
+ * HeaderRowRetriever - defines header row
+ * @constructor HeaderRowRetriever
+ * @return {HeaderRowRetriever}
+ */
 
 import { DEFAULT_HEADER_ANCHOR } from './CONSTANTS';
 
