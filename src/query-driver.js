@@ -22,8 +22,9 @@ export default class QueryDriver {
     }
     this.query = query;
     const queryAsString = query.toString();
-    SUPPORTED_ATTRIBUTES.forEach((attribute)=>{
-      const regex = new RegExp('\.{0,1}[\'|"|\[]{0,1}' + attribute + '[\[\'|"]{0,1}', 'g');
+    SUPPORTED_ATTRIBUTES.forEach(attribute => {
+      const reString=`\.{0,1}[\'|"|\[]{0,1}' ${attribute} '[\[\'|"]{0,1}`;
+      const regex = new RegExp(reString, 'g');
       if (regex.test(queryAsString)) {
         this.requestedAttributes.push(attribute);
       };
