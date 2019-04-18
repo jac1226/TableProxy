@@ -3,7 +3,7 @@
  * @return {SheetAccessor}
  */
 
-import { DEFAULT_HEADER_ANCHOR } from './CONSTANTS.js'
+import { DEFAULT_HEADER_ANCHOR } from './CONSTANTS';
 
 export default class SheetAccessor {
   constructor(sheet, headerAnchorToken) {
@@ -13,23 +13,22 @@ export default class SheetAccessor {
     this.fontcolor = {};
     this.note = {};
     this.fontfamily = {};
-    this.fontsize == {};
+    this.fontsize = {};
     this.fontstyle = {};
     this.fontweight = {};
-    this.headerAnchorToken;
-    this.headerRowIndex;
-    this.headerColumnIndex;
-    this.getHeaderRow;
-    this.getAllRecordIndices;
+    this.headerAnchorToken = DEFAULT_HEADER_ANCHOR;
+    this.headerRowIndex = 0;
+    this.headerColumnIndex = 0;
+    this.getHeaderRow = null;
+    this.getAllRecordIndices = null;
 
     /**
-     * flesh out headerAnchorToken
+     * set headerAnchorToken input
      */
-    this.headerAnchorToken =
-    toString.call(headerAnchorToken) === "[object String]"
-      ? headerAnchorToken
-      : DEFAULT_HEADER_ANCHOR;
-
+    if (toString.call(headerAnchorToken) === '[object String]') {
+      this.headerAnchorToken = headerAnchorToken;
+    }
+   
     /**
      * flesh out headerRowIndex, headerColumnIndex
      */
@@ -43,9 +42,6 @@ export default class SheetAccessor {
         break;
       }
     }
-    this.headerRowIndex =
-      this.headerRowIndex === undefined ? 0 : this.headerRowIndex;
-
     for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
       if (
         notesData[this.headerRowIndex][columnIndex].indexOf(
@@ -56,8 +52,6 @@ export default class SheetAccessor {
         break;
       }
     }
-    this.headerColumnIndex =
-      this.headerColumnIndex === undefined ? 0 : this.headerColumnIndex;
 
     /**
      * flesh out range retrievers
@@ -72,7 +66,7 @@ export default class SheetAccessor {
       getColumn: (columnIndex, startRowIndex) => {
         const dataRange = sheet.getDataRange();
         const startRowIndx =
-          toString.call(startRowIndex) === "[object Number]"
+          toString.call(startRowIndex) === '[object Number]'
             ? startRowIndex
             : 0;
         return sheet.getRange(
