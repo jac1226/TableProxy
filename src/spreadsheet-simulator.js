@@ -3,7 +3,7 @@
  * let sheet=SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test');
  */
 
-const SpreadsheetApp = {
+export default SpreadsheetApp = {
   getActiveSpreadsheet: () => {
     return new ActiveSpreadsheet();
   }
