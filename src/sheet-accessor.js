@@ -127,6 +127,7 @@ export default class SheetAccessor {
     this.getAllRecordIndices = () => {
       const indices = [];
       const numRows = this.range.getAllRecords().getNumRows();
+      Browser.msgBox(numRows);
       let i = this.headerRowIndex + 1;
       while (i < numRows) {
         indices.push(i);
