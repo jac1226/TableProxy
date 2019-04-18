@@ -40,5 +40,5 @@ const test = () => {
   return true;
 };
 
-const c;
+let c;
 (c = test());
