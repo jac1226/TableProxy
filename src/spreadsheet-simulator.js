@@ -194,7 +194,6 @@ class Range {
     this.startColumn = startColumn;
     this.numRows = numRows;
     this.numColumns = numColumns;
-    console.log(this.dataContainer);
     this.shape = `${this.dataChunk.values.length}x${this.dataChunk.values[0].length}`;
   }
 
