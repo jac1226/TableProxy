@@ -16,17 +16,17 @@ export default class QueryDriver {
     this.loadQuery(query);
   }
 
-    loadQuery(query) {
-        if (toString.call(query) !== '[object Function]') {
-            throw new TypeError('loadQuery requires accepts a function callback');
-        }
-        this.query = query;
-        const queryAsString = query.toString();
-        SUPPORTED_ATTRIBUTES.forEach((attribute)=>{
-            const regex = new RegExp('\.{0,1}[\'|"|\[]{0,1}' + attribute + '[\[\'|"]{0,1}', 'g');
-            if (regex.test(queryAsString)) {
-                this.requestedAttributes.push(attribute);
-            };
-        });
+  loadQuery(query) {
+    if (toString.call(query) !== '[object Function]') {
+      throw new TypeError('loadQuery requires accepts a function callback');
     }
+    this.query = query;
+    const queryAsString = query.toString();
+    SUPPORTED_ATTRIBUTES.forEach((attribute)=>{
+      const regex = new RegExp('\.{0,1}[\'|"|\[]{0,1}' + attribute + '[\[\'|"]{0,1}', 'g');
+      if (regex.test(queryAsString)) {
+        this.requestedAttributes.push(attribute);
+      };
+    });
+  }
 }
