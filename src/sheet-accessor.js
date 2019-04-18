@@ -28,7 +28,7 @@ export default class SheetAccessor {
     if (toString.call(headerAnchorToken) === '[object String]') {
       this.headerAnchorToken = headerAnchorToken;
     }
-   
+
     /**
      * flesh out headerRowIndex, headerColumnIndex
      */
@@ -37,17 +37,13 @@ export default class SheetAccessor {
     const columnCount = notesData[0].length;
 
     for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
-      if (notesData[rowIndex].join("").indexOf(this.headerAnchorToken) !== -1) {
+      if (notesData[rowIndex].join('').indexOf(this.headerAnchorToken) !== -1) {
         this.headerRowIndex = rowIndex;
         break;
       }
     }
     for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
-      if (
-        notesData[this.headerRowIndex][columnIndex].indexOf(
-          this.headerAnchorToken
-        ) !== -1
-      ) {
+      if (notesData[this.headerRowIndex][columnIndex].indexOf(this.headerAnchorToken)·!==·-1) {
         this.headerColumnIndex = columnIndex;
         break;
       }
@@ -79,11 +75,11 @@ export default class SheetAccessor {
       getAll: (startRowIndex, startColumnIndex) => {
         const dataRange = sheet.getDataRange();
         const startRowIndx =
-          toString.call(startRowIndex) === "[object Number]"
+          toString.call(startRowIndex) === '[object Number]'
             ? startRowIndex
             : 0;
         const startColumnIndx =
-          toString.call(startColumnIndex) === "[object Number]"
+          toString.call(startColumnIndex) === '[object Number]'
             ? startColumnIndex
             : 0;
         return sheet.getRange(
@@ -102,14 +98,14 @@ export default class SheetAccessor {
      * flesh out attribute accessors
      */
     const mapping = {
-      value: { get: "getValues", set: "setValues" },
-      background: { get: "getBackgrounds", set: "setBackgrounds" },
-      fontcolor: { get: "getFontColors", set: "setFontColors" },
-      note: { get: "getNotes", set: "setNotes" },
-      fontfamily: { get: "getFontFamilies", set: "setFontFamilies" },
-      fontsize: { get: "getFontSizes", set: "setFontSizes" },
-      fontstyle: { get: "getFontStyles", set: "setFontStyles" },
-      fontweight: { get: "getFontWeights", set: "setFontWeights" }
+      value: { get: 'getValues', set: 'setValues' },
+      background: { get: 'getBackgrounds', set: 'setBackgrounds' },
+      fontcolor: { get: 'getFontColors', set: 'setFontColors' },
+      note: { get: 'getNotes', set: 'setNotes' },
+      fontfamily: { get: 'getFontFamilies', set: 'setFontFamilies' },
+      fontsize: { get: 'getFontSizes', set: 'setFontSizes' },
+      fontstyle: { get: 'getFontStyles', set: 'setFontStyles' },
+      fontweight: { get: 'getFontWeights', set: 'setFontWeights' }
     };
     Object.keys(mapping).forEach(attribute => {
       this[attribute] = {};
