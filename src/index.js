@@ -4,7 +4,7 @@ import QueryDriver from './query-driver';
 import QueryReturn from './query-return';
 import RowIndexCursor from './row-index-cursor';
 
-const doGet = () => {
+const TableProxy = () => {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test');
   const sheetAccessor = new SheetAccessor(sheet);
   const rowIndexCursor = new RowIndexCursor(sheetAccessor);
@@ -33,11 +33,4 @@ const doGet = () => {
   return ContentService.createTextOutput(json).setMimeType(ContentService.MimeType.JSON);
 };
 
-global.doGet = doGet;
-
-const test = () => {
-  Browser.msgBox('test');
-  return true;
-};
-
-global.test = test;
+global.TableProxy = (TableProxy)();
