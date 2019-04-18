@@ -1,20 +1,20 @@
 /**
-* QueryDriver class
-* @return {Object}
-*/
+ * QueryDriver class
+ * @return {Object}
+ */
 
 import UniqueSet from './unique-set';
 import { SUPPORTED_ATTRIBUTES } from './CONSTANTS';
 
 export default class QueryDriver {
-    constructor(query, type) {
-        this.query = null;
-        this.type = type.toUpperCase();
-        this.writeToCursor = false;
-        this.withRecords = false;
-        this.requestedAttributes = new UniqueSet();
-        this.loadQuery(query);
-    }
+  constructor(query, type) {
+    this.query = null;
+    this.type = type.toUpperCase();
+    this.writeToCursor = false;
+    this.withRecords = false;
+    this.requestedAttributes = new UniqueSet();
+    this.loadQuery(query);
+  }
 
     loadQuery(query) {
         if (toString.call(query) !== '[object Function]') {
