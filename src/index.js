@@ -10,9 +10,9 @@ const query = r => {
   let balls = 1;
   if (r.nuggets.value === r.nuggets.fontcolor) {
     balls = 5;
-  };
+  }
   return balls;
-}
+};
 
 const queryDriver = new QueryDriver(query, 'test');
 const queryReturn = new QueryReturn(queryDriver);
