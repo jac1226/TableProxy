@@ -94,17 +94,14 @@ class DataContainer {
     if (!isInteger(startColumn)) {
       throw new Error(`startColumn must be an integer - received ${startColumn}.`);
     }
+    if(numRows === undefined && numColumns !== undefined){
+      throw new Error(`numRows must be specified if numColumns is specified.`);
+    }
 
     const dataArray = this[dataArrayName];
-    let numRowsClean;
-    let numColumnsClean;
 
-    if (numRows === undefined && numColumns === undefined) {
-      numRowsClean = 1;
-      numColumnsClean = 1;
-    } else if (numRows !== undefined && numColumns === undefined) {
-      numColumnsClean = dataArray[0].length + 1 - startColumn;
-    }
+    const numRowsClean = numRows === undefined ? 1 : numRows;
+    const numColumnsClean = numColumns === undefined ? 1 : numColumns;
 
     if (startRow < 1 || startRow > dataArray.length) {
       throw new Error(
@@ -197,6 +194,7 @@ class Range {
     this.startColumn = startColumn;
     this.numRows = numRows;
     this.numColumns = numColumns;
+    console.log(this.dataContainer);
     this.shape = `${this.dataChunk.values.length}x${this.dataChunk.values[0].length}`;
   }
 
@@ -374,4 +372,6 @@ const SpreadsheetAppFake = {
   }
 };
 
-export default SpreadsheetAppFake;
+//export default SpreadsheetAppFake;
+let s=SpreadsheetAppFake.getActiveSpreadsheet().getSheetByName('Test');
+s.getDataRange();
