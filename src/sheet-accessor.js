@@ -108,9 +108,9 @@ export default class SheetAccessor {
         Object.keys(this.range).forEach(rangeMethodName => {
           this[attribute][getSet + rangeMethodName.substr(3)] = (...args) => {
             const rangeMethod = this.range[rangeMethodName];
-            const range = rangeMethod.apply(null, args.splice(0, rangeMethod.length));
+            const range = rangeMethod(...args);
             if (args.length !== 0) {
-              return range[getSetMapping[getSet]](args[0]);
+              return range[getSetMapping[getSet]](...args.splice(rangeMethod.length,args.length));
             }
             return range[getSetMapping[getSet]]();
           };
