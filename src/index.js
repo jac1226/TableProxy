@@ -30,6 +30,7 @@ const doGet = () => {
 
   const json = JSON.stringify(output);
 
+
   return ContentService.createTextOutput(json).setMimeType(ContentService.MimeType.JSON);
 };
 
@@ -40,5 +41,4 @@ const test = () => {
   return true;
 };
 
-let c;
-(c = test());
+global.c = test();
