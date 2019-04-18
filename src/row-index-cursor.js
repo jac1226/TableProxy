@@ -50,7 +50,7 @@ export default class RowIndexCursor {
 
   flush() {
     this.refreshSheetIndices();
-    this.selectedRowIndexer.flush().copyIndices(this.allRowIndexer);
+    this.selectedRowIndexer.flush().copyItems(this.allRowIndexer);
     return this;
   }
 

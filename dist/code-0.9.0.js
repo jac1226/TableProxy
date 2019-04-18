@@ -713,7 +713,7 @@ function doGet() {
             key: "consumeSelection",
             value: function(selectionSet) {
                 if (!(selectionSet instanceof _unique_set__WEBPACK_IMPORTED_MODULE_1__["a"])) throw new TypeError("consumeSelections accepts only UniqueSet input.");
-                return this.selectedRowIndexer.flush().copyIndices(selectionSet), this;
+                return this.selectedRowIndexer.flush().copyItems(selectionSet), this;
             }
         }, {
             key: "indices",
