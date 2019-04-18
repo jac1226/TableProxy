@@ -6,10 +6,10 @@ import QueryReturn from './query-return';
 const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test');
 const sheetAccessor = new SheetAccessor(sheet);
 
-const query=function(r){
+const query = (r) => {
   let balls=1;
-  if(r.nuggets.value === r.nuggets.fontcolor){
-      balls=5;
+  if (r.nuggets.value === r.nuggets.fontcolor) {
+    balls = 5;
   }
   return balls;
 }
