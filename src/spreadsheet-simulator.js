@@ -82,13 +82,13 @@ class DataContainer {
 
   filterDataArray(dataArrayName, startRow, startColumn, numRows, numColumns) {
     if (this[dataArrayName] === undefined) {
-      throw new Error('invalid dataset: "' + dataArrayName + '"');
+      throw new Error(`invalid dataset: "${dataArrayName}"`);
     }
     if (!Number.isInteger(startRow)) {
-      throw new Error('startRow must be an integer - received ' + startRow+'.');
+      throw new Error(`startRow must be an integer - received ${startRow}.`);
     }
     if (!Number.isInteger(startColumn)) {
-      throw new Error('startColumn must be an integer - received ' + startColumn+'.');
+      throw new Error(`startColumn must be an integer - received ${startColumn}.`);
     }
 
     let dataArray = this[dataArrayName];
@@ -101,38 +101,18 @@ class DataContainer {
     }
 
     if (startRow < 1 || startRow > dataArray.length) {
-      throw new Error('startRow out of range for ' +
-        dataArrayName +
-        '. Requested startRow ' +
-        startRow +
-        ' - must be between 1 and ' +
-        dataArray.length+'.');
+      throw new Error(`startRow out of range for ${dataArrayName}. Requested startRow ${startRow} - must be between 1 and ${dataArray.length}.`);
     }
     if (startColumn < 1 || startColumn > dataArray[0].length) {
-      throw new Error('startColumn out of range for ' +
-        dataArrayName +
-        '. Requested startColumn ' +
-        startColumn +
-        ' - must be between 1 and ' +
-        dataArray[0].length+'.');
+      throw new Error(`startColumn out of range for ${dataArrayName}. Requested startColumn ${startColumn} - must be between 1 and ${dataArray[0].length}.`);
     }
 
     if (startRow + numRows - 1 > dataArray.length) {
-      throw new Error('numRows out of range for ' +
-        dataArrayName +
-        '. For startRow ' +
-        startRow +
-        ' , numRows must be  between 1 and ' +
-        (dataArray.length - startRow + 1)+'.');
+      throw new Error(`numRows out of range for ${dataArrayName}. For startRow ${startRow}, numRows must be  between 1 and ${(dataArray.length - startRow + 1)}`);
     }
 
     if ((startColumn + numColumns - 1) > dataArray[0].length) {
-      throw new Error('numColumns out of range for ' +
-        dataArrayName +
-        '. For startColumn ' +
-        startColumn +
-        ', numColumns must be between 1 and ' +
-        (dataArray[0].length - startColumn + 1)+'.');
+      throw new Error(`numColumns out of range for ${dataArrayName}. For startColumn ${startColumn}, numColumns must be between 1 and ${dataArray[0].length - startColumn + 1}`);
     }
 
     return dataArray
@@ -202,11 +182,7 @@ class Range {
 
   validateInputShape(input, type) {
     if (this.getShape(input) !== this.shape) {
-      throw new Error(type +
-        ' failed: range shape is ' +
-        this.shape +
-        ' and input is ' +
-        this.getShape(input));
+      throw new Error(`${type} failed: range shape is ${this.shape} and input is ${this.getShape(input)}`);
     }
   }
 
@@ -342,7 +318,7 @@ class Sheet {
     try {
       return new Range(this, startRow, startColumn, numRows, numColumns);
     } catch (e) {
-      throw new Error('getRange failed because of invalid inputs: ' + e);
+      throw new Error(`getRange failed because of invalid inputs: ${e}`);
     }
   }
 
@@ -370,7 +346,7 @@ class ActiveSpreadsheet {
 
   getSheetByName(name) {
     if (Object.keys(this.sheets).indexOf(name) == -1) {
-      throw new Error('sheet named "' + name + '" does not exist.');
+      throw new Error(`sheet named "${name}" does not exist.`);
     }
     return this.sheets[name];
   }
