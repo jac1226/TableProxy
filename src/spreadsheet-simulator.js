@@ -94,7 +94,7 @@ class DataContainer {
     if (!isInteger(startColumn)) {
       throw new Error(`startColumn must be an integer - received ${startColumn}.`);
     }
-    if(numRows === undefined && numColumns !== undefined){
+    if (numRows === undefined && numColumns !== undefined) {
       throw new Error(`numRows must be specified if numColumns is specified.`);
     }
 
