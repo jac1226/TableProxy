@@ -23,4 +23,4 @@ function test() {
   Logger.log(JSON.stringify(queryDriver));
   Logger.log(JSON.stringify(queryReturn));
 }
-
+test();
