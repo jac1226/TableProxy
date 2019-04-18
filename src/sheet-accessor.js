@@ -73,7 +73,8 @@ export default class SheetAccessor {
         const dataRange = sheet.getDataRange();
         const startRowIndx = toString.call(startRowIndex) === '[object Number]' ? startRowIndex : 0;
 
-        const startColumnIndx = toString.call(startColumnIndex) === '[object Number]' ? startColumnIndex : 0;
+        const startColumnIndx =
+          toString.call(startColumnIndex) === '[object Number]' ? startColumnIndex : 0;
 
         return sheet.getRange(
           startRowIndx + 1,
@@ -107,10 +108,7 @@ export default class SheetAccessor {
         Object.keys(this.range).forEach(rangeMethodName => {
           this[attribute][getSet + rangeMethodName.substr(3)] = (...args) => {
             const rangeMethod = this.range[rangeMethodName];
-            const range = rangeMethod.apply(
-              null,
-              args.splice(0, rangeMethod.length)
-            );
+            const range = rangeMethod.apply(null, args.splice(0, rangeMethod.length));
             if (args.length !== 0) {
               return range[getSetMapping[getSet]](args[0]);
             }
