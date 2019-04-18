@@ -30,7 +30,10 @@ const TableProxy = () => {
 
   const json = JSON.stringify(output);
 
-  return ContentService.createTextOutput(json).setMimeType(ContentService.MimeType.JSON);
+  /*
+   * return ContentService.createTextOutput(json).setMimeType(ContentService.MimeType.JSON);
+   */
+  return () => {Browser.msgBox(json);}
 };
 
 global.TableProxy = TableProxy();
