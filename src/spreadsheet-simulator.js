@@ -68,9 +68,9 @@ const fontfamilies = [
   ['Arial', 'Arial', 'Arial', 'Arial', 'Arial']
 ];
 
-const isInteger = (input) => {
-  return data === parseInt(input, 10);
-}
+const isInteger = input => {
+  return input === parseInt(input, 10);
+};
 
 class DataContainer {
   constructor() {
