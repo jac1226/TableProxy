@@ -364,8 +364,8 @@ class ActiveSpreadsheet {
   }
 }
 
-export default (SpreadsheetAppFake = {
+export default SpreadsheetAppFake = {
   getActiveSpreadsheet: () => {
     return new ActiveSpreadsheet();
   }
-});
+};
