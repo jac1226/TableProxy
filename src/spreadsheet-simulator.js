@@ -35,7 +35,7 @@ class Sheet {
     try {
       return new Range(this, startRow, startColumn, numRows, numColumns);
     } catch (e) {
-      throw 'getRange failed because of invalid inputs:' + e;
+      throw 'getRange failed because of invalid inputs: ' + e;
     }
   }
 
@@ -198,7 +198,6 @@ class Range {
 }
 
 class DataContainer {
-  //get a copy of everything.
   constructor() {
     this.values = values;
     this.backgrounds = backgrounds;
@@ -210,16 +209,15 @@ class DataContainer {
     this.fontfamilies = fontfamilies;
   }
   filterDataArray(dataArrayName, startRow, startColumn, numRows, numColumns) {
-    //one indexed
 
     if (this[dataArrayName] === undefined) {
       throw 'invalid dataset: "' + dataArrayName + '"';
     }
     if (!Number.isInteger(startRow)) {
-      throw 'startRow must be an integer - received ' + startRow;
+      throw 'startRow must be an integer - received ' + startRow+'.';
     }
     if (!Number.isInteger(startColumn)) {
-      throw 'startColumn must be an integer - received ' + startColumn;
+      throw 'startColumn must be an integer - received ' + startColumn+'.';
     }
 
     let dataArray = this[dataArrayName];
@@ -234,35 +232,36 @@ class DataContainer {
     if (startRow < 1 || startRow > dataArray.length) {
       throw 'startRow out of range for ' +
         dataArrayName +
-        ': one-indexed startRow given as ' +
+        '. Requested startRow ' +
         startRow +
         ' - must be between 1 and ' +
-        dataArray.length;
+        dataArray.length+'.';
     }
     if (startColumn < 1 || startColumn > dataArray[0].length) {
       throw 'startColumn out of range for ' +
         dataArrayName +
-        ': one-indexed startColumn given as ' +
+        '. Requested startColumn ' +
         startColumn +
         ' - must be between 1 and ' +
-        dataArray[0].length;
+        dataArray[0].length+'.';
     }
 
     if (startRow + numRows - 1 > dataArray.length) {
       throw 'numRows out of range for ' +
         dataArrayName +
-        ' with startRow=' +
+        '. For startRow ' +
         startRow +
-        ' - must be  between 1 and ' +
-        (dataArray.length - startRow + 1);
+        ' , numRows must be  between 1 and ' +
+        (dataArray.length - startRow + 1)+'.';
     }
-    if (startColumn + numColumns - 1 > dataArray[0].length) {
+
+    if ((startColumn + numColumns - 1) > dataArray[0].length) {
       throw 'numColumns out of range for ' +
         dataArrayName +
-        ' with startColumn=' +
+        '. For startColumn ' +
         startColumn +
-        ' - must be between 1 and ' +
-        (dataArray[0].length - startColumn + 1);
+        ', numColumns must be between 1 and ' +
+        (dataArray[0].length - startColumn + 1)+'.';
     }
 
     return dataArray
@@ -309,6 +308,7 @@ class DataContainer {
   }
 
   getNumRows() {
+    console.log('hit');
     return this.values.length;
   }
   
