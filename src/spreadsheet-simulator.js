@@ -198,8 +198,8 @@ class Range {
 
   validateInputShape(input, type) {
     const inputShape = `${input.length}x${input[0].length}`;
-    if(inputShape !== this.shape) {
-      throw new Error (`${type} failed: range shape is ${this.shape} and input is ${inputShape}`);
+    if (inputShape !== this.shape) {
+      throw new Error(`${type} failed: range shape is ${this.shape} and input is ${inputShape}`);
     }
   }
 
@@ -364,8 +364,8 @@ class ActiveSpreadsheet {
   }
 }
 
-export default SpreadsheetApp = {
+export default SpreadsheetApp = ({
   getActiveSpreadsheet: () => {
     return new ActiveSpreadsheet();
   }
-};
+});
