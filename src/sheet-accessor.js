@@ -62,6 +62,7 @@ export default class SheetAccessor {
       getColumn: (columnIndex, startRowIndex) => {
         const dataRange = sheet.getDataRange();
         const startRowIndx = toString.call(startRowIndex) === '[object Number]' ? startRowIndex : 0;
+        
         return sheet.getRange(
           startRowIndx + 1,
           columnIndex + 1,
@@ -73,7 +74,13 @@ export default class SheetAccessor {
         const dataRange = sheet.getDataRange();
         const startRowIndx = toString.call(startRowIndex) === '[object Number]' ? startRowIndex : 0;
         const startColumnIndx = toString.call(startColumnIndex) === '[object Number]' ? startColumnIndex : 0;
-        return sheet.getRange(startRowIndx + 1, startColumnIndx + 1, dataRange.getNumRows() - startRowIndx, dataRange.getNumColumns() - startColumnIndx);
+
+        return sheet.getRange(
+          startRowIndx + 1,
+          startColumnIndx + 1,
+          dataRange.getNumRows() - startRowIndx,
+          dataRange.getNumColumns() - startColumnIndx
+        );
       },
       getAllRecords: () => {
         return this.range.getAll(this.headerRowIndex, 0);
