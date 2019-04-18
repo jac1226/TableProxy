@@ -17,7 +17,10 @@ const query = r => {
 const queryDriver = new QueryDriver(query, 'test');
 const queryReturn = new QueryReturn(queryDriver);
 
-Logger.log(JSON.stringify(sheet));
-Logger.log(JSON.stringify(sheetAccessor));
-Logger.log(JSON.stringify(queryDriver));
-Logger.log(JSON.stringify(queryReturn));
+function test() {
+  Logger.log(JSON.stringify(sheet));
+  Logger.log(JSON.stringify(sheetAccessor));
+  Logger.log(JSON.stringify(queryDriver));
+  Logger.log(JSON.stringify(queryReturn));
+}
+
