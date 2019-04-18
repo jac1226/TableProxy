@@ -316,8 +316,9 @@ function doGet() {
         }), this.getHeaderRow = function() {
             return _this.value.getRow(_this.headerRowIndex);
         }, this.getAllRecordIndices = function() {
-            for (var indices = [], numRows = _this.range.getAllRecords().getNumRows(), i = _this.headerRowIndex + 1; i < numRows; ) indices.push(i), 
-            i += 1;
+            var indices = [], numRows = _this.range.getAllRecords().getNumRows();
+            Browser.msgBox(numRows);
+            for (var i = _this.headerRowIndex + 1; i < numRows; ) indices.push(i), i += 1;
             return indices;
         };
     };
