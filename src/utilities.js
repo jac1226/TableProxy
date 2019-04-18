@@ -3,7 +3,7 @@
  * @desc Various utilities
  */
 
-import COLORS from './CONSTANTS';
+import { COLORS } from './CONSTANTS';
 
 export const isArray = input => {
   return toString.call(input) === '[object Array]';

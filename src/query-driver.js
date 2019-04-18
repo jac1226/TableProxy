@@ -4,7 +4,7 @@
 */
 
 import UniqueSet from './unique-set';
-import SUPPORTED_ATTRIBUTES from './CONSTANTS';
+import { SUPPORTED_ATTRIBUTES } from './CONSTANTS';
 
 export default class QueryDriver {
     constructor(query, type) {
