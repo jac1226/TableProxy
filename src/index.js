@@ -3,7 +3,7 @@ import SheetAccessor from './sheet-accessor';
 import QueryDriver from './query-driver';
 import QueryReturn from './query-return';
 
-const sheet=SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test');
+let sheet=SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test');
 const sheetAccessor= new SheetAccessor(sheet);
 
 const query=function(r){
@@ -13,7 +13,7 @@ const query=function(r){
 }
 
 const queryDriver=new QueryDriver(query,'test');
-const queryReturn=new queryReturn(queryDriver);
+const queryReturn=new QueryReturn(queryDriver);
 
 Logger.log(JSON.stringify(sheet));
 Logger.log(JSON.stringify(sheetAccessor));

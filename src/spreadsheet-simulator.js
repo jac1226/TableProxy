@@ -3,12 +3,6 @@
  * let sheet=SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test');
  */
 
-export default SpreadsheetApp = {
-  getActiveSpreadsheet: () => {
-    return new ActiveSpreadsheet();
-  }
-};
-
 class ActiveSpreadsheet {
   constructor() {
     this.sheets = {
@@ -382,4 +376,9 @@ const fontfamilies = [
   ['Arial', 'Arial', 'Arial', 'Arial', 'Arial']
 ];
 
-const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test');
+export default SpreadsheetApp = {
+  getActiveSpreadsheet: () => {
+    return new ActiveSpreadsheet();
+  }
+};
+
