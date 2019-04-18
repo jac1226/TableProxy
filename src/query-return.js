@@ -8,7 +8,7 @@ import UniqueSet from './unique-set';
 import QueryDriver from './query-driver';
 
 export default class QueryReturn {
-  constructor(queryDriver){
+  constructor(queryDriver) {
     if (!(queryDriver instanceof QueryDriver)) {
       throw new TypeError('QueryResult constructor requires QueryDriver input.');
     }
@@ -18,21 +18,21 @@ export default class QueryReturn {
     this.queryStartTime = getTimeStamp();
     this.queryDuration = null;
     this.returnContainer = {
-        records: {},
-        errors: []
+      records: {},
+      errors: []
     };
   }
 
-  get count(){
+  get count() {
     return this.resultSet.length;
   }
 
-  push(input){
+  push(input) {
     this.resultSet.push(input);
   }
 
-  done(){
+  done() {
     this.queryDuration = getTimeDiff(this.queryStartTime);
-    Logger.log(this.type + ' operation completed in ' + this.queryDuration + 'ms.\n' + this.query.toString());
+    Logger.log(`${this.type} operation completed in ${this.queryDuration} ms.\n ${this.query.toString()}`);
   }
 }
