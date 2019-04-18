@@ -165,7 +165,7 @@ class DataContainer {
   }
 
   setChunk(dataAttribute, dataChunk, startRow, startColumn) {
-    Object.keys(dataChunk).forEach(attribute=>{
+    Object.keys(dataChunk).forEach(dataAttribute => {
       if (this[dataAttribute]) {
         dataChunk[dataAttribute].forEach((row, rowIndex) => {
           row.forEach((columnValue, columnIndex) => {
