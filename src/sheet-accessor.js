@@ -43,7 +43,7 @@ export default class SheetAccessor {
       }
     }
     for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
-      if (notesData[this.headerRowIndex][columnIndex].indexOf(this.headerAnchorToken)!==-1) {
+      if (notesData[this.headerRowIndex][columnIndex].indexOf(this.headerAnchorToken) !== -1) {
         this.headerColumnIndex = columnIndex;
         break;
       }
