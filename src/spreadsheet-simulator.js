@@ -128,10 +128,10 @@ class DataContainer {
     if (startColumn + numColumnsClean - 1 > dataArray[0].length) {
       throw new Error(
         `numColumns out of range for ${dataArrayName}. For startColumn ${startColumn}, numColumns must be between 1 and ${dataArray[0]
-          .length - 
+          .length -
           startColumn +
           1}`
-        );
+      );
     }
 
     return dataArray
@@ -182,7 +182,7 @@ class DataContainer {
   getNumRows() {
     return this.values.length;
   }
-  
+
   getNumColumns() {
     return this.values[0].length;
   }
@@ -197,7 +197,7 @@ class Range {
     this.startColumn = startColumn;
     this.numRows = numRows;
     this.numColumns = numColumns;
-    this.shape = this.dataChunk.values.length + 'x' + this.dataChunk.values[0].length;
+    this.shape = `${this.dataChunk.values.length}x${this.dataChunk.values[0].length}`;
   }
 
   validateInputShape(input, type) {
@@ -334,7 +334,6 @@ class Sheet {
   }
 
   getRange(startRow, startColumn, numRows, numColumns) {
-    //expects 1 indexed values
     try {
       return new Range(this, startRow, startColumn, numRows, numColumns);
     } catch (e) {
@@ -365,7 +364,7 @@ class ActiveSpreadsheet {
   }
 
   getSheetByName(name) {
-    if (Object.keys(this.sheets).indexOf(name) == -1) {
+    if (Object.keys(this.sheets).indexOf(name) === -1) {
       throw new Error(`sheet named "${name}" does not exist.`);
     }
     return this.sheets[name];
@@ -377,4 +376,3 @@ export default SpreadsheetApp = {
     return new ActiveSpreadsheet();
   }
 };
-
