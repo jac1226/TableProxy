@@ -165,7 +165,7 @@ class DataContainer {
   }
 
   setChunk(dataAttribute, dataChunk, startRow, startColumn) {
-    Object.keys(dataChunk).forEach(dataAttribute => {
+    for (dataAttribute in dataChunk) {
       if (this[dataAttribute]) {
         dataChunk[dataAttribute].forEach((row, rowIndex) => {
           row.forEach((columnValue, columnIndex) => {
@@ -175,7 +175,7 @@ class DataContainer {
           });
         });
       }
-    });
+    }
     return this;
   }
 
@@ -202,7 +202,9 @@ class Range {
 
   validateInputShape(input, type) {
     if (this.getShape(input) !== this.shape) {
-      throw new Error(`${type} failed: range shape is ${this.shape} and input is ${this.getShape(input)}`);
+      throw new Error(
+        `${type} failed: range shape is ${this.shape} and input is ${this.getShape(input)}`
+      );
     }
   }
 
