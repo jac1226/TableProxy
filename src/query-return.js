@@ -33,6 +33,8 @@ export default class QueryReturn {
 
   done() {
     this.queryDuration = getTimeDiff(this.queryStartTime);
-    Logger.log(`${this.type} operation completed in ${this.queryDuration} ms.\n ${this.query.toString()}`);
+    Logger.log(
+        `${this.type} operation completed in ${this.queryDuration} ms.\n ${this.query.toString()}`
+    );
   }
 }
