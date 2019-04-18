@@ -66,7 +66,7 @@ export default class RowIndexCursor {
     if (!(selectionSet instanceof UniqueSet)) {
       throw new TypeError('consumeSelections accepts only UniqueSet input.');
     }
-    this.selectedRowIndexer.flush().copyIndices(selectionSet);
+    this.selectedRowIndexer.flush().copyItems(selectionSet);
     return this;
   }
 }
