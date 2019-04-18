@@ -3,48 +3,188 @@
  * let sheet=SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test');
  */
 
-class ActiveSpreadsheet {
+const values = [
+  ['1-1 Value', '1-2 Value', '1-3 Value', '1-4 Value', '1-5 Value'],
+  ['2-1 Value', '2-2 Value', '2-3 Value', '2-4 Value', '2-5 Value'],
+  ['3-1 Value', '3-2 Value', '3-3 Value', '3-4 Value', '3-5 Value'],
+  ['4-1 Value', '4-2 Value', '4-3 Value', '4-4 Value', '4-5 Value'],
+  ['5-1 Value', '5-2 Value', '5-3 Value', '5-4 Value', '5-5 Value'],
+  ['6-1 Value', '6-2 Value', '6-3 Value', '6-4 Value', '6-5 Value']
+];
+const backgrounds = [
+  ['#E5E5E5', '#E5E5E5', '#E5E5E5', '#E5E5E5', '#E5E5E5'],
+  ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
+  ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
+  ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
+  ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
+  ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF']
+];
+const fontcolors = [
+  ['#000000', '#000000', '#000000', '#000000', '#000000'],
+  ['#000000', '#000000', '#000000', '#000000', '#000000'],
+  ['#000000', '#000000', '#000000', '#000000', '#000000'],
+  ['#000000', '#000000', '#000000', '#000000', '#000000'],
+  ['#000000', '#000000', '#000000', '#000000', '#000000'],
+  ['#000000', '#000000', '#000000', '#000000', '#000000']
+];
+const notes = [
+  ['', '', '', '', ''],
+  ['', '', 'HEADER_ANCHOR', '', ''],
+  ['', '', '', '', ''],
+  ['', '', '', '', ''],
+  ['', '', '', '', ''],
+  ['', '', '', '', '']
+];
+const fontweights = [
+  ['bold', 'bold', 'bold', 'bold', 'bold'],
+  ['normal', 'normal', 'normal', 'normal', 'normal'],
+  ['normal', 'normal', 'normal', 'normal', 'normal'],
+  ['normal', 'normal', 'normal', 'normal', 'normal'],
+  ['normal', 'normal', 'normal', 'normal', 'normal'],
+  ['normal', 'normal', 'normal', 'normal', 'normal']
+];
+const fontstyles = [
+  ['normal', 'normal', 'normal', 'normal', 'normal'],
+  ['normal', 'normal', 'normal', 'normal', 'normal'],
+  ['normal', 'normal', 'normal', 'normal', 'normal'],
+  ['normal', 'normal', 'normal', 'normal', 'normal'],
+  ['normal', 'normal', 'normal', 'normal', 'normal'],
+  ['normal', 'normal', 'normal', 'normal', 'normal']
+];
+const fontsizes = [
+  [12, 12, 12, 12, 12],
+  [10, 10, 10, 10, 10],
+  [10, 10, 10, 10, 10],
+  [10, 10, 10, 10, 10],
+  [10, 10, 10, 10, 10],
+  [10, 10, 10, 10, 10]
+];
+const fontfamilies = [
+  ['Arial', 'Arial', 'Arial', 'Arial', 'Arial'],
+  ['Arial', 'Arial', 'Arial', 'Arial', 'Arial'],
+  ['Arial', 'Arial', 'Arial', 'Arial', 'Arial'],
+  ['Arial', 'Arial', 'Arial', 'Arial', 'Arial'],
+  ['Arial', 'Arial', 'Arial', 'Arial', 'Arial'],
+  ['Arial', 'Arial', 'Arial', 'Arial', 'Arial']
+];
+
+class DataContainer {
   constructor() {
-    this.sheets = {
-      Test: new Sheet('Test')
+    this.values = values;
+    this.backgrounds = backgrounds;
+    this.fontcolors = fontcolors;
+    this.notes = notes;
+    this.fontweights = fontweights;
+    this.fontstyles = fontstyles;
+    this.fontsizes = fontsizes;
+    this.fontfamilies = fontfamilies;
+  }
+
+  filterDataArray(dataArrayName, startRow, startColumn, numRows, numColumns) {
+    if (this[dataArrayName] === undefined) {
+      throw new Error('invalid dataset: "' + dataArrayName + '"');
+    }
+    if (!Number.isInteger(startRow)) {
+      throw new Error('startRow must be an integer - received ' + startRow+'.');
+    }
+    if (!Number.isInteger(startColumn)) {
+      throw new Error('startColumn must be an integer - received ' + startColumn+'.');
+    }
+
+    let dataArray = this[dataArrayName];
+
+    if (numRows === undefined && numColumns === undefined) {
+      numRows = 1;
+      numColumns = 1;
+    } else if (numRows !== undefined && numColumns === undefined) {
+      numColumns = dataArray[0].length + 1 - startColumn;
+    }
+
+    if (startRow < 1 || startRow > dataArray.length) {
+      throw new Error('startRow out of range for ' +
+        dataArrayName +
+        '. Requested startRow ' +
+        startRow +
+        ' - must be between 1 and ' +
+        dataArray.length+'.');
+    }
+    if (startColumn < 1 || startColumn > dataArray[0].length) {
+      throw new Error('startColumn out of range for ' +
+        dataArrayName +
+        '. Requested startColumn ' +
+        startColumn +
+        ' - must be between 1 and ' +
+        dataArray[0].length+'.');
+    }
+
+    if (startRow + numRows - 1 > dataArray.length) {
+      throw new Error('numRows out of range for ' +
+        dataArrayName +
+        '. For startRow ' +
+        startRow +
+        ' , numRows must be  between 1 and ' +
+        (dataArray.length - startRow + 1)+'.');
+    }
+
+    if ((startColumn + numColumns - 1) > dataArray[0].length) {
+      throw new Error('numColumns out of range for ' +
+        dataArrayName +
+        '. For startColumn ' +
+        startColumn +
+        ', numColumns must be between 1 and ' +
+        (dataArray[0].length - startColumn + 1)+'.');
+    }
+
+    return dataArray
+      .filter((row, rowIndex) => {
+        if (rowIndex + 1 >= startRow && rowIndex <= startRow + numRows - 2) {
+          return true;
+        }
+      })
+      .map(row => {
+        return row.filter((column, columnIndex) => {
+          if (columnIndex + 1 >= startColumn && columnIndex <= startColumn + numColumns - 2) {
+            return true;
+          }
+        });
+      });
+  }
+
+  getChunk(startRow, startColumn, numRows, numColumns) {
+    return {
+      values: this.filterDataArray('values', startRow, startColumn, numRows, numColumns),
+      backgrounds: this.filterDataArray('backgrounds', startRow, startColumn, numRows, numColumns),
+      fontcolors: this.filterDataArray('fontcolors', startRow, startColumn, numRows, numColumns),
+      notes: this.filterDataArray('notes', startRow, startColumn, numRows, numColumns),
+      fontweights: this.filterDataArray('fontweights', startRow, startColumn, numRows, numColumns),
+      fontstyles: this.filterDataArray('fontstyles', startRow, startColumn, numRows, numColumns),
+      fontsizes: this.filterDataArray('fontsizes', startRow, startColumn, numRows, numColumns),
+      fontfamilies: this.filterDataArray('fontfamilies', startRow, startColumn, numRows, numColumns)
     };
   }
 
-  getSheetByName(name) {
-    if (Object.keys(this.sheets).indexOf(name) == -1) {
-      throw 'sheet named "' + name + '" does not exist.';
+  setChunk(dataAttribute, dataChunk, startRow, startColumn) {
+    for (dataAttribute in dataChunk) {
+      if (this[dataAttribute]) {
+        dataChunk[dataAttribute].forEach((row, rowIndex) => {
+          row.forEach((columnValue, columnIndex) => {
+            this[dataAttribute][startRow - 1 + rowIndex][
+              startColumn - 1 + columnIndex
+            ] = columnValue;
+          });
+        });
+      }
     }
-    return this.sheets[name];
-  }
-}
-
-class Sheet {
-  constructor(name) {
-    this.name = name;
-    this.dataContainer = new DataContainer();
+    return this;
   }
 
-  getRange(startRow, startColumn, numRows, numColumns) {
-    //expects 1 indexed values
-    try {
-      return new Range(this, startRow, startColumn, numRows, numColumns);
-    } catch (e) {
-      throw 'getRange failed because of invalid inputs: ' + e;
-    }
+  getNumRows() {
+    console.log('hit');
+    return this.values.length;
   }
-
-  getName() {
-    return this.name;
-  }
-
-  getDataRange() {
-    return new Range(
-      this,
-      1,
-      1,
-      this.dataContainer.getNumRows(),
-      this.dataContainer.getNumColumns()
-    );
+  
+  getNumColumns() {
+    return this.values[0].length;
   }
 }
 
@@ -62,11 +202,11 @@ class Range {
 
   validateInputShape(input, type) {
     if (this.getShape(input) !== this.shape) {
-      throw type +
+      throw new Error(type +
         ' failed: range shape is ' +
         this.shape +
         ' and input is ' +
-        this.getShape(input);
+        this.getShape(input));
     }
   }
 
@@ -191,190 +331,50 @@ class Range {
   }
 }
 
-class DataContainer {
-  constructor() {
-    this.values = values;
-    this.backgrounds = backgrounds;
-    this.fontcolors = fontcolors;
-    this.notes = notes;
-    this.fontweights = fontweights;
-    this.fontstyles = fontstyles;
-    this.fontsizes = fontsizes;
-    this.fontfamilies = fontfamilies;
-  }
-  filterDataArray(dataArrayName, startRow, startColumn, numRows, numColumns) {
-
-    if (this[dataArrayName] === undefined) {
-      throw 'invalid dataset: "' + dataArrayName + '"';
-    }
-    if (!Number.isInteger(startRow)) {
-      throw 'startRow must be an integer - received ' + startRow+'.';
-    }
-    if (!Number.isInteger(startColumn)) {
-      throw 'startColumn must be an integer - received ' + startColumn+'.';
-    }
-
-    let dataArray = this[dataArrayName];
-
-    if (numRows === undefined && numColumns === undefined) {
-      numRows = 1;
-      numColumns = 1;
-    } else if (numRows !== undefined && numColumns === undefined) {
-      numColumns = dataArray[0].length + 1 - startColumn;
-    }
-
-    if (startRow < 1 || startRow > dataArray.length) {
-      throw 'startRow out of range for ' +
-        dataArrayName +
-        '. Requested startRow ' +
-        startRow +
-        ' - must be between 1 and ' +
-        dataArray.length+'.';
-    }
-    if (startColumn < 1 || startColumn > dataArray[0].length) {
-      throw 'startColumn out of range for ' +
-        dataArrayName +
-        '. Requested startColumn ' +
-        startColumn +
-        ' - must be between 1 and ' +
-        dataArray[0].length+'.';
-    }
-
-    if (startRow + numRows - 1 > dataArray.length) {
-      throw 'numRows out of range for ' +
-        dataArrayName +
-        '. For startRow ' +
-        startRow +
-        ' , numRows must be  between 1 and ' +
-        (dataArray.length - startRow + 1)+'.';
-    }
-
-    if ((startColumn + numColumns - 1) > dataArray[0].length) {
-      throw 'numColumns out of range for ' +
-        dataArrayName +
-        '. For startColumn ' +
-        startColumn +
-        ', numColumns must be between 1 and ' +
-        (dataArray[0].length - startColumn + 1)+'.';
-    }
-
-    return dataArray
-      .filter((row, rowIndex) => {
-        if (rowIndex + 1 >= startRow && rowIndex <= startRow + numRows - 2) {
-          return true;
-        }
-      })
-      .map(row => {
-        return row.filter((column, columnIndex) => {
-          if (columnIndex + 1 >= startColumn && columnIndex <= startColumn + numColumns - 2) {
-            return true;
-          }
-        });
-      });
+class Sheet {
+  constructor(name) {
+    this.name = name;
+    this.dataContainer = new DataContainer();
   }
 
-  getChunk(startRow, startColumn, numRows, numColumns) {
-    return {
-      values: this.filterDataArray('values', startRow, startColumn, numRows, numColumns),
-      backgrounds: this.filterDataArray('backgrounds', startRow, startColumn, numRows, numColumns),
-      fontcolors: this.filterDataArray('fontcolors', startRow, startColumn, numRows, numColumns),
-      notes: this.filterDataArray('notes', startRow, startColumn, numRows, numColumns),
-      fontweights: this.filterDataArray('fontweights', startRow, startColumn, numRows, numColumns),
-      fontstyles: this.filterDataArray('fontstyles', startRow, startColumn, numRows, numColumns),
-      fontsizes: this.filterDataArray('fontsizes', startRow, startColumn, numRows, numColumns),
-      fontfamilies: this.filterDataArray('fontfamilies', startRow, startColumn, numRows, numColumns)
-    };
-  }
-
-  setChunk(dataAttribute, dataChunk, startRow, startColumn) {
-    for (dataAttribute in dataChunk) {
-      if (this[dataAttribute]) {
-        dataChunk[dataAttribute].forEach((row, rowIndex) => {
-          row.forEach((columnValue, columnIndex) => {
-            this[dataAttribute][startRow - 1 + rowIndex][
-              startColumn - 1 + columnIndex
-            ] = columnValue;
-          });
-        });
-      }
+  getRange(startRow, startColumn, numRows, numColumns) {
+    //expects 1 indexed values
+    try {
+      return new Range(this, startRow, startColumn, numRows, numColumns);
+    } catch (e) {
+      throw new Error('getRange failed because of invalid inputs: ' + e);
     }
-    return this;
   }
 
-  getNumRows() {
-    console.log('hit');
-    return this.values.length;
+  getName() {
+    return this.name;
   }
-  
-  getNumColumns() {
-    return this.values[0].length;
+
+  getDataRange() {
+    return new Range(
+      this,
+      1,
+      1,
+      this.dataContainer.getNumRows(),
+      this.dataContainer.getNumColumns()
+    );
   }
 }
 
-const values = [
-  ['1-1 Value', '1-2 Value', '1-3 Value', '1-4 Value', '1-5 Value'],
-  ['2-1 Value', '2-2 Value', '2-3 Value', '2-4 Value', '2-5 Value'],
-  ['3-1 Value', '3-2 Value', '3-3 Value', '3-4 Value', '3-5 Value'],
-  ['4-1 Value', '4-2 Value', '4-3 Value', '4-4 Value', '4-5 Value'],
-  ['5-1 Value', '5-2 Value', '5-3 Value', '5-4 Value', '5-5 Value'],
-  ['6-1 Value', '6-2 Value', '6-3 Value', '6-4 Value', '6-5 Value']
-];
-const backgrounds = [
-  ['#E5E5E5', '#E5E5E5', '#E5E5E5', '#E5E5E5', '#E5E5E5'],
-  ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
-  ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
-  ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
-  ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
-  ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF']
-];
-const fontcolors = [
-  ['#000000', '#000000', '#000000', '#000000', '#000000'],
-  ['#000000', '#000000', '#000000', '#000000', '#000000'],
-  ['#000000', '#000000', '#000000', '#000000', '#000000'],
-  ['#000000', '#000000', '#000000', '#000000', '#000000'],
-  ['#000000', '#000000', '#000000', '#000000', '#000000'],
-  ['#000000', '#000000', '#000000', '#000000', '#000000']
-];
-const notes = [
-  ['', '', '', '', ''],
-  ['', '', 'HEADER_ANCHOR', '', ''],
-  ['', '', '', '', ''],
-  ['', '', '', '', ''],
-  ['', '', '', '', ''],
-  ['', '', '', '', '']
-];
-const fontweights = [
-  ['bold', 'bold', 'bold', 'bold', 'bold'],
-  ['normal', 'normal', 'normal', 'normal', 'normal'],
-  ['normal', 'normal', 'normal', 'normal', 'normal'],
-  ['normal', 'normal', 'normal', 'normal', 'normal'],
-  ['normal', 'normal', 'normal', 'normal', 'normal'],
-  ['normal', 'normal', 'normal', 'normal', 'normal']
-];
-const fontstyles = [
-  ['normal', 'normal', 'normal', 'normal', 'normal'],
-  ['normal', 'normal', 'normal', 'normal', 'normal'],
-  ['normal', 'normal', 'normal', 'normal', 'normal'],
-  ['normal', 'normal', 'normal', 'normal', 'normal'],
-  ['normal', 'normal', 'normal', 'normal', 'normal'],
-  ['normal', 'normal', 'normal', 'normal', 'normal']
-];
-const fontsizes = [
-  [12, 12, 12, 12, 12],
-  [10, 10, 10, 10, 10],
-  [10, 10, 10, 10, 10],
-  [10, 10, 10, 10, 10],
-  [10, 10, 10, 10, 10],
-  [10, 10, 10, 10, 10]
-];
-const fontfamilies = [
-  ['Arial', 'Arial', 'Arial', 'Arial', 'Arial'],
-  ['Arial', 'Arial', 'Arial', 'Arial', 'Arial'],
-  ['Arial', 'Arial', 'Arial', 'Arial', 'Arial'],
-  ['Arial', 'Arial', 'Arial', 'Arial', 'Arial'],
-  ['Arial', 'Arial', 'Arial', 'Arial', 'Arial'],
-  ['Arial', 'Arial', 'Arial', 'Arial', 'Arial']
-];
+class ActiveSpreadsheet {
+  constructor() {
+    this.sheets = {
+      Test: new Sheet('Test')
+    };
+  }
+
+  getSheetByName(name) {
+    if (Object.keys(this.sheets).indexOf(name) == -1) {
+      throw new Error('sheet named "' + name + '" does not exist.');
+    }
+    return this.sheets[name];
+  }
+}
 
 export default SpreadsheetApp = {
   getActiveSpreadsheet: () => {
