@@ -62,7 +62,12 @@ export default class SheetAccessor {
       getColumn: (columnIndex, startRowIndex) => {
         const dataRange = sheet.getDataRange();
         const startRowIndx = toString.call(startRowIndex) === '[object Number]' ? startRowIndex : 0;
-        return sheet.getRange(startRowIndx + 1, columnIndex + 1, dataRange.getNumRows() - startRowIndx, 1);
+        return sheet.getRange(
+          startRowIndx + 1,
+          columnIndex + 1,
+          dataRange.getNumRows() - startRowIndx,
+          1
+        );
       },
       getAll: (startRowIndex, startColumnIndex) => {
         const dataRange = sheet.getDataRange();
