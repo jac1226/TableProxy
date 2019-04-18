@@ -6,11 +6,11 @@ import QueryReturn from './query-return';
 const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test');
 const sheetAccessor = new SheetAccessor(sheet);
 
-const query = (r) => {
-  let balls=1;
+const query = r => {
+  let balls = 1;
   if (r.nuggets.value === r.nuggets.fontcolor) {
     balls = 5;
-  }
+  };
   return balls;
 }
 
