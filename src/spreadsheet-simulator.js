@@ -119,9 +119,10 @@ class DataContainer {
 
     if (startRow + numRowsClean - 1 > dataArray.length) {
       throw new Error(
-        `numRows out of range for ${dataArrayName}. For startRow ${startRow}, numRows must be  between 1 and ${(dataArray.length -
-        startRow
-        + 1)}`);
+        `numRows out of range for ${dataArrayName}. For startRow ${startRow}, numRows must be  between 1 and ${dataArray.length -
+          startRow +
+        1}`
+      );
     }
 
     if (startColumn + numColumnsClean - 1 > dataArray[0].length) {
