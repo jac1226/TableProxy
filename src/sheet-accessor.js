@@ -110,7 +110,7 @@ export default class SheetAccessor {
             const rangeMethod = this.range[rangeMethodName];
             const range = rangeMethod(...args);
             if (args.length !== 0) {
-              return range[getSetMapping[getSet]](...args.splice(rangeMethod.length,args.length));
+              return range[getSetMapping[getSet]](...args.splice(rangeMethod.length, args.length));
             }
             return range[getSetMapping[getSet]]();
           };

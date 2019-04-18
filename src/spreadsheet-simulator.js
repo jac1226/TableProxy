@@ -92,6 +92,8 @@ class DataContainer {
     }
 
     const dataArray = this[dataArrayName];
+    let numRowsClean;
+    let numColumnsClean;
 
     if (numRows === undefined && numColumns === undefined) {
       numRowsClean = 1;
@@ -101,17 +103,23 @@ class DataContainer {
     }
 
     if (startRow < 1 || startRow > dataArray.length) {
-      throw new Error(`startRow out of range for ${dataArrayName}. Requested startRow ${startRow} - must be between 1 and ${dataArray.length}.`);
+      throw new Error(
+        `startRow out of range for ${dataArrayName}. Requested startRow ${startRow} - must be between 1 and ${
+          dataArray.length
+        }.`);
     }
     if (startColumn < 1 || startColumn > dataArray[0].length) {
-      throw new Error(`startColumn out of range for ${dataArrayName}. Requested startColumn ${startColumn} - must be between 1 and ${dataArray[0].length}.`);
+      throw new Error(
+        `startColumn out of range for ${dataArrayName}. Requested startColumn ${startColumn} - must be between 1 and ${
+          dataArray[0].length
+        }.`);
     }
 
     if (startRow + numRowsClean - 1 > dataArray.length) {
       throw new Error(`numRows out of range for ${dataArrayName}. For startRow ${startRow}, numRows must be  between 1 and ${(dataArray.length - startRow + 1)}`);
     }
 
-    if ((startColumn + numColumnsClean - 1) > dataArray[0].length) {
+    if (startColumn + numColumnsClean - 1 > dataArray[0].length) {
       throw new Error(`numColumns out of range for ${dataArrayName}. For startColumn ${startColumn}, numColumns must be between 1 and ${dataArray[0].length - startColumn + 1}`);
     }
 
