@@ -165,7 +165,7 @@ class DataContainer {
   }
 
   setChunk(dataAttribute, dataChunk, startRow, startColumn) {
-    for (dataAttribute in dataChunk) {
+    Object.keys(dataChunk).forEach(attribute=>{
       if (this[dataAttribute]) {
         dataChunk[dataAttribute].forEach((row, rowIndex) => {
           row.forEach((columnValue, columnIndex) => {
@@ -175,7 +175,7 @@ class DataContainer {
           });
         });
       }
-    }
+    });
     return this;
   }
 
@@ -207,7 +207,7 @@ class Range {
   }
 
   getShape(input) {
-    return input.length + 'x' + input[0].length;
+    return `${input.length}x${input[0].length}`;
   }
 
   getSheet() {
