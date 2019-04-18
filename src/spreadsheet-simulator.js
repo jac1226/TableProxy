@@ -69,7 +69,7 @@ const fontfamilies = [
 ];
 
 const isInteger = (input) => {
-  return data === parseInt(input, 10));
+  return data === parseInt(input, 10);
 }
 
 class DataContainer {
