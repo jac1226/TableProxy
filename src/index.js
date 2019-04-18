@@ -16,15 +16,14 @@ const doGet = () => {
   const queryDriver = new QueryDriver(query, 'test');
   const queryReturn = new QueryReturn(queryDriver);
 
-  const output={
-    sheet:sheet,
-    sheetAccessor:sheetAccessor,
-    queryDriver:queryDriver,
-    queryReturn:queryReturn
+  const output = {
+    sheet,
+    sheetAccessor,
+    queryDriver,
+    queryReturn
   };
 
-  return ContentService.createTextOutput(output)
-  .setMimeType(ContentService.MimeType.JSON);
-}
+  return ContentService.createTextOutput(output).setMimeType(ContentService.MimeType.JSON);
+};
 
 global.doGet = doGet;
