@@ -165,16 +165,14 @@ class DataContainer {
   }
 
   setChunk(dataAttribute, dataChunk, startRow, startColumn) {
-    for (dataAttribute in dataChunk) {
-      if (this[dataAttribute]) {
-        dataChunk[dataAttribute].forEach((row, rowIndex) => {
-          row.forEach((columnValue, columnIndex) => {
-            this[dataAttribute][startRow - 1 + rowIndex][
-              startColumn - 1 + columnIndex
-            ] = columnValue;
-          });
+    if (this[dataAttribute]) {
+      dataChunk[dataAttribute].forEach((row, rowIndex) => {
+        row.forEach((columnValue, columnIndex) => {
+          this[dataAttribute][startRow - 1 + rowIndex][
+            startColumn - 1 + columnIndex
+          ] = columnValue;
         });
-      }
+      });
     }
     return this;
   }
@@ -201,15 +199,12 @@ class Range {
   }
 
   validateInputShape(input, type) {
-    if (this.getShape(input) !== this.shape) {
+    const inputShape=`${input.length}x${input[0].length}`;
+    if(inputShape !== this.shape) {
       throw new Error(
-        `${type} failed: range shape is ${this.shape} and input is ${this.getShape(input)}`
+        `${type} failed: range shape is ${this.shape} and input is ${inputShape}`
       );
     }
-  }
-
-  getShape(input) {
-    return `${input.length}x${input[0].length}`;
   }
 
   getSheet() {
