@@ -35,6 +35,6 @@ const doGet = () => {
 
 global.doGet = doGet;
 
-function test(){
+const test = () => {
   Browser.msgBox('test');
 }
