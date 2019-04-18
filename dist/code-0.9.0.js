@@ -317,7 +317,7 @@ function doGet() {
             _classCallCheck(this, Range), this.sheet = sheet, this.dataContainer = sheet.dataContainer, 
             this.dataChunk = this.dataContainer.getChunk(startRow, startColumn, numRows, numColumns), 
             this.startRow = startRow, this.startColumn = startColumn, this.numRows = numRows, 
-            this.numColumns = numColumns, console.log(this.dataContainer), this.shape = "".concat(this.dataChunk.values.length, "x").concat(this.dataChunk.values[0].length);
+            this.numColumns = numColumns, this.shape = "".concat(this.dataChunk.values.length, "x").concat(this.dataChunk.values[0].length);
         }
         return _createClass(Range, [ {
             key: "validateInputShape",

@@ -23,7 +23,7 @@ const doGet = () => {
     queryReturn
   };
 
-  return ContentService.createTextOutput(output).setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput(JSON.stringify(output)).setMimeType(ContentService.MimeType.JSON);
 };
 
 global.doGet = doGet;
