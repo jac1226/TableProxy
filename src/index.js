@@ -23,7 +23,7 @@ const doGet = () => {
   const output = {
     sheet,
     sheetAccessor,
-    rowIndexCursor,
+    indices:rowIndexCursor.indices,
     queryDriver,
     queryReturn
   };

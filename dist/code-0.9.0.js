@@ -699,7 +699,7 @@ function doGet() {
         }(RowIndexCursor, [ {
             key: "flush",
             value: function() {
-                return this.refreshSheetIndices(), this.selectedRowIndexer.flush().copyIndices(this.allRowIndexer), 
+                return this.refreshSheetIndices(), this.selectedRowIndexer.flush().copyItems(this.allRowIndexer), 
                 this;
             }
         }, {
