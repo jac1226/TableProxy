@@ -372,6 +372,4 @@ const SpreadsheetAppFake = {
   }
 };
 
-//export default SpreadsheetAppFake;
-let s=SpreadsheetAppFake.getActiveSpreadsheet().getSheetByName('Test');
-s.getDataRange();
+export default SpreadsheetAppFake;
