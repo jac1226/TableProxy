@@ -68,6 +68,10 @@ const fontfamilies = [
   ['Arial', 'Arial', 'Arial', 'Arial', 'Arial']
 ];
 
+const isInteger = (input) => {
+  return data === parseInt(input, 10));
+}
+
 class DataContainer {
   constructor() {
     this.values = values;
@@ -84,10 +88,10 @@ class DataContainer {
     if (this[dataArrayName] === undefined) {
       throw new Error(`invalid dataset: "${dataArrayName}"`);
     }
-    if (!Number.isInteger(startRow)) {
+    if (!isInteger(startRow)) {
       throw new Error(`startRow must be an integer - received ${startRow}.`);
     }
-    if (!Number.isInteger(startColumn)) {
+    if (!isInteger(startColumn)) {
       throw new Error(`startColumn must be an integer - received ${startColumn}.`);
     }
 
