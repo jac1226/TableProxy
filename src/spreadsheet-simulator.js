@@ -168,9 +168,7 @@ class DataContainer {
     if (this[dataAttribute]) {
       dataChunk[dataAttribute].forEach((row, rowIndex) => {
         row.forEach((columnValue, columnIndex) => {
-          this[dataAttribute][startRow - 1 + rowIndex][
-            startColumn - 1 + columnIndex
-          ] = columnValue;
+          this[dataAttribute][startRow - 1 + rowIndex][startColumn - 1 + columnIndex] = columnValue;
         });
       });
     }
@@ -199,11 +197,9 @@ class Range {
   }
 
   validateInputShape(input, type) {
-    const inputShape=`${input.length}x${input[0].length}`;
+    const inputShape = `${input.length}x${input[0].length}`;
     if(inputShape !== this.shape) {
-      throw new Error(
-        `${type} failed: range shape is ${this.shape} and input is ${inputShape}`
-      );
+      throw new Error (`${type} failed: range shape is ${this.shape} and input is ${inputShape}`);
     }
   }
 
