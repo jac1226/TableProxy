@@ -368,6 +368,6 @@ const SpreadsheetAppFake = {
   getActiveSpreadsheet: () => {
     return new ActiveSpreadsheet();
   }
-}
+};
 
 export default SpreadsheetAppFake;
