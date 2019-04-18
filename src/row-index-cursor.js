@@ -1,13 +1,13 @@
 /**
-  * RowIndexCursor - fronts two UniqueIndexer objects
-  * @desc This is the heart of selection state handling
-  * @desc Under current implementation, there should be only be one RowIndexCursor for a TableProxy Instance
-  * @constructor RowIndexCursor
-  * @param {Object} sheetAccessor
-  * @return {RowIndexCursor}
-  */
+* RowIndexCursor - fronts two UniqueIndexer objects
+* @desc This is the heart of selection state handling
+* @desc Under current implementation, there should be only be one RowIndexCursor for a TableProxy Instance
+* @constructor RowIndexCursor
+* @param {Object} sheetAccessor
+* @return {RowIndexCursor}
+*/
 
-import { getTimeStamp } from './utilities';
+import { getTimeStamp, getTimeDiff } from './utilities';
 import UniqueSet from './unique-set';
 import SheetAccessor from './sheet-accessor';
 
@@ -45,7 +45,7 @@ export default class RowIndexCursor {
   }
 
   get push() {
-    return this.selectedRowIndexer.push
+    return this.selectedRowIndexer.push;
   }
 
   flush() {
