@@ -1,13 +1,13 @@
 {
-  "name": "apps-script-starter",
-  "version": "2.9.0",
-  "description": "A starter kit for creating Google Apps Script projects with modern JavaScript and Visual Studio Code",
+  "name": "table-proxy",
+  "version": "0.9.0",
+  "description": "Test",
   "author": {
-    "name": "Amit Agarwal",
-    "email": "amit@labnol.org",
-    "url": "https://ctrlq.org"
+    "name": "JC",
+    "email": "12jac26@gmail.com",
+    "url": "https://github.com/jac1226/TableProxy/"
   },
-  "homepage": "https://digitalinspiration.com/",
+  "homepage": "https://github.com/jac1226/TableProxy/",
   "license": "MIT",
   "main": "src/index.js",
   "scripts": {
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/labnol/apps-script-starter.git"
+    "url": "git+https://github.com/jac1226/TableProxy.git"
   },
   "keywords": [
     "google-apps-script",
