@@ -34,3 +34,7 @@ const doGet = () => {
 };
 
 global.doGet = doGet;
+
+function test(){
+  Browser.msgBox('test');
+}
