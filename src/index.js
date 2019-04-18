@@ -33,4 +33,4 @@ const TableProxy = () => {
   return ContentService.createTextOutput(json).setMimeType(ContentService.MimeType.JSON);
 };
 
-global.TableProxy = (TableProxy)();
+global.TableProxy = TableProxy();
