@@ -1,4 +1,13 @@
 
+/**
+ * queryProcessor - a function that executes interactions with sheet data
+ * @return {QueryReturn}
+ */
+
+import QueryDriver from './query-driver';
+import SheetAccessor from './sheet-accessor';
+import RowIndexCursor from './row-index-cursor';
+import QueryReturn from './query-return';
 
 export default function queryProcessor(queryDriver, sheetAccessor, rowIndexCursor){
     if (!(queryDriver instanceof QueryDriver)) {
@@ -11,8 +20,8 @@ export default function queryProcessor(queryDriver, sheetAccessor, rowIndexCurso
         throw new Error(`queryProcessor requires a RowIndexCursor instance.`);
     }
 
-    const queryResult = new QueryResult(queryDriver);
-    const requestedAttributes = queryDriver.requestedAttributes.values;
+    const queryResult = new QueryReturn(queryDriver);
+    const requestedAttributes = queryDriver.requestedAttributes.values; //*** */
     
     const recordProxy = new RecordProxy();
     

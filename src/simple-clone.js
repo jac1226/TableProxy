@@ -3,7 +3,7 @@
  * @desc taken from https://stackoverflow.com/questions/728360/how-do-i-correctly-clone-a-javascript-object
  */
 
-export const simpleClone = input => {
+export default function simpleClone(input) {
   let copy;
   const toStringType = toString.call(input);
   switch (toStringType) {
@@ -32,4 +32,4 @@ export const simpleClone = input => {
       throw new TypeError(`Unable to clone: object type ${toStringType} is unsupported.`);
   }
   return copy;
-};
+}

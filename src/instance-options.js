@@ -3,103 +3,156 @@
  * @return {InstanceOptions}
  */
 
- /*
-import {
-    DEFAULT_HEADER_ANCHOR
-} from 'CONSTANTS.js'
-*/
+import SpreadsheetApp from './spreadsheet-simulator';
+import { DEFAULT_HEADER_ANCHOR, VALID_WRITE_LEVELS, DEFAULT_WRITE_LEVEL } from './CONSTANTS';
+import { isSpreadsheet } from './sheets-utilities';
+import simpleClone from './simple-clone';
 
-var WRITE_LEVEL_CELL='WRITE_LEVEL_CELL';
-var WRITE_LEVEL_ROW='WRITE_LEVEL_ROW';
-var WRITE_LEVEL_TABLE='WRITE_LEVEL_TABLE';
-var DEFAULT_WRITE_LEVEL=WRITE_LEVEL_TABLE;
-var WRITE_LEVELS=[WRITE_LEVEL_CELL,WRITE_LEVEL_ROW,WRITE_LEVEL_TABLE];
+export default class InstanceOptions {
+  constructor() {
+    this.pvt_sheetName = null;
+    this.pvt_headerAnchorToken = DEFAULT_HEADER_ANCHOR;
+    this.pvt_columnFilter = [];
+    this.pvt_exportAttributes = ['value'];
+    this.pvt_exportOnlySelected = false;
+    this.pvt_writeLevel = DEFAULT_WRITE_LEVEL;
+    this.pvt_autoResizeColumns = false;
+    this.pvt_uniqueColumnId = null;
 
- class InstanceOptions {
-    constructor(){
-        this.sheetName=null;
-        this.headerAnchorToken=null;
-        this.columnFilter=[];
-        this.exportAttributes=['value'];
-        this.exportOnlySelected=false;
-        this.writeLevel=DEFAULT_WRITE_LEVEL;
-        this.autoResizeColumns=false;
-        this.sheet=null;
-        this.uniqueColumnId=null;
+    this.pvt_spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+    this.pvt_sheet = null;
+  }
+
+  get sheetName() {
+    return this.pvt_sheetName;
+  }
+
+  set sheetName(input) {
+    if (toString.call(input) !== '[object String]') {
+      throw new TypeError(`sheetName must be a string.`);
     }
-
-    setSheetName(input){
-        if(toString.call(input)!=='[object String]'){
-            throw new TypeError('setSheetName accepts only string input.');
-        }
-        this.sheetName=input;
-        try{
-            this.sheet=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(input);
-        }catch(e){
-            throw 'setSheetName exception: '+e;
-        }
-        return this;
+    if (this.pvt_sheet) {
+      throw new Error(`sheetName was alreadys set to ${this.pvt_sheetName} and cannot be changed.`);
     }
-
-    setHeaderAnchorToken(input){
-        if(toString.call(input)!=='[object String]'){
-            throw new TypeError('setHeaderAnchorToken accepts only string input.');
-        }
-        this.headerAnchorToken=input;
-        return this;
+    try {
+      this.pvt_sheet = this.pvt_spreadsheet.getSheetByName(input);
+    } catch (e) {
+      throw new Error(`set sheetName exception: ${e}`);
     }
+    this.pvt_sheetName = input;
+    return this.pvt_sheetName;
+  }
 
-    setColumnFilter(input){
-        if(toString.call(input)!=='[object Array]'){
-            throw new TypeError('setColumnFilter accepts only array input.');
-        }
-        this.columnFilter=input;
-        return this;
+  get headerAnchorToken() {
+    return this.pvt_headerAnchorToken;
+  }
+
+  set headerAnchorToken(input) {
+    if (toString.call(input) !== '[object String]') {
+      throw new TypeError(`headerAnchorToken must be a string.`);
     }
+    this.pvt_headerAnchorToken = input;
+    return this.pvt_headerAnchorToken;
+  }
 
-    setExportAttributes(input){
-        if(toString.call(input)!=='[object Array]'){
-            throw new TypeError('setExportAttributes accepts only array input.');
-        }
-        this.exportAttributes=input;
-        return this;
+  get columnFilter() {
+    return this.this.pvt_columnFilter;
+  }
+
+  set columnFilter(input) {
+    if (toString.call(input) !== '[object Array]') {
+      throw new TypeError(`columnFilter must be an array.`);
     }
+    this.pvt_columnFilter = simpleClone(input);
+    return this.pvt_columnFilter;
+  }
 
-    setExportOnlySelected(input){
-        if(toString.call(input)!=='[object Boolean]'){
-            throw new TypeError('setExportOnlySelected accepts only array input.');
-        }
-        this.exportOnlySelected=input;
-        return this;
+  get exportAttributes() {
+    return this.pvt_exportAttributes;
+  }
+
+  set exportAttributes(input) {
+    if (toString.call(input) !== '[object Array]') {
+      throw new TypeError(`exportAttributes must be an array.`);
     }
+    this.pvt_columnFilter = simpleClone(input);
+    return this.pvt_columnFilter;
+  }
 
-    setWriteLevel(input){
-        if(toString.call(input)!=='[object String]'){
-            throw new TypeError('setWriteLevel accepts only string input.');
-        }
-        if(WRITE_LEVELS.indexOf(input)==-1){
-            throw 'setWriteLevel error: invalid write level value "'+input+'"';
-        }
-        this.writeLevel=input;
-        return this;
+  get exportOnlySelected() {
+    return this.pvt_exportOnlySelected;
+  }
+
+  set exportOnlySelected(input) {
+    if (toString.call(input) !== '[object Boolean]') {
+      throw new TypeError(`exportOnlySelected must be a boolean.`);
     }
+    this.pvt_exportOnlySelected = input;
+    return this.pvt_exportOnlySelected;
+  }
 
-    setAutoResizeColumns(input){
-        console.log(input);
-        console.log(this);
-        if(toString.call(input)!=='[object Boolean]'){
-            throw new TypeError('setAutoResizeColumns accepts only array input.');
-        }
-        this.autoResizeColumns=input;
-        return this;
+  get writeLevel() {
+    return this.pvt_writeLevel;
+  }
+
+  set writeLevel(input) {
+    if (toString.call(input) !== '[object String]') {
+      throw new TypeError(`exportOnlySelected must be a string.`);
     }
- }
-
-
- var a=function(){
-    var I=new InstanceOptions();
-
-    return {
-        setAutoResizeColumns:I.setAutoResizeColumns.bind(I)
+    if (VALID_WRITE_LEVELS.indexOf(input) === -1) {
+      throw new Error(
+        `writeLevel must be one of ${VALID_WRITE_LEVELS.toString()} received ${input}`
+      );
     }
- }
+    this.pvt_writeLevel = input;
+    return this.pvt_writeLevel;
+  }
+
+  get autoResizeColumns() {
+    return this.pvt_autoResizeColumns;
+  }
+
+  set autoResizeColumns(input) {
+    if (toString.call(input) !== '[object Boolean]') {
+      throw new TypeError(`autoResizeColumns must be a boolean.`);
+    }
+    this.pvt_autoResizeColumns = input;
+    return this.pvt_autoResizeColumns;
+  }
+
+  get uniqueColumnId() {
+    return this.pvt_uniqueColumnId;
+  }
+
+  set uniqueColumnId(input) {
+    if (toString.call(input) !== '[object String]' && toString.call(input) !== '[object Number]') {
+      throw new TypeError(`uniqueColumnId must be a string or number.`);
+    }
+    this.pvt_uniqueColumnId = input;
+    return this.pvt_uniqueColumnId;
+  }
+
+  set spreadsheet(input) {
+    if (!isSpreadsheet(input)) {
+      throw new TypeError('spreadsheet must be a spreadsheet object.');
+    }
+    this.pvt_spreadsheet = input;
+    return this.pvt_spreadsheet;
+  }
+
+  get sheet() {
+    return this.pvt_sheet;
+  }
+
+  absorb(input) {
+    if (toString.call(input) !== '[object Object]') {
+      throw new TypeError(`options initialization must be performed with an object.`);
+    }
+    Object.keys(this).forEach(key => {
+      if (['pvt_sheet', 'pvt_spreadsheet'].indexOf(key) === -1) {
+        this[key] = input[key];
+      }
+    });
+    return this;
+  }
+}

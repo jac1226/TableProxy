@@ -9,9 +9,9 @@
 
 export default class UniqueSet {
   constructor(...args) {
-    this.strings = {};
-    this.numbers = {};
-    this.dates = {};
+    this.pvt_strings = {};
+    this.pvt_numbers = {};
+    this.pvt_dates = {};
 
     Object.keys(args).forEach(i => {
       this.push(args[i]);
@@ -23,13 +23,13 @@ export default class UniqueSet {
     (inputType === '[object Array]' ? input : [input]).forEach((i, index) => {
       switch (toString.call(i)) {
         case '[object Number]':
-          this.numbers[i] = Number;
+          this.pvt_numbers[i] = Number;
           break;
         case '[object String]':
-          this.strings[i] = String;
+          this.pvt_strings[i] = String;
           break;
         case '[object Date]':
-          this.dates[i] = Date;
+          this.pvt_dates[i] = Date;
           break;
         default:
           throw new TypeError(
@@ -45,13 +45,13 @@ export default class UniqueSet {
     (inputType === '[object Array]' ? input : [input]).forEach((i, index) => {
       switch (toString.call(i)) {
         case '[object Number]':
-          delete this.numbers[i];
+          delete this.pvt_numbers[i];
           break;
         case '[object String]':
-          delete this.strings[i];
+          delete this.pvt_strings[i];
           break;
         case '[object Date]':
-          delete this.dates[i];
+          delete this.pvt_dates[i];
           break;
         default:
           throw new TypeError(
@@ -63,9 +63,9 @@ export default class UniqueSet {
   }
 
   flush() {
-    this.strings = {};
-    this.numbers = {};
-    this.dates = {};
+    this.pvt_strings = {};
+    this.pvt_numbers = {};
+    this.pvt_dates = {};
     return this;
   }
 
@@ -79,27 +79,27 @@ export default class UniqueSet {
   get values() {
     return []
       .concat(
-        Object.keys(this.numbers).map(i => {
-          return this.numbers[i](i);
+        Object.keys(this.pvt_numbers).map(i => {
+          return this.pvt_numbers[i](i);
         })
       )
       .concat(
-        Object.keys(this.strings).map(i => {
-          return this.strings[i](i);
+        Object.keys(this.pvt_strings).map(i => {
+          return this.pvt_strings[i](i);
         })
       )
       .concat(
-        Object.keys(this.dates).map(i => {
-          return this.dates[i](i);
+        Object.keys(this.pvt_dates).map(i => {
+          return this.pvt_dates[i](i);
         })
       );
   }
 
   get contains() {
     return {
-      numbers: Object.keys(this.numbers).length,
-      strings: Object.keys(this.strings).length,
-      dates: Object.keys(this.dates).length
+      numbers: Object.keys(this.pvt_numbers).length,
+      strings: Object.keys(this.pvt_strings).length,
+      dates: Object.keys(this.pvt_dates).length
     };
   }
 

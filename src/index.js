@@ -1,13 +1,19 @@
-import SpreadsheetApp from './spreadsheet-simulator';
 import SheetAccessor from './sheet-accessor';
 import QueryDriver from './query-driver';
 import QueryReturn from './query-return';
 import RowIndexCursor from './row-index-cursor';
+import DataController from './data-controller';
+import InstanceOptions from './instance-options';
+import UniqueSet from './unique-set';
 
 const TableProxy = () => {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test');
-  const sheetAccessor = new SheetAccessor(sheet);
+  const instanceOptions = new InstanceOptions();
+  instanceOptions.sheetName = 'Test';
+
+  const requestedAttributes = new UniqueSet('value');
+  const sheetAccessor = new SheetAccessor(instanceOptions);
   const rowIndexCursor = new RowIndexCursor(sheetAccessor);
+  const dataController = new DataController(sheetAccessor, instanceOptions, requestedAttributes);
 
   const query = r => {
     let balls = 1;
@@ -21,7 +27,8 @@ const TableProxy = () => {
   const queryReturn = new QueryReturn(queryDriver);
 
   const output = {
-    sheet,
+    dataController,
+    instanceOptions,
     sheetAccessor,
     indices: rowIndexCursor.indices,
     queryDriver,
