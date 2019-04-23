@@ -69,6 +69,10 @@ export default class UniqueSet {
     return this;
   }
 
+  forEach(callback) {
+    return this.values.forEach(callback);
+  }
+
   copyItems(uniqueSet) {
     if (!(uniqueSet instanceof UniqueSet)) {
       throw new TypeError('copyIndices accepts only UniqueSet input.');

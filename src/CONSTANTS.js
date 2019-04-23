@@ -2,6 +2,8 @@
  * CONSTANTS - various constants
  */
 
+export const IS_TEST_MODE = false;
+
 export const DEFAULT_HEADER_ANCHOR = 'HEADER_ANCHOR';
 
 export const TOP = 'TOP';

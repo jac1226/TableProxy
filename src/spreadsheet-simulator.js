@@ -3,6 +3,8 @@
  * let sheet=SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test');
  */
 
+import { IS_TEST_MODE } from './CONSTANTS';
+
 const values = [
   ['1-1 Value', '1-2 Value', '1-3 Value', '1-4 Value', '1-5 Value'],
   ['2-1 Value', '2-2 Value', '2-3 Value', '2-4 Value', '2-5 Value'],
@@ -100,8 +102,8 @@ class DataContainer {
 
     const dataArray = this[dataArrayName];
 
-    const numRowsClean = numRows === undefined ? 1 : numRows;
-    const numColumnsClean = numColumns === undefined ? 1 : numColumns;
+    const numRowsClean = numRows === undefined ? 1 : numRows; // this is wrong
+    const numColumnsClean = numColumns === undefined ? this.getNumColumns() : numColumns;
 
     if (startRow < 1 || startRow > dataArray.length) {
       throw new Error(
@@ -357,6 +359,10 @@ class ActiveSpreadsheet {
     };
   }
 
+  getActiveSheet() {
+    return this.sheets.Test;
+  }
+
   getSheetByName(name) {
     if (Object.keys(this.sheets).indexOf(name) === -1) {
       throw new Error(`sheet named "${name}" does not exist.`);
@@ -371,4 +377,7 @@ const SpreadsheetAppFake = {
   }
 };
 
-export default SpreadsheetAppFake;
+const exportSS = IS_TEST_MODE ? SpreadsheetAppFake : SpreadsheetApp;
+export default exportSS;
+
+

@@ -5,6 +5,7 @@
 
 import UniqueSet from './unique-set';
 import { SUPPORTED_ATTRIBUTES } from './CONSTANTS';
+import { isFunction } from './utilities';
 
 export default class QueryDriver {
   constructor(query, type) {
@@ -12,21 +13,21 @@ export default class QueryDriver {
     this.type = type.toUpperCase();
     this.writeToCursor = false;
     this.withRecords = false;
-    this.requestedAttributes = new UniqueSet();
+    this.requestedAttributesSet = new UniqueSet();
     this.loadQuery(query);
   }
 
   loadQuery(query) {
-    if (toString.call(query) !== '[object Function]') {
+    if (!isFunction(query)) {
       throw new TypeError('loadQuery requires accepts a function callback');
     }
     this.query = query;
     const queryAsString = query.toString();
     SUPPORTED_ATTRIBUTES.forEach(attribute => {
-      const reString = `.{0,1}['|"|[]{0,1}' ${attribute} '[['|"]{0,1}`;
-      const regex = new RegExp(reString, 'g');
-      if (regex.test(queryAsString)) {
-        this.requestedAttributes.push(attribute);
+      const re1 = new RegExp(`[[]{1}['|"]{1}${attribute}['|"]{1}[]]{1}`, 'g');
+      const re2 = new RegExp(`[.]{1}${attribute}[^a-zA-Z0-9]`, 'g');
+      if (re1.test(queryAsString) || re2.test(queryAsString)) {
+        this.requestedAttributesSet.push(attribute);
       }
     });
   }

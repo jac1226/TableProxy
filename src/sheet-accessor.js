@@ -4,6 +4,7 @@
  */
 
 import InstanceOptions from './instance-options';
+import { isNumeric } from './utilities';
 
 export default class SheetAccessor {
   constructor(instanceOptions) {
@@ -25,6 +26,7 @@ export default class SheetAccessor {
     this.headerColumnIndex = 0;
     this.getHeaderRow = null;
     this.getAllRecordIndices = null;
+    this.resizeColumns = null;
 
     /**
      * flesh out headerRowIndex, headerColumnIndex
@@ -58,11 +60,17 @@ export default class SheetAccessor {
         return this.pvt_instanceOptions.sheet.getRange(rowIndex + 1, columnIndex + 1);
       },
       getRow: rowIndex => {
-        return this.pvt_instanceOptions.sheet.getRange(rowIndex + 1, 1, 1);
+        const dataRange = this.pvt_instanceOptions.sheet.getDataRange();
+        return this.pvt_instanceOptions.sheet.getRange(
+          rowIndex + 1,
+          1,
+          1,
+          dataRange.getNumColumns()
+        );
       },
       getColumn: (columnIndex, startRowIndex) => {
         const dataRange = this.pvt_instanceOptions.sheet.getDataRange();
-        const startRowIndx = toString.call(startRowIndex) === '[object Number]' ? startRowIndex : 0;
+        const startRowIndx = isNumeric(startRowIndex) ? startRowIndex : 0;
         return this.pvt_instanceOptions.sheet.getRange(
           startRowIndx + 1,
           columnIndex + 1,
@@ -72,10 +80,9 @@ export default class SheetAccessor {
       },
       getAll: (startRowIndex, startColumnIndex) => {
         const dataRange = this.pvt_instanceOptions.sheet.getDataRange();
-        const startRowIndx = toString.call(startRowIndex) === '[object Number]' ? startRowIndex : 0;
+        const startRowIndx = isNumeric(startRowIndex) ? startRowIndex : 0;
 
-        const startColumnIndx =
-          toString.call(startColumnIndex) === '[object Number]' ? startColumnIndex : 0;
+        const startColumnIndx = isNumeric(startColumnIndex) ? startColumnIndex : 0;
 
         return this.pvt_instanceOptions.sheet.getRange(
           startRowIndx + 1,
@@ -123,17 +130,26 @@ export default class SheetAccessor {
      * flesh out getHeaderRow, getAllRecordIndices methods
      */
     this.getHeaderRow = () => {
-      return this.value.getRow(this.headerRowIndex);
+      return this.value.getRow(this.headerRowIndex)[0];
     };
     this.getAllRecordIndices = () => {
       const indices = [];
       const numRows = this.range.getAllRecords().getNumRows();
       let i = this.headerRowIndex + 1;
-      while (i <= numRows) {
+      while (i < numRows) {
         indices.push(i);
         i += 1;
       }
       return indices;
+    };
+
+    /**
+     * flesh out autoResizeColumns method
+     */
+    this.resizeColumns = () => {
+      this.getHeaderRow().forEach((columnName, index) => {
+        this.pvt_instanceOptions.sheet.autoResizeColumn(index + 1);
+      });
     };
   }
 }

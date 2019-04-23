@@ -18,37 +18,22 @@ export default class DataController {
     if (!(instanceOptions instanceof InstanceOptions)) {
       throw new TypeError(`DataController requires an instance of InstanceOptions object.`);
     }
-    if (!(requestedAttributesSet instanceof UniqueSet)) {
+    if (!(requestedAttributesSet instanceof UniqueSet) || requestedAttributesSet.length < 1) {
       throw new TypeError(
-        `DataController requires a UniqueSet instance for requestedAttributesSet.`
-      );
-    }
-    if (requestedAttributesSet.length < 1) {
-      throw new TypeError(
-        `DataController requires a UniqueSet instance for requestedAttributesSet.`
+        `DataController requires a UniqueSet instance with at least one value for for requestedAttributesSet.`
       );
     }
 
     this.pvt_sheetAccessor = sheetAccessor;
-    this.pvt_requestedAttributes = requestedAttributesSet.values;
+    this.pvt_requestedAttributesSet = requestedAttributesSet;
     this.pvt_instanceOptions = instanceOptions;
     this.pvt_rowIndex = null;
-    this.pvt_changedAttributes = null;
+    this.pvt_changedAttributes = new UniqueSet();
     this.pvt_dataPayload = {};
 
-    this.pvt_requestedAttributes.forEach(attribute => {
-      this.pvt_dataPayload[attribute] = this.pvt_sheetAccessor[attribute].getAllRecords();
+    this.pvt_requestedAttributesSet.forEach(attribute => {
+      this.pvt_dataPayload[attribute] = this.pvt_sheetAccessor[attribute].getAll();
     });
-  }
-
-  setRowIndex(rowIndex) {
-    if (this.pvt_instanceOptions.writeLevel === WRITE_LEVEL_ROW) {
-      if (this.pvt_rowIndex !== null) {
-        this.writeCurrentRow();
-      }
-      this.pvt_rowIndex = rowIndex;
-    }
-    return this;
   }
 
   getColumnByIndex(attribute, columnIndex) {
@@ -62,6 +47,14 @@ export default class DataController {
     } else {
       this.pvt_changedAttributes.push(attribute);
     }
+    return this;
+  }
+
+  setRowIndex(rowIndex) {
+    if (this.pvt_instanceOptions.writeLevel === WRITE_LEVEL_ROW && this.pvt_rowIndex !== null) {
+      this.writeCurrentRow();
+    }
+    this.pvt_rowIndex = rowIndex;
     return this;
   }
 

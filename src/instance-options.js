@@ -3,24 +3,32 @@
  * @return {InstanceOptions}
  */
 
-import SpreadsheetApp from './spreadsheet-simulator';
-import { DEFAULT_HEADER_ANCHOR, VALID_WRITE_LEVELS, DEFAULT_WRITE_LEVEL } from './CONSTANTS';
-import { isSpreadsheet } from './sheets-utilities';
+import {
+  DEFAULT_HEADER_ANCHOR,
+  VALID_WRITE_LEVELS,
+  DEFAULT_WRITE_LEVEL,
+  IS_TEST_MODE
+} from './CONSTANTS';
+import { isSpreadsheet, isSheet } from './sheets-utilities';
 import simpleClone from './simple-clone';
+import { isString, isArray, isBoolean, isObject, isNumeric } from './utilities';
 
 export default class InstanceOptions {
-  constructor() {
+  constructor(sheetNameOrOptions) {
     this.pvt_sheetName = null;
     this.pvt_headerAnchorToken = DEFAULT_HEADER_ANCHOR;
     this.pvt_columnFilter = [];
     this.pvt_exportAttributes = ['value'];
-    this.pvt_exportOnlySelected = false;
+    this.pvt_exportOnlySelected = true;
     this.pvt_writeLevel = DEFAULT_WRITE_LEVEL;
     this.pvt_autoResizeColumns = false;
+    this.pvt_computedProperties = {};
     this.pvt_uniqueColumnId = null;
 
     this.pvt_spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
     this.pvt_sheet = null;
+
+    this.processInput(sheetNameOrOptions);
   }
 
   get sheetName() {
@@ -28,11 +36,11 @@ export default class InstanceOptions {
   }
 
   set sheetName(input) {
-    if (toString.call(input) !== '[object String]') {
+    if (!isString(input)) {
       throw new TypeError(`sheetName must be a string.`);
     }
     if (this.pvt_sheet) {
-      throw new Error(`sheetName was alreadys set to ${this.pvt_sheetName} and cannot be changed.`);
+      throw new Error(`sheetName was already set to ${this.pvt_sheetName} and cannot be changed.`);
     }
     try {
       this.pvt_sheet = this.pvt_spreadsheet.getSheetByName(input);
@@ -48,7 +56,7 @@ export default class InstanceOptions {
   }
 
   set headerAnchorToken(input) {
-    if (toString.call(input) !== '[object String]') {
+    if (!isString(input)) {
       throw new TypeError(`headerAnchorToken must be a string.`);
     }
     this.pvt_headerAnchorToken = input;
@@ -56,11 +64,11 @@ export default class InstanceOptions {
   }
 
   get columnFilter() {
-    return this.this.pvt_columnFilter;
+    return this.pvt_columnFilter;
   }
 
   set columnFilter(input) {
-    if (toString.call(input) !== '[object Array]') {
+    if (!isArray(input)) {
       throw new TypeError(`columnFilter must be an array.`);
     }
     this.pvt_columnFilter = simpleClone(input);
@@ -72,11 +80,11 @@ export default class InstanceOptions {
   }
 
   set exportAttributes(input) {
-    if (toString.call(input) !== '[object Array]') {
+    if (!isArray(input)) {
       throw new TypeError(`exportAttributes must be an array.`);
     }
-    this.pvt_columnFilter = simpleClone(input);
-    return this.pvt_columnFilter;
+    this.pvt_exportAttributes = simpleClone(input);
+    return this.pvt_exportAttributes;
   }
 
   get exportOnlySelected() {
@@ -84,7 +92,7 @@ export default class InstanceOptions {
   }
 
   set exportOnlySelected(input) {
-    if (toString.call(input) !== '[object Boolean]') {
+    if (!isBoolean(input)) {
       throw new TypeError(`exportOnlySelected must be a boolean.`);
     }
     this.pvt_exportOnlySelected = input;
@@ -96,7 +104,7 @@ export default class InstanceOptions {
   }
 
   set writeLevel(input) {
-    if (toString.call(input) !== '[object String]') {
+    if (!isString(input)) {
       throw new TypeError(`exportOnlySelected must be a string.`);
     }
     if (VALID_WRITE_LEVELS.indexOf(input) === -1) {
@@ -113,7 +121,7 @@ export default class InstanceOptions {
   }
 
   set autoResizeColumns(input) {
-    if (toString.call(input) !== '[object Boolean]') {
+    if (!isBoolean(input)) {
       throw new TypeError(`autoResizeColumns must be a boolean.`);
     }
     this.pvt_autoResizeColumns = input;
@@ -125,16 +133,30 @@ export default class InstanceOptions {
   }
 
   set uniqueColumnId(input) {
-    if (toString.call(input) !== '[object String]' && toString.call(input) !== '[object Number]') {
+    if (!isString(input) && !isNumeric(input)) {
       throw new TypeError(`uniqueColumnId must be a string or number.`);
     }
     this.pvt_uniqueColumnId = input;
     return this.pvt_uniqueColumnId;
   }
 
+  get computedProperties() {
+    return this.pvt_computedProperties;
+  }
+
+  set computedProperties(input) {
+    if (!isObject(input)) {
+      throw new TypeError(`computedProperties must be a property descriptor object`);
+    }
+    this.pvt_computedProperties = input;
+    return this.pvt_computedProperties;
+  }
+
   set spreadsheet(input) {
-    if (!isSpreadsheet(input)) {
-      throw new TypeError('spreadsheet must be a spreadsheet object.');
+    if (!IS_TEST_MODE) {
+      if (!isSpreadsheet(input)) {
+        throw new TypeError(`spreadsheet must be a spreadsheet object.`);
+      }
     }
     this.pvt_spreadsheet = input;
     return this.pvt_spreadsheet;
@@ -144,15 +166,37 @@ export default class InstanceOptions {
     return this.pvt_sheet;
   }
 
-  absorb(input) {
-    if (toString.call(input) !== '[object Object]') {
-      throw new TypeError(`options initialization must be performed with an object.`);
+  sheetIsSet() {
+    return IS_TEST_MODE ? true : isSheet(this.pvt_sheet);
+  }
+
+  processInput(sheetNameOrOptions) {
+    const errMsg =
+      'requires a string sheetName or an options object which at least define a valid sheetName';
+
+    if (sheetNameOrOptions === undefined || sheetNameOrOptions === null) {
+      throw new Error(errMsg);
     }
-    Object.keys(this).forEach(key => {
-      if (['pvt_sheet', 'pvt_spreadsheet'].indexOf(key) === -1) {
-        this[key] = input[key];
-      }
-    });
+
+    switch (toString.call(sheetNameOrOptions)) {
+      case '[object String]':
+        this.sheetName = sheetNameOrOptions;
+        break;
+      case '[object Object]':
+        Object.keys(sheetNameOrOptions).forEach(key => {
+          if (key.indexOf('pvt_') === -1) {
+            this[key] = sheetNameOrOptions[key];
+          }
+        });
+        break;
+      default:
+        throw new Error(errMsg);
+    }
+
+    if (!this.sheetIsSet()) {
+      throw new Error(errMsg);
+    }
+
     return this;
   }
 }

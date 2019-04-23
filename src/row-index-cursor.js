@@ -69,4 +69,8 @@ export default class RowIndexCursor {
     this.pvt_selectedRowIndexer.flush().copyItems(selectionSet);
     return this;
   }
+
+  forEach(callback) {
+    return this.pvt_selectedRowIndexer.forEach(callback);
+  }
 }

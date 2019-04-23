@@ -11,6 +11,7 @@ export default function simpleClone(input) {
     case '[object Null]':
     case '[object Number]':
     case '[object String]':
+    case '[object Boolean]':
       copy = input;
       break;
     case '[object Array]':

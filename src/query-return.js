@@ -18,8 +18,7 @@ export default class QueryReturn {
     this.queryStartTime = getTimeStamp();
     this.queryDuration = null;
     this.returnContainer = {
-      records: {},
-      errors: []
+      records: {}
     };
   }
 
@@ -36,5 +35,6 @@ export default class QueryReturn {
     Logger.log(
       `${this.type} operation completed in ${this.queryDuration} ms.\n ${this.query.toString()}`
     );
+    return this;
   }
 }

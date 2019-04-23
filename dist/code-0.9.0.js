@@ -48,24 +48,73 @@ function TableProxy() {
     }, __webpack_require__.p = "", __webpack_require__(__webpack_require__.s = 9);
 }([ function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
-    __webpack_require__.d(__webpack_exports__, "b", function() {
-        return DEFAULT_HEADER_ANCHOR;
-    }), __webpack_require__.d(__webpack_exports__, "f", function() {
-        return WRITE_LEVEL_CELL;
+    __webpack_require__.d(__webpack_exports__, "d", function() {
+        return isArray;
+    }), __webpack_require__.d(__webpack_exports__, "i", function() {
+        return isString;
     }), __webpack_require__.d(__webpack_exports__, "g", function() {
-        return WRITE_LEVEL_ROW;
+        return isNumeric;
+    }), __webpack_require__.d(__webpack_exports__, "f", function() {
+        return isFunction;
     }), __webpack_require__.d(__webpack_exports__, "h", function() {
-        return WRITE_LEVEL_TABLE;
+        return isObject;
     }), __webpack_require__.d(__webpack_exports__, "e", function() {
-        return VALID_WRITE_LEVELS;
+        return isBoolean;
     }), __webpack_require__.d(__webpack_exports__, "c", function() {
-        return DEFAULT_WRITE_LEVEL;
+        return inArray;
+    }), __webpack_require__.d(__webpack_exports__, "b", function() {
+        return getTimeStamp;
     }), __webpack_require__.d(__webpack_exports__, "a", function() {
-        return COLORS;
+        return getTimeDiff;
+    });
+    __webpack_require__(1);
+    var isArray = function isArray(input) {
+        return "[object Array]" === toString.call(input);
+    }, isString = function isString(input) {
+        return "[object String]" === toString.call(input);
+    }, isNumeric = function isNumeric(input) {
+        return "[object Number]" === toString.call(input);
+    }, isFunction = function isFunction(input) {
+        return "[object Function]" === toString.call(input);
+    }, isObject = function isObject(input) {
+        return "[object Object]" === toString.call(input);
+    }, isBoolean = function isBoolean(input) {
+        return "[object Boolean]" === toString.call(input);
+    }, inArray = function inArray(needle, haystack) {
+        return -1 !== haystack.indexOf(needle);
+    }, getTimeStamp = function getTimeStamp(precision) {
+        var time = new Date().getTime();
+        return precision ? time.toFixed(precision) : time;
+    }, getTimeDiff = function getTimeDiff(oldTime, precision) {
+        var newTime = getTimeStamp();
+        return precision ? (newTime - oldTime).toFixed(precision) : newTime - oldTime;
+    };
+}, function(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
+    __webpack_require__.d(__webpack_exports__, "e", function() {
+        return IS_TEST_MODE;
+    }), __webpack_require__.d(__webpack_exports__, "c", function() {
+        return DEFAULT_HEADER_ANCHOR;
+    }), __webpack_require__.d(__webpack_exports__, "g", function() {
+        return TOP;
+    }), __webpack_require__.d(__webpack_exports__, "a", function() {
+        return BOTTOM;
+    }), __webpack_require__.d(__webpack_exports__, "i", function() {
+        return WRITE_LEVEL_CELL;
+    }), __webpack_require__.d(__webpack_exports__, "j", function() {
+        return WRITE_LEVEL_ROW;
+    }), __webpack_require__.d(__webpack_exports__, "k", function() {
+        return WRITE_LEVEL_TABLE;
+    }), __webpack_require__.d(__webpack_exports__, "h", function() {
+        return VALID_WRITE_LEVELS;
     }), __webpack_require__.d(__webpack_exports__, "d", function() {
+        return DEFAULT_WRITE_LEVEL;
+    }), __webpack_require__.d(__webpack_exports__, "b", function() {
+        return COLORS;
+    }), __webpack_require__.d(__webpack_exports__, "f", function() {
         return SUPPORTED_ATTRIBUTES;
     });
-    var DEFAULT_HEADER_ANCHOR = "HEADER_ANCHOR", WRITE_LEVEL_CELL = "WRITE_LEVEL_CELL", WRITE_LEVEL_ROW = "WRITE_LEVEL_ROW", WRITE_LEVEL_TABLE = "WRITE_LEVEL_TABLE", VALID_WRITE_LEVELS = [ WRITE_LEVEL_CELL, WRITE_LEVEL_ROW, WRITE_LEVEL_TABLE ], DEFAULT_WRITE_LEVEL = WRITE_LEVEL_TABLE, COLORS = {
+    var IS_TEST_MODE = !1, DEFAULT_HEADER_ANCHOR = "HEADER_ANCHOR", TOP = "TOP", BOTTOM = "BOTTOM", WRITE_LEVEL_CELL = "WRITE_LEVEL_CELL", WRITE_LEVEL_ROW = "WRITE_LEVEL_ROW", WRITE_LEVEL_TABLE = "WRITE_LEVEL_TABLE", VALID_WRITE_LEVELS = [ WRITE_LEVEL_CELL, WRITE_LEVEL_ROW, WRITE_LEVEL_TABLE ], DEFAULT_WRITE_LEVEL = WRITE_LEVEL_TABLE, COLORS = {
         SUCCESS: "#DFFFB4",
         FAILURE: "#FFB4B4",
         WARNING: "#FFDDB4",
@@ -157,6 +206,11 @@ function TableProxy() {
                 return this.pvt_strings = {}, this.pvt_numbers = {}, this.pvt_dates = {}, this;
             }
         }, {
+            key: "forEach",
+            value: function(callback) {
+                return this.values.forEach(callback);
+            }
+        }, {
             key: "copyItems",
             value: function(uniqueSet) {
                 if (!(uniqueSet instanceof UniqueSet)) throw new TypeError("copyIndices accepts only UniqueSet input.");
@@ -212,7 +266,7 @@ function TableProxy() {
     __webpack_require__.d(__webpack_exports__, "a", function() {
         return SheetAccessor;
     });
-    var _instance_options__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+    var _instance_options__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4), _utilities__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(0);
     function _toConsumableArray(arr) {
         return function _arrayWithoutHoles(arr) {
             if (Array.isArray(arr)) {
@@ -233,7 +287,7 @@ function TableProxy() {
         this.pvt_instanceOptions = instanceOptions, this.range = {}, this.value = {}, this.background = {}, 
         this.fontcolor = {}, this.note = {}, this.fontfamily = {}, this.fontsize = {}, this.fontstyle = {}, 
         this.fontweight = {}, this.headerRowIndex = 0, this.headerColumnIndex = 0, this.getHeaderRow = null, 
-        this.getAllRecordIndices = null;
+        this.getAllRecordIndices = null, this.resizeColumns = null;
         for (var notesData = this.pvt_instanceOptions.sheet.getDataRange().getNotes(), rowCount = notesData.length, columnCount = notesData[0].length, rowIndex = 0; rowIndex < rowCount; rowIndex += 1) if (-1 !== notesData[rowIndex].join("").indexOf(this.pvt_instanceOptions.headerAnchorToken)) {
             this.headerRowIndex = rowIndex;
             break;
@@ -247,14 +301,15 @@ function TableProxy() {
                 return _this.pvt_instanceOptions.sheet.getRange(rowIndex + 1, columnIndex + 1);
             },
             getRow: function(rowIndex) {
-                return _this.pvt_instanceOptions.sheet.getRange(rowIndex + 1, 1, 1);
+                var dataRange = _this.pvt_instanceOptions.sheet.getDataRange();
+                return _this.pvt_instanceOptions.sheet.getRange(rowIndex + 1, 1, 1, dataRange.getNumColumns());
             },
             getColumn: function(columnIndex, startRowIndex) {
-                var dataRange = _this.pvt_instanceOptions.sheet.getDataRange(), startRowIndx = "[object Number]" === toString.call(startRowIndex) ? startRowIndex : 0;
+                var dataRange = _this.pvt_instanceOptions.sheet.getDataRange(), startRowIndx = Object(_utilities__WEBPACK_IMPORTED_MODULE_1__["g"])(startRowIndex) ? startRowIndex : 0;
                 return _this.pvt_instanceOptions.sheet.getRange(startRowIndx + 1, columnIndex + 1, dataRange.getNumRows() - startRowIndx, 1);
             },
             getAll: function(startRowIndex, startColumnIndex) {
-                var dataRange = _this.pvt_instanceOptions.sheet.getDataRange(), startRowIndx = "[object Number]" === toString.call(startRowIndex) ? startRowIndex : 0, startColumnIndx = "[object Number]" === toString.call(startColumnIndex) ? startColumnIndex : 0;
+                var dataRange = _this.pvt_instanceOptions.sheet.getDataRange(), startRowIndx = Object(_utilities__WEBPACK_IMPORTED_MODULE_1__["g"])(startRowIndex) ? startRowIndex : 0, startColumnIndx = Object(_utilities__WEBPACK_IMPORTED_MODULE_1__["g"])(startColumnIndex) ? startColumnIndex : 0;
                 return _this.pvt_instanceOptions.sheet.getRange(startRowIndx + 1, startColumnIndx + 1, dataRange.getNumRows() - startRowIndx, dataRange.getNumColumns() - startColumnIndx);
             },
             getAllRecords: function() {
@@ -308,279 +363,20 @@ function TableProxy() {
                 });
             });
         }), this.getHeaderRow = function() {
-            return _this.value.getRow(_this.headerRowIndex);
+            return _this.value.getRow(_this.headerRowIndex)[0];
         }, this.getAllRecordIndices = function() {
-            for (var indices = [], numRows = _this.range.getAllRecords().getNumRows(), i = _this.headerRowIndex + 1; i <= numRows; ) indices.push(i), 
+            for (var indices = [], numRows = _this.range.getAllRecords().getNumRows(), i = _this.headerRowIndex + 1; i < numRows; ) indices.push(i), 
             i += 1;
             return indices;
+        }, this.resizeColumns = function() {
+            _this.getHeaderRow().forEach(function(columnName, index) {
+                _this.pvt_instanceOptions.sheet.autoResizeColumn(index + 1);
+            });
         };
     };
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
-    }
-    function _defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-            var descriptor = props[i];
-            descriptor.enumerable = descriptor.enumerable || !1, descriptor.configurable = !0, 
-            "value" in descriptor && (descriptor.writable = !0), Object.defineProperty(target, descriptor.key, descriptor);
-        }
-    }
-    function _createClass(Constructor, protoProps, staticProps) {
-        return protoProps && _defineProperties(Constructor.prototype, protoProps), staticProps && _defineProperties(Constructor, staticProps), 
-        Constructor;
-    }
-    var values = [ [ "1-1 Value", "1-2 Value", "1-3 Value", "1-4 Value", "1-5 Value" ], [ "2-1 Value", "2-2 Value", "2-3 Value", "2-4 Value", "2-5 Value" ], [ "3-1 Value", "3-2 Value", "3-3 Value", "3-4 Value", "3-5 Value" ], [ "4-1 Value", "4-2 Value", "4-3 Value", "4-4 Value", "4-5 Value" ], [ "5-1 Value", "5-2 Value", "5-3 Value", "5-4 Value", "5-5 Value" ], [ "6-1 Value", "6-2 Value", "6-3 Value", "6-4 Value", "6-5 Value" ] ], backgrounds = [ [ "#E5E5E5", "#E5E5E5", "#E5E5E5", "#E5E5E5", "#E5E5E5" ], [ "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF" ], [ "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF" ], [ "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF" ], [ "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF" ], [ "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF" ] ], fontcolors = [ [ "#000000", "#000000", "#000000", "#000000", "#000000" ], [ "#000000", "#000000", "#000000", "#000000", "#000000" ], [ "#000000", "#000000", "#000000", "#000000", "#000000" ], [ "#000000", "#000000", "#000000", "#000000", "#000000" ], [ "#000000", "#000000", "#000000", "#000000", "#000000" ], [ "#000000", "#000000", "#000000", "#000000", "#000000" ] ], notes = [ [ "", "", "", "", "" ], [ "", "", "HEADER_ANCHOR", "", "" ], [ "", "", "", "", "" ], [ "", "", "", "", "" ], [ "", "", "", "", "" ], [ "", "", "", "", "" ] ], fontweights = [ [ "bold", "bold", "bold", "bold", "bold" ], [ "normal", "normal", "normal", "normal", "normal" ], [ "normal", "normal", "normal", "normal", "normal" ], [ "normal", "normal", "normal", "normal", "normal" ], [ "normal", "normal", "normal", "normal", "normal" ], [ "normal", "normal", "normal", "normal", "normal" ] ], fontstyles = [ [ "normal", "normal", "normal", "normal", "normal" ], [ "normal", "normal", "normal", "normal", "normal" ], [ "normal", "normal", "normal", "normal", "normal" ], [ "normal", "normal", "normal", "normal", "normal" ], [ "normal", "normal", "normal", "normal", "normal" ], [ "normal", "normal", "normal", "normal", "normal" ] ], fontsizes = [ [ 12, 12, 12, 12, 12 ], [ 10, 10, 10, 10, 10 ], [ 10, 10, 10, 10, 10 ], [ 10, 10, 10, 10, 10 ], [ 10, 10, 10, 10, 10 ], [ 10, 10, 10, 10, 10 ] ], fontfamilies = [ [ "Arial", "Arial", "Arial", "Arial", "Arial" ], [ "Arial", "Arial", "Arial", "Arial", "Arial" ], [ "Arial", "Arial", "Arial", "Arial", "Arial" ], [ "Arial", "Arial", "Arial", "Arial", "Arial" ], [ "Arial", "Arial", "Arial", "Arial", "Arial" ], [ "Arial", "Arial", "Arial", "Arial", "Arial" ] ], isInteger = function isInteger(input) {
-        return input === parseInt(input, 10);
-    }, DataContainer = function() {
-        function DataContainer() {
-            _classCallCheck(this, DataContainer), this.values = values, this.backgrounds = backgrounds, 
-            this.fontcolors = fontcolors, this.notes = notes, this.fontweights = fontweights, 
-            this.fontstyles = fontstyles, this.fontsizes = fontsizes, this.fontfamilies = fontfamilies;
-        }
-        return _createClass(DataContainer, [ {
-            key: "filterDataArray",
-            value: function(dataArrayName, startRow, startColumn, numRows, numColumns) {
-                if (this[dataArrayName] === undefined) throw new Error('invalid dataset: "'.concat(dataArrayName, '"'));
-                if (!isInteger(startRow)) throw new Error("startRow must be an integer - received ".concat(startRow, "."));
-                if (!isInteger(startColumn)) throw new Error("startColumn must be an integer - received ".concat(startColumn, "."));
-                if (numRows === undefined && numColumns !== undefined) throw new Error("numRows must be specified if numColumns is specified.");
-                var dataArray = this[dataArrayName], numRowsClean = numRows === undefined ? 1 : numRows, numColumnsClean = numColumns === undefined ? 1 : numColumns;
-                if (startRow < 1 || startRow > dataArray.length) throw new Error("startRow out of range for ".concat(dataArrayName, ". Requested startRow ").concat(startRow, " - must be between 1 and ").concat(dataArray.length, "."));
-                if (startColumn < 1 || startColumn > dataArray[0].length) throw new Error("startColumn out of range for ".concat(dataArrayName, ". Requested startColumn ").concat(startColumn, " - must be between 1 and ").concat(dataArray[0].length, "."));
-                if (startRow + numRowsClean - 1 > dataArray.length) throw new Error("numRows out of range for ".concat(dataArrayName, ". For startRow ").concat(startRow, ", numRows must be  between 1 and ").concat(dataArray.length - startRow + 1));
-                if (startColumn + numColumnsClean - 1 > dataArray[0].length) throw new Error("numColumns out of range for ".concat(dataArrayName, ". For startColumn ").concat(startColumn, ", numColumns must be between 1 and ").concat(dataArray[0].length - startColumn + 1));
-                return dataArray.filter(function(row, rowIndex) {
-                    return startRow <= rowIndex + 1 && rowIndex <= startRow + numRowsClean - 2;
-                }).map(function(row) {
-                    return row.filter(function(column, columnIndex) {
-                        return startColumn <= columnIndex + 1 && columnIndex <= startColumn + numColumnsClean - 2;
-                    });
-                });
-            }
-        }, {
-            key: "getChunk",
-            value: function(startRow, startColumn, numRows, numColumns) {
-                return {
-                    values: this.filterDataArray("values", startRow, startColumn, numRows, numColumns),
-                    backgrounds: this.filterDataArray("backgrounds", startRow, startColumn, numRows, numColumns),
-                    fontcolors: this.filterDataArray("fontcolors", startRow, startColumn, numRows, numColumns),
-                    notes: this.filterDataArray("notes", startRow, startColumn, numRows, numColumns),
-                    fontweights: this.filterDataArray("fontweights", startRow, startColumn, numRows, numColumns),
-                    fontstyles: this.filterDataArray("fontstyles", startRow, startColumn, numRows, numColumns),
-                    fontsizes: this.filterDataArray("fontsizes", startRow, startColumn, numRows, numColumns),
-                    fontfamilies: this.filterDataArray("fontfamilies", startRow, startColumn, numRows, numColumns)
-                };
-            }
-        }, {
-            key: "setChunk",
-            value: function(dataAttribute, dataChunk, startRow, startColumn) {
-                var _this = this;
-                return this[dataAttribute] && dataChunk[dataAttribute].forEach(function(row, rowIndex) {
-                    row.forEach(function(columnValue, columnIndex) {
-                        _this[dataAttribute][startRow - 1 + rowIndex][startColumn - 1 + columnIndex] = columnValue;
-                    });
-                }), this;
-            }
-        }, {
-            key: "getNumRows",
-            value: function() {
-                return this.values.length;
-            }
-        }, {
-            key: "getNumColumns",
-            value: function() {
-                return this.values[0].length;
-            }
-        } ]), DataContainer;
-    }(), Range = function() {
-        function Range(sheet, startRow, startColumn, numRows, numColumns) {
-            _classCallCheck(this, Range), this.sheet = sheet, this.dataContainer = sheet.dataContainer, 
-            this.dataChunk = this.dataContainer.getChunk(startRow, startColumn, numRows, numColumns), 
-            this.startRow = startRow, this.startColumn = startColumn, this.numRows = numRows, 
-            this.numColumns = numColumns, this.shape = "".concat(this.dataChunk.values.length, "x").concat(this.dataChunk.values[0].length);
-        }
-        return _createClass(Range, [ {
-            key: "validateInputShape",
-            value: function(input, type) {
-                var inputShape = "".concat(input.length, "x").concat(input[0].length);
-                if (inputShape !== this.shape) throw new Error("".concat(type, " failed: range shape is ").concat(this.shape, " and input is ").concat(inputShape));
-            }
-        }, {
-            key: "getSheet",
-            value: function() {
-                return this.sheet;
-            }
-        }, {
-            key: "getRow",
-            value: function() {
-                return this.startRow;
-            }
-        }, {
-            key: "getRowIndex",
-            value: function() {
-                return this.startRow - 1;
-            }
-        }, {
-            key: "getColumn",
-            value: function() {
-                return this.startColumn;
-            }
-        }, {
-            key: "getColumnIndex",
-            value: function() {
-                return this.startColumn - 1;
-            }
-        }, {
-            key: "getNumRows",
-            value: function() {
-                return this.numRows;
-            }
-        }, {
-            key: "getNumColumns",
-            value: function() {
-                return this.numColumns;
-            }
-        }, {
-            key: "getValues",
-            value: function() {
-                return this.dataChunk.values;
-            }
-        }, {
-            key: "setValues",
-            value: function(input) {
-                return this.validateInputShape(input, "setValues"), this.dataChunk.values = input, 
-                this.dataContainer.setChunk("values", this.dataChunk, this.startRow, this.startColumn), 
-                this;
-            }
-        }, {
-            key: "getBackgrounds",
-            value: function() {
-                return this.dataChunk.backgrounds;
-            }
-        }, {
-            key: "setBackgrounds",
-            value: function(input) {
-                return this.validateInputShape(input, "setBackgrounds"), this.dataChunk.values = input, 
-                this.dataContainer.setChunk("backgrounds", this.dataChunk, this.startRow, this.startColumn), 
-                this;
-            }
-        }, {
-            key: "getFontColors",
-            value: function() {
-                return this.dataChunk.fontcolors;
-            }
-        }, {
-            key: "setFontColors",
-            value: function(input) {
-                return this.validateInputShape(input, "setFontColors"), this.dataChunk.values = input, 
-                this.dataContainer.setChunk("fontcolors", this.dataChunk, this.startRow, this.startColumn), 
-                this;
-            }
-        }, {
-            key: "getNotes",
-            value: function() {
-                return this.dataChunk.notes;
-            }
-        }, {
-            key: "setNotes",
-            value: function(input) {
-                return this.validateInputShape(input, "setNotes"), this.dataChunk.values = input, 
-                this.dataContainer.setChunk("notes", this.dataChunk, this.startRow, this.startColumn), 
-                this;
-            }
-        }, {
-            key: "getFontFamilies",
-            value: function() {
-                return this.dataChunk.fontfamilies;
-            }
-        }, {
-            key: "setFontFamilies",
-            value: function(input) {
-                return this.validateInputShape(input, "setFontFamilies"), this.dataChunk.values = input, 
-                this.dataContainer.setChunk("fontfamilies", this.dataChunk, this.startRow, this.startColumn), 
-                this;
-            }
-        }, {
-            key: "getFontSizes",
-            value: function() {
-                return this.dataChunk.fontsizes;
-            }
-        }, {
-            key: "setFontSizes",
-            value: function(input) {
-                return this.validateInputShape(input, "setFontSizes"), this.dataChunk.values = input, 
-                this.dataContainer.setChunk("fontsizes", this.dataChunk, this.startRow, this.startColumn), 
-                this;
-            }
-        }, {
-            key: "getFontStyles",
-            value: function() {
-                return this.dataChunk.fontstyles;
-            }
-        }, {
-            key: "setFontStyles",
-            value: function(input) {
-                return this.validateInputShape(input, "setFontStyles"), this.dataChunk.values = input, 
-                this.dataContainer.setChunk("fontstyles", this.dataChunk, this.startRow, this.startColumn), 
-                this;
-            }
-        }, {
-            key: "getFontWeights",
-            value: function() {
-                return this.dataChunk.fontweights;
-            }
-        }, {
-            key: "setFontWeights",
-            value: function(input) {
-                return this.validateInputShape(input, "setFontWeights"), this.dataChunk.values = input, 
-                this.dataContainer.setChunk("fontweights", this.dataChunk, this.startRow, this.startColumn), 
-                this;
-            }
-        } ]), Range;
-    }(), Sheet = function() {
-        function Sheet(name) {
-            _classCallCheck(this, Sheet), this.name = name, this.dataContainer = new DataContainer();
-        }
-        return _createClass(Sheet, [ {
-            key: "getRange",
-            value: function(startRow, startColumn, numRows, numColumns) {
-                try {
-                    return new Range(this, startRow, startColumn, numRows, numColumns);
-                } catch (e) {
-                    throw new Error("getRange failed because of invalid inputs: ".concat(e));
-                }
-            }
-        }, {
-            key: "getName",
-            value: function() {
-                return this.name;
-            }
-        }, {
-            key: "getDataRange",
-            value: function() {
-                return new Range(this, 1, 1, this.dataContainer.getNumRows(), this.dataContainer.getNumColumns());
-            }
-        } ]), Sheet;
-    }(), ActiveSpreadsheet = function() {
-        function ActiveSpreadsheet() {
-            _classCallCheck(this, ActiveSpreadsheet), this.sheets = {
-                Test: new Sheet("Test")
-            };
-        }
-        return _createClass(ActiveSpreadsheet, [ {
-            key: "getSheetByName",
-            value: function(name) {
-                if (-1 === Object.keys(this.sheets).indexOf(name)) throw new Error('sheet named "'.concat(name, '" does not exist.'));
-                return this.sheets[name];
-            }
-        } ]), ActiveSpreadsheet;
-    }(), spreadsheet_simulator = {
-        getActiveSpreadsheet: function() {
-            return new ActiveSpreadsheet();
-        }
-    }, CONSTANTS = __webpack_require__(0);
+    var CONSTANTS = __webpack_require__(1);
     function _typeof(obj) {
         return (_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function _typeof(obj) {
             return typeof obj;
@@ -597,6 +393,201 @@ function TableProxy() {
         }
         return returnType;
     }
+    var simple_clone = __webpack_require__(6), utilities = __webpack_require__(0);
+    function _defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+            var descriptor = props[i];
+            descriptor.enumerable = descriptor.enumerable || !1, descriptor.configurable = !0, 
+            "value" in descriptor && (descriptor.writable = !0), Object.defineProperty(target, descriptor.key, descriptor);
+        }
+    }
+    __webpack_require__.d(__webpack_exports__, "a", function() {
+        return instance_options_InstanceOptions;
+    });
+    var instance_options_InstanceOptions = function() {
+        function InstanceOptions(sheetNameOrOptions) {
+            !function _classCallCheck(instance, Constructor) {
+                if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
+            }(this, InstanceOptions), this.pvt_sheetName = null, this.pvt_headerAnchorToken = CONSTANTS["c"], 
+            this.pvt_columnFilter = [], this.pvt_exportAttributes = [ "value" ], this.pvt_exportOnlySelected = !0, 
+            this.pvt_writeLevel = CONSTANTS["d"], this.pvt_autoResizeColumns = !1, this.pvt_computedProperties = {}, 
+            this.pvt_uniqueColumnId = null, this.pvt_spreadsheet = SpreadsheetApp.getActiveSpreadsheet(), 
+            this.pvt_sheet = null, this.processInput(sheetNameOrOptions);
+        }
+        return function _createClass(Constructor, protoProps, staticProps) {
+            return protoProps && _defineProperties(Constructor.prototype, protoProps), staticProps && _defineProperties(Constructor, staticProps), 
+            Constructor;
+        }(InstanceOptions, [ {
+            key: "sheetIsSet",
+            value: function() {
+                return !!CONSTANTS["e"] || function isSheet(input) {
+                    return "Sheet" === getSheetsObjectType(input);
+                }(this.pvt_sheet);
+            }
+        }, {
+            key: "processInput",
+            value: function(sheetNameOrOptions) {
+                var _this = this, errMsg = "requires a string sheetName or an options object which at least define a valid sheetName";
+                if (sheetNameOrOptions === undefined || null === sheetNameOrOptions) throw new Error(errMsg);
+                switch (toString.call(sheetNameOrOptions)) {
+                  case "[object String]":
+                    this.sheetName = sheetNameOrOptions;
+                    break;
+
+                  case "[object Object]":
+                    Object.keys(sheetNameOrOptions).forEach(function(key) {
+                        -1 === key.indexOf("pvt_") && (_this[key] = sheetNameOrOptions[key]);
+                    });
+                    break;
+
+                  default:
+                    throw new Error(errMsg);
+                }
+                if (!this.sheetIsSet()) throw new Error(errMsg);
+                return this;
+            }
+        }, {
+            key: "sheetName",
+            get: function() {
+                return this.pvt_sheetName;
+            },
+            set: function(input) {
+                if (!Object(utilities["i"])(input)) throw new TypeError("sheetName must be a string.");
+                if (this.pvt_sheet) throw new Error("sheetName was already set to ".concat(this.pvt_sheetName, " and cannot be changed."));
+                try {
+                    this.pvt_sheet = this.pvt_spreadsheet.getSheetByName(input);
+                } catch (e) {
+                    throw new Error("set sheetName exception: ".concat(e));
+                }
+                return this.pvt_sheetName = input, this.pvt_sheetName;
+            }
+        }, {
+            key: "headerAnchorToken",
+            get: function() {
+                return this.pvt_headerAnchorToken;
+            },
+            set: function(input) {
+                if (!Object(utilities["i"])(input)) throw new TypeError("headerAnchorToken must be a string.");
+                return this.pvt_headerAnchorToken = input, this.pvt_headerAnchorToken;
+            }
+        }, {
+            key: "columnFilter",
+            get: function() {
+                return this.pvt_columnFilter;
+            },
+            set: function(input) {
+                if (!Object(utilities["d"])(input)) throw new TypeError("columnFilter must be an array.");
+                return this.pvt_columnFilter = Object(simple_clone["a"])(input), this.pvt_columnFilter;
+            }
+        }, {
+            key: "exportAttributes",
+            get: function() {
+                return this.pvt_exportAttributes;
+            },
+            set: function(input) {
+                if (!Object(utilities["d"])(input)) throw new TypeError("exportAttributes must be an array.");
+                return this.pvt_exportAttributes = Object(simple_clone["a"])(input), this.pvt_exportAttributes;
+            }
+        }, {
+            key: "exportOnlySelected",
+            get: function() {
+                return this.pvt_exportOnlySelected;
+            },
+            set: function(input) {
+                if (!Object(utilities["e"])(input)) throw new TypeError("exportOnlySelected must be a boolean.");
+                return this.pvt_exportOnlySelected = input, this.pvt_exportOnlySelected;
+            }
+        }, {
+            key: "writeLevel",
+            get: function() {
+                return this.pvt_writeLevel;
+            },
+            set: function(input) {
+                if (!Object(utilities["i"])(input)) throw new TypeError("exportOnlySelected must be a string.");
+                if (-1 === CONSTANTS["h"].indexOf(input)) throw new Error("writeLevel must be one of ".concat(CONSTANTS["h"].toString(), " received ").concat(input));
+                return this.pvt_writeLevel = input, this.pvt_writeLevel;
+            }
+        }, {
+            key: "autoResizeColumns",
+            get: function() {
+                return this.pvt_autoResizeColumns;
+            },
+            set: function(input) {
+                if (!Object(utilities["e"])(input)) throw new TypeError("autoResizeColumns must be a boolean.");
+                return this.pvt_autoResizeColumns = input, this.pvt_autoResizeColumns;
+            }
+        }, {
+            key: "uniqueColumnId",
+            get: function() {
+                return this.pvt_uniqueColumnId;
+            },
+            set: function(input) {
+                if (!Object(utilities["i"])(input) && !Object(utilities["g"])(input)) throw new TypeError("uniqueColumnId must be a string or number.");
+                return this.pvt_uniqueColumnId = input, this.pvt_uniqueColumnId;
+            }
+        }, {
+            key: "computedProperties",
+            get: function() {
+                return this.pvt_computedProperties;
+            },
+            set: function(input) {
+                if (!Object(utilities["h"])(input)) throw new TypeError("computedProperties must be a property descriptor object");
+                return this.pvt_computedProperties = input, this.pvt_computedProperties;
+            }
+        }, {
+            key: "spreadsheet",
+            set: function(input) {
+                if (!CONSTANTS["e"] && !function isSpreadsheet(input) {
+                    return "Spreadsheet" === getSheetsObjectType(input);
+                }(input)) throw new TypeError("spreadsheet must be a spreadsheet object.");
+                return this.pvt_spreadsheet = input, this.pvt_spreadsheet;
+            }
+        }, {
+            key: "sheet",
+            get: function() {
+                return this.pvt_sheet;
+            }
+        } ]), InstanceOptions;
+    }();
+}, function(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
+    __webpack_require__.d(__webpack_exports__, "a", function() {
+        return QueryDriver;
+    });
+    var _unique_set__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2), _CONSTANTS__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1), _utilities__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(0);
+    function _defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+            var descriptor = props[i];
+            descriptor.enumerable = descriptor.enumerable || !1, descriptor.configurable = !0, 
+            "value" in descriptor && (descriptor.writable = !0), Object.defineProperty(target, descriptor.key, descriptor);
+        }
+    }
+    var QueryDriver = function() {
+        function QueryDriver(query, type) {
+            !function _classCallCheck(instance, Constructor) {
+                if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
+            }(this, QueryDriver), this.query = null, this.type = type.toUpperCase(), this.writeToCursor = !1, 
+            this.withRecords = !1, this.requestedAttributesSet = new _unique_set__WEBPACK_IMPORTED_MODULE_0__["a"](), 
+            this.loadQuery(query);
+        }
+        return function _createClass(Constructor, protoProps, staticProps) {
+            return protoProps && _defineProperties(Constructor.prototype, protoProps), staticProps && _defineProperties(Constructor, staticProps), 
+            Constructor;
+        }(QueryDriver, [ {
+            key: "loadQuery",
+            value: function(query) {
+                var _this = this;
+                if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_2__["f"])(query)) throw new TypeError("loadQuery requires accepts a function callback");
+                var queryAsString = (this.query = query).toString();
+                _CONSTANTS__WEBPACK_IMPORTED_MODULE_1__["f"].forEach(function(attribute) {
+                    var re1 = new RegExp("[[]{1}['|\"]{1}".concat(attribute, "['|\"]{1}[]]{1}"), "g"), re2 = new RegExp("[.]{1}".concat(attribute, "[^a-zA-Z0-9]"), "g");
+                    (re1.test(queryAsString) || re2.test(queryAsString)) && _this.requestedAttributesSet.push(attribute);
+                });
+            }
+        } ]), QueryDriver;
+    }();
+}, function(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
     function simpleClone(input) {
         var copy, toStringType = toString.call(input);
         switch (toStringType) {
@@ -604,6 +595,7 @@ function TableProxy() {
           case "[object Null]":
           case "[object Number]":
           case "[object String]":
+          case "[object Boolean]":
             copy = input;
             break;
 
@@ -628,237 +620,15 @@ function TableProxy() {
         }
         return copy;
     }
-    function instance_options_defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-            var descriptor = props[i];
-            descriptor.enumerable = descriptor.enumerable || !1, descriptor.configurable = !0, 
-            "value" in descriptor && (descriptor.writable = !0), Object.defineProperty(target, descriptor.key, descriptor);
-        }
-    }
     __webpack_require__.d(__webpack_exports__, "a", function() {
-        return instance_options_InstanceOptions;
+        return simpleClone;
     });
-    var instance_options_InstanceOptions = function() {
-        function InstanceOptions() {
-            !function instance_options_classCallCheck(instance, Constructor) {
-                if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
-            }(this, InstanceOptions), this.pvt_sheetName = null, this.pvt_headerAnchorToken = CONSTANTS["b"], 
-            this.pvt_columnFilter = [], this.pvt_exportAttributes = [ "value" ], this.pvt_exportOnlySelected = !1, 
-            this.pvt_writeLevel = CONSTANTS["c"], this.pvt_autoResizeColumns = !1, this.pvt_uniqueColumnId = null, 
-            this.pvt_spreadsheet = spreadsheet_simulator.getActiveSpreadsheet(), this.pvt_sheet = null;
-        }
-        return function instance_options_createClass(Constructor, protoProps, staticProps) {
-            return protoProps && instance_options_defineProperties(Constructor.prototype, protoProps), 
-            staticProps && instance_options_defineProperties(Constructor, staticProps), Constructor;
-        }(InstanceOptions, [ {
-            key: "absorb",
-            value: function(input) {
-                var _this = this;
-                if ("[object Object]" !== toString.call(input)) throw new TypeError("options initialization must be performed with an object.");
-                return Object.keys(this).forEach(function(key) {
-                    -1 === [ "pvt_sheet", "pvt_spreadsheet" ].indexOf(key) && (_this[key] = input[key]);
-                }), this;
-            }
-        }, {
-            key: "sheetName",
-            get: function() {
-                return this.pvt_sheetName;
-            },
-            set: function(input) {
-                if ("[object String]" !== toString.call(input)) throw new TypeError("sheetName must be a string.");
-                if (this.pvt_sheet) throw new Error("sheetName was alreadys set to ".concat(this.pvt_sheetName, " and cannot be changed."));
-                try {
-                    this.pvt_sheet = this.pvt_spreadsheet.getSheetByName(input);
-                } catch (e) {
-                    throw new Error("set sheetName exception: ".concat(e));
-                }
-                return this.pvt_sheetName = input, this.pvt_sheetName;
-            }
-        }, {
-            key: "headerAnchorToken",
-            get: function() {
-                return this.pvt_headerAnchorToken;
-            },
-            set: function(input) {
-                if ("[object String]" !== toString.call(input)) throw new TypeError("headerAnchorToken must be a string.");
-                return this.pvt_headerAnchorToken = input, this.pvt_headerAnchorToken;
-            }
-        }, {
-            key: "columnFilter",
-            get: function() {
-                return this["this"].pvt_columnFilter;
-            },
-            set: function(input) {
-                if ("[object Array]" !== toString.call(input)) throw new TypeError("columnFilter must be an array.");
-                return this.pvt_columnFilter = simpleClone(input), this.pvt_columnFilter;
-            }
-        }, {
-            key: "exportAttributes",
-            get: function() {
-                return this.pvt_exportAttributes;
-            },
-            set: function(input) {
-                if ("[object Array]" !== toString.call(input)) throw new TypeError("exportAttributes must be an array.");
-                return this.pvt_columnFilter = simpleClone(input), this.pvt_columnFilter;
-            }
-        }, {
-            key: "exportOnlySelected",
-            get: function() {
-                return this.pvt_exportOnlySelected;
-            },
-            set: function(input) {
-                if ("[object Boolean]" !== toString.call(input)) throw new TypeError("exportOnlySelected must be a boolean.");
-                return this.pvt_exportOnlySelected = input, this.pvt_exportOnlySelected;
-            }
-        }, {
-            key: "writeLevel",
-            get: function() {
-                return this.pvt_writeLevel;
-            },
-            set: function(input) {
-                if ("[object String]" !== toString.call(input)) throw new TypeError("exportOnlySelected must be a string.");
-                if (-1 === CONSTANTS["e"].indexOf(input)) throw new Error("writeLevel must be one of ".concat(CONSTANTS["e"].toString(), " received ").concat(input));
-                return this.pvt_writeLevel = input, this.pvt_writeLevel;
-            }
-        }, {
-            key: "autoResizeColumns",
-            get: function() {
-                return this.pvt_autoResizeColumns;
-            },
-            set: function(input) {
-                if ("[object Boolean]" !== toString.call(input)) throw new TypeError("autoResizeColumns must be a boolean.");
-                return this.pvt_autoResizeColumns = input, this.pvt_autoResizeColumns;
-            }
-        }, {
-            key: "uniqueColumnId",
-            get: function() {
-                return this.pvt_uniqueColumnId;
-            },
-            set: function(input) {
-                if ("[object String]" !== toString.call(input) && "[object Number]" !== toString.call(input)) throw new TypeError("uniqueColumnId must be a string or number.");
-                return this.pvt_uniqueColumnId = input, this.pvt_uniqueColumnId;
-            }
-        }, {
-            key: "spreadsheet",
-            set: function(input) {
-                if (!function isSpreadsheet(input) {
-                    return "Spreadsheet" === getSheetsObjectType(input);
-                }(input)) throw new TypeError("spreadsheet must be a spreadsheet object.");
-                return this.pvt_spreadsheet = input, this.pvt_spreadsheet;
-            }
-        }, {
-            key: "sheet",
-            get: function() {
-                return this.pvt_sheet;
-            }
-        } ]), InstanceOptions;
-    }();
-}, function(module, __webpack_exports__, __webpack_require__) {
-    "use strict";
-    __webpack_require__.d(__webpack_exports__, "b", function() {
-        return getTimeStamp;
-    }), __webpack_require__.d(__webpack_exports__, "a", function() {
-        return getTimeDiff;
-    });
-    __webpack_require__(0), function isString(input) {
-        return "[object String]" === toString.call(input);
-    };
-    var getTimeStamp = function getTimeStamp(precision) {
-        var time = new Date().getTime();
-        return precision ? time.toFixed(precision) : time;
-    }, getTimeDiff = function getTimeDiff(oldTime, precision) {
-        var newTime = getTimeStamp();
-        return precision ? (newTime - oldTime).toFixed(precision) : newTime - oldTime;
-    };
-}, function(module, __webpack_exports__, __webpack_require__) {
-    "use strict";
-    __webpack_require__.d(__webpack_exports__, "a", function() {
-        return QueryDriver;
-    });
-    var _unique_set__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1), _CONSTANTS__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(0);
-    function _defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-            var descriptor = props[i];
-            descriptor.enumerable = descriptor.enumerable || !1, descriptor.configurable = !0, 
-            "value" in descriptor && (descriptor.writable = !0), Object.defineProperty(target, descriptor.key, descriptor);
-        }
-    }
-    var QueryDriver = function() {
-        function QueryDriver(query, type) {
-            !function _classCallCheck(instance, Constructor) {
-                if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
-            }(this, QueryDriver), this.query = null, this.type = type.toUpperCase(), this.writeToCursor = !1, 
-            this.withRecords = !1, this.requestedAttributes = new _unique_set__WEBPACK_IMPORTED_MODULE_0__["a"](), 
-            this.loadQuery(query);
-        }
-        return function _createClass(Constructor, protoProps, staticProps) {
-            return protoProps && _defineProperties(Constructor.prototype, protoProps), staticProps && _defineProperties(Constructor, staticProps), 
-            Constructor;
-        }(QueryDriver, [ {
-            key: "loadQuery",
-            value: function(query) {
-                var _this = this;
-                if ("[object Function]" !== toString.call(query)) throw new TypeError("loadQuery requires accepts a function callback");
-                var queryAsString = (this.query = query).toString();
-                _CONSTANTS__WEBPACK_IMPORTED_MODULE_1__["d"].forEach(function(attribute) {
-                    var reString = ".{0,1}['|\"|[]{0,1}' ".concat(attribute, " '[['|\"]{0,1}");
-                    new RegExp(reString, "g").test(queryAsString) && _this.requestedAttributes.push(attribute);
-                });
-            }
-        } ]), QueryDriver;
-    }();
-}, function(module, __webpack_exports__, __webpack_require__) {
-    "use strict";
-    __webpack_require__.d(__webpack_exports__, "a", function() {
-        return QueryReturn;
-    });
-    var _utilities__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4), _unique_set__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1), _query_driver__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
-    function _defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-            var descriptor = props[i];
-            descriptor.enumerable = descriptor.enumerable || !1, descriptor.configurable = !0, 
-            "value" in descriptor && (descriptor.writable = !0), Object.defineProperty(target, descriptor.key, descriptor);
-        }
-    }
-    var QueryReturn = function() {
-        function QueryReturn(queryDriver) {
-            if (function _classCallCheck(instance, Constructor) {
-                if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
-            }(this, QueryReturn), !(queryDriver instanceof _query_driver__WEBPACK_IMPORTED_MODULE_2__["a"])) throw new TypeError("QueryResult constructor requires QueryDriver input.");
-            this.query = queryDriver.query, this.type = queryDriver.type, this.resultSet = new _unique_set__WEBPACK_IMPORTED_MODULE_1__["a"](), 
-            this.queryStartTime = Object(_utilities__WEBPACK_IMPORTED_MODULE_0__["b"])(), this.queryDuration = null, 
-            this.returnContainer = {
-                records: {},
-                errors: []
-            };
-        }
-        return function _createClass(Constructor, protoProps, staticProps) {
-            return protoProps && _defineProperties(Constructor.prototype, protoProps), staticProps && _defineProperties(Constructor, staticProps), 
-            Constructor;
-        }(QueryReturn, [ {
-            key: "push",
-            value: function(input) {
-                this.resultSet.push(input);
-            }
-        }, {
-            key: "done",
-            value: function() {
-                this.queryDuration = Object(_utilities__WEBPACK_IMPORTED_MODULE_0__["a"])(this.queryStartTime), 
-                Logger.log("".concat(this.type, " operation completed in ").concat(this.queryDuration, " ms.\n ").concat(this.query.toString()));
-            }
-        }, {
-            key: "count",
-            get: function() {
-                return this.resultSet.length;
-            }
-        } ]), QueryReturn;
-    }();
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
     __webpack_require__.d(__webpack_exports__, "a", function() {
         return RowIndexCursor;
     });
-    var _utilities__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4), _unique_set__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1), _sheet_accessor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2);
+    var _utilities__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0), _unique_set__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2), _sheet_accessor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3);
     function _defineProperties(target, props) {
         for (var i = 0; i < props.length; i++) {
             var descriptor = props[i];
@@ -898,6 +668,11 @@ function TableProxy() {
                 return this.pvt_selectedRowIndexer.flush().copyItems(selectionSet), this;
             }
         }, {
+            key: "forEach",
+            value: function(callback) {
+                return this.pvt_selectedRowIndexer.forEach(callback);
+            }
+        }, {
             key: "indices",
             get: function() {
                 return this.pvt_selectedRowIndexer.values;
@@ -931,10 +706,7 @@ function TableProxy() {
     }();
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
-    __webpack_require__.d(__webpack_exports__, "a", function() {
-        return DataController;
-    });
-    var _CONSTANTS__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0), _sheet_accessor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2), _instance_options__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3), _unique_set__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1);
+    var query_driver = __webpack_require__(5), sheet_accessor = __webpack_require__(3), CONSTANTS = __webpack_require__(1), instance_options = __webpack_require__(4), unique_set = __webpack_require__(2);
     function _defineProperties(target, props) {
         for (var i = 0; i < props.length; i++) {
             var descriptor = props[i];
@@ -942,31 +714,24 @@ function TableProxy() {
             "value" in descriptor && (descriptor.writable = !0), Object.defineProperty(target, descriptor.key, descriptor);
         }
     }
-    var DataController = function() {
+    var data_controller_DataController = function() {
         function DataController(sheetAccessor, instanceOptions, requestedAttributesSet) {
             var _this = this;
             if (function _classCallCheck(instance, Constructor) {
                 if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
-            }(this, DataController), !(sheetAccessor instanceof _sheet_accessor__WEBPACK_IMPORTED_MODULE_1__["a"])) throw new TypeError("DataController requires an instance of InstanceOptions object.");
-            if (!(instanceOptions instanceof _instance_options__WEBPACK_IMPORTED_MODULE_2__["a"])) throw new TypeError("DataController requires an instance of InstanceOptions object.");
-            if (!(requestedAttributesSet instanceof _unique_set__WEBPACK_IMPORTED_MODULE_3__["a"])) throw new TypeError("DataController requires a UniqueSet instance for requestedAttributesSet.");
-            if (requestedAttributesSet.length < 1) throw new TypeError("DataController requires a UniqueSet instance for requestedAttributesSet.");
-            this.pvt_sheetAccessor = sheetAccessor, this.pvt_requestedAttributes = requestedAttributesSet.values, 
-            this.pvt_instanceOptions = instanceOptions, this.pvt_rowIndex = null, this.pvt_changedAttributes = null, 
-            this.pvt_dataPayload = {}, this.pvt_requestedAttributes.forEach(function(attribute) {
-                _this.pvt_dataPayload[attribute] = _this.pvt_sheetAccessor[attribute].getAllRecords();
+            }(this, DataController), !(sheetAccessor instanceof sheet_accessor["a"])) throw new TypeError("DataController requires an instance of InstanceOptions object.");
+            if (!(instanceOptions instanceof instance_options["a"])) throw new TypeError("DataController requires an instance of InstanceOptions object.");
+            if (!(requestedAttributesSet instanceof unique_set["a"]) || requestedAttributesSet.length < 1) throw new TypeError("DataController requires a UniqueSet instance with at least one value for for requestedAttributesSet.");
+            this.pvt_sheetAccessor = sheetAccessor, this.pvt_requestedAttributesSet = requestedAttributesSet, 
+            this.pvt_instanceOptions = instanceOptions, this.pvt_rowIndex = null, this.pvt_changedAttributes = new unique_set["a"](), 
+            this.pvt_dataPayload = {}, this.pvt_requestedAttributesSet.forEach(function(attribute) {
+                _this.pvt_dataPayload[attribute] = _this.pvt_sheetAccessor[attribute].getAll();
             });
         }
         return function _createClass(Constructor, protoProps, staticProps) {
             return protoProps && _defineProperties(Constructor.prototype, protoProps), staticProps && _defineProperties(Constructor, staticProps), 
             Constructor;
         }(DataController, [ {
-            key: "setRowIndex",
-            value: function(rowIndex) {
-                return this.pvt_instanceOptions.writeLevel === _CONSTANTS__WEBPACK_IMPORTED_MODULE_0__["g"] && (null !== this.pvt_rowIndex && this.writeCurrentRow(), 
-                this.pvt_rowIndex = rowIndex), this;
-            }
-        }, {
             key: "getColumnByIndex",
             value: function(attribute, columnIndex) {
                 return this.pvt_dataPayload[attribute][this.pvt_rowIndex][columnIndex];
@@ -975,8 +740,14 @@ function TableProxy() {
             key: "updateColumnByIndex",
             value: function(attribute, columnIndex, updatedValue) {
                 return this.pvt_dataPayload[attribute][this.pvt_rowIndex][columnIndex] = updatedValue, 
-                this.pvt_instanceOptions.writeLevel === _CONSTANTS__WEBPACK_IMPORTED_MODULE_0__["f"] ? this.pvt_sheetAccessor[attribute].setCell(this.pvt_rowIndex, columnIndex, [ [ updatedValue ] ]) : this.pvt_changedAttributes.push(attribute), 
+                this.pvt_instanceOptions.writeLevel === CONSTANTS["i"] ? this.pvt_sheetAccessor[attribute].setCell(this.pvt_rowIndex, columnIndex, [ [ updatedValue ] ]) : this.pvt_changedAttributes.push(attribute), 
                 this;
+            }
+        }, {
+            key: "setRowIndex",
+            value: function(rowIndex) {
+                return this.pvt_instanceOptions.writeLevel === CONSTANTS["j"] && null !== this.pvt_rowIndex && this.writeCurrentRow(), 
+                this.pvt_rowIndex = rowIndex, this;
             }
         }, {
             key: "writeCurrentRow",
@@ -990,31 +761,203 @@ function TableProxy() {
             key: "capWrite",
             value: function() {
                 var _this3 = this;
-                this.pvt_instanceOptions.writeLevel === _CONSTANTS__WEBPACK_IMPORTED_MODULE_0__["h"] && (this.pvt_changedAttributes.forEach(function(attribute) {
+                this.pvt_instanceOptions.writeLevel === CONSTANTS["k"] && (this.pvt_changedAttributes.forEach(function(attribute) {
                     _this3.pvt_sheetAccessor[attribute].setAllRecords(_this3.pvt_dataPayload[attribute]);
-                }), this.pvt_changedAttributes.flush()), this.pvt_instanceOptions.writeLevel === _CONSTANTS__WEBPACK_IMPORTED_MODULE_0__["g"] && this.writeCurrentRow();
+                }), this.pvt_changedAttributes.flush()), this.pvt_instanceOptions.writeLevel === CONSTANTS["j"] && this.writeCurrentRow();
             }
         } ]), DataController;
+    }(), row_index_cursor = __webpack_require__(7), utilities = __webpack_require__(0);
+    function query_return_defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+            var descriptor = props[i];
+            descriptor.enumerable = descriptor.enumerable || !1, descriptor.configurable = !0, 
+            "value" in descriptor && (descriptor.writable = !0), Object.defineProperty(target, descriptor.key, descriptor);
+        }
+    }
+    var query_return_QueryReturn = function() {
+        function QueryReturn(queryDriver) {
+            if (function query_return_classCallCheck(instance, Constructor) {
+                if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
+            }(this, QueryReturn), !(queryDriver instanceof query_driver["a"])) throw new TypeError("QueryResult constructor requires QueryDriver input.");
+            this.query = queryDriver.query, this.type = queryDriver.type, this.resultSet = new unique_set["a"](), 
+            this.queryStartTime = Object(utilities["b"])(), this.queryDuration = null, this.returnContainer = {
+                records: {}
+            };
+        }
+        return function query_return_createClass(Constructor, protoProps, staticProps) {
+            return protoProps && query_return_defineProperties(Constructor.prototype, protoProps), 
+            staticProps && query_return_defineProperties(Constructor, staticProps), Constructor;
+        }(QueryReturn, [ {
+            key: "push",
+            value: function(input) {
+                this.resultSet.push(input);
+            }
+        }, {
+            key: "done",
+            value: function() {
+                return this.queryDuration = Object(utilities["a"])(this.queryStartTime), Logger.log("".concat(this.type, " operation completed in ").concat(this.queryDuration, " ms.\n ").concat(this.query.toString())), 
+                this;
+            }
+        }, {
+            key: "count",
+            get: function() {
+                return this.resultSet.length;
+            }
+        } ]), QueryReturn;
     }();
+    function getRecordProxy(sheetAccessor, dataController, instanceOptions, requestedAttributesSet) {
+        if (!(sheetAccessor instanceof sheet_accessor["a"])) throw new Error("getRecordProxy requires a SheetAccessor instance.");
+        if (!(dataController instanceof data_controller_DataController)) throw new Error("getRecordProxy requires a DataController instance.");
+        if (!(instanceOptions instanceof instance_options["a"])) throw new Error("getRecordProxy requires an InstanceOptions instance.");
+        if (!(requestedAttributesSet instanceof unique_set["a"])) throw new Error("getRecordProxy requires an UniqueSet instance for input parameter requestedAttributesSet.");
+        var columnFilter = instanceOptions.columnFilter;
+        var recordProxy = {};
+        sheetAccessor.getHeaderRow().forEach(function(column, columnIndex) {
+            if (function columnIsValid(column) {
+                return null !== column && column !== undefined && !(0 < columnFilter.length && -1 === columnFilter.indexOf(column));
+            }(column)) {
+                var columnProxy = {};
+                requestedAttributesSet.forEach(function(attribute) {
+                    Object.defineProperty(columnProxy, attribute, {
+                        enumerable: !0,
+                        get: function() {
+                            return dataController.getColumnByIndex(attribute, columnIndex);
+                        },
+                        set: function(value) {
+                            return dataController.updateColumnByIndex(attribute, columnIndex, value);
+                        }
+                    });
+                }), recordProxy[column] = columnProxy;
+            }
+        });
+        try {
+            Object.keys(instanceOptions.computedProperties).forEach(function(key) {
+                Object.defineProperty({}, "value", {
+                    enumerable: instanceOptions.computedProperties[key].enumerable,
+                    value: instanceOptions.computedProperties[key].get.bind(recordProxy)
+                });
+            }), Object.defineProperties(recordProxy, instanceOptions.computedProperties);
+        } catch (e) {
+            throw new Error("there was a problem creating a record proxy with the specified computedProperties: ".concat(e));
+        }
+        return recordProxy;
+    }
+    var simple_clone = __webpack_require__(6);
+    function processQuery(queryDriver, sheetAccessor, rowIndexCursor, instanceOptions) {
+        if (!(queryDriver instanceof query_driver["a"])) throw new Error("queryProcessor requires a QueryDriver instance.");
+        if (!(sheetAccessor instanceof sheet_accessor["a"])) throw new Error("queryProcessor requires a SheetAccessor instance.");
+        if (!(rowIndexCursor instanceof row_index_cursor["a"])) throw new Error("queryProcessor requires a RowIndexCursor instance.");
+        var queryReturn = new query_return_QueryReturn(queryDriver), dataController = new data_controller_DataController(sheetAccessor, instanceOptions, queryDriver.requestedAttributesSet), recordProxy = getRecordProxy(sheetAccessor, dataController, instanceOptions, queryDriver.requestedAttributesSet), query = queryDriver.query.bind(recordProxy);
+        return rowIndexCursor.forEach(function(index) {
+            dataController.setRowIndex(index), query(recordProxy) && (queryReturn.push(index), 
+            queryDriver.withRecords && (queryReturn.returnContainer.records[index] = Object(simple_clone["a"])(recordProxy)));
+        }), dataController.capWrite(), queryDriver.writeToCursor && rowIndexCursor.consumeSelection(queryReturn.resultSet), 
+        instanceOptions.autoResizeColumns && sheetAccessor.resizeColumns(), queryReturn.done();
+    }
+    __webpack_require__.d(__webpack_exports__, "a", function() {
+        return processQuery;
+    });
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
     __webpack_require__.r(__webpack_exports__), function(global) {
-        var _sheet_accessor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2), _query_driver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5), _query_return__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6), _row_index_cursor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7), _data_controller__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8), _instance_options__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(3), _unique_set__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(1), TableProxy = function TableProxy() {
-            var instanceOptions = new _instance_options__WEBPACK_IMPORTED_MODULE_5__["a"]();
-            instanceOptions.sheetName = "Test";
-            var requestedAttributes = new _unique_set__WEBPACK_IMPORTED_MODULE_6__["a"]("value"), sheetAccessor = new _sheet_accessor__WEBPACK_IMPORTED_MODULE_0__["a"](instanceOptions), rowIndexCursor = new _row_index_cursor__WEBPACK_IMPORTED_MODULE_3__["a"](sheetAccessor), dataController = new _data_controller__WEBPACK_IMPORTED_MODULE_4__["a"](sheetAccessor, instanceOptions, requestedAttributes), query = function query(r) {
-                var balls = 1;
-                return r.nuggets.value === r.nuggets.fontcolor && (balls = 5), balls;
-            }, queryDriver = new _query_driver__WEBPACK_IMPORTED_MODULE_1__["a"](query, "test"), queryReturn = new _query_return__WEBPACK_IMPORTED_MODULE_2__["a"](queryDriver), output = {
-                dataController: dataController,
-                instanceOptions: instanceOptions,
-                sheetAccessor: sheetAccessor,
-                indices: rowIndexCursor.indices,
-                queryDriver: queryDriver,
-                queryReturn: queryReturn
-            }, json = JSON.stringify(output);
-            return function() {
-                Browser.msgBox(json);
+        var _instance_options__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4), _sheet_accessor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3), _row_index_cursor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7), _query_driver__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5), _unique_set__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(2), _process_query__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8), _utilities__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(0), _CONSTANTS__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1), TableProxy = function TableProxy() {
+            return {
+                mount: function mount(sheetNameOrOptions) {
+                    var _this = this;
+                    try {
+                        var instanceOptions = new _instance_options__WEBPACK_IMPORTED_MODULE_0__["a"](sheetNameOrOptions), sheetAccessor = new _sheet_accessor__WEBPACK_IMPORTED_MODULE_1__["a"](instanceOptions), rowIndexCursor = new _row_index_cursor__WEBPACK_IMPORTED_MODULE_2__["a"](sheetAccessor), recordsContainer = {}, api = {};
+                        return Object.defineProperty(api, "query", {
+                            enumerable: !0,
+                            configurable: !1,
+                            writable: !1,
+                            value: function(query) {
+                                var queryDriver = new _query_driver__WEBPACK_IMPORTED_MODULE_3__["a"](query, "query");
+                                queryDriver.writeToCursor = !0, queryDriver.withRecords = !0;
+                                var queryReturn = Object(_process_query__WEBPACK_IMPORTED_MODULE_5__["a"])(queryDriver, sheetAccessor, rowIndexCursor, instanceOptions);
+                                return recordsContainer = queryReturn.returnContainer.records, _this;
+                            }
+                        }), Object.defineProperty(api, "unique", {
+                            enumerable: !0,
+                            configurable: !1,
+                            writable: !1,
+                            value: function(columnName, attribute) {
+                                if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_6__["i"])(columnName) && !Object(_utilities__WEBPACK_IMPORTED_MODULE_6__["g"])(columnName)) throw new Error("unique method requires a string or number columnName");
+                                if (attribute && !Object(_utilities__WEBPACK_IMPORTED_MODULE_6__["c"])(attribute, _CONSTANTS__WEBPACK_IMPORTED_MODULE_7__["f"])) throw new Error("invalid data attribute specified: ".concat(attribute));
+                                var attr = attribute || "value", aggregator = new _unique_set__WEBPACK_IMPORTED_MODULE_4__["a"](), queryDriver = new _query_driver__WEBPACK_IMPORTED_MODULE_3__["a"](function(r) {
+                                    aggregator.push(r[columnName][attr]);
+                                }, "unique");
+                                return queryDriver.requestedAttributesSet.push(attr), Object(_process_query__WEBPACK_IMPORTED_MODULE_5__["a"])(queryDriver, sheetAccessor, rowIndexCursor, instanceOptions), 
+                                aggregator.values;
+                            }
+                        }), Object.defineProperty(api, "flush", {
+                            enumerable: !0,
+                            configurable: !1,
+                            writable: !1,
+                            value: function() {
+                                return rowIndexCursor.flush(), recordsContainer = {}, _this;
+                            }
+                        }), Object.defineProperty(api, "records", {
+                            enumerable: !0,
+                            get: function() {
+                                return recordsContainer;
+                            }
+                        }), Object.defineProperties(api, {
+                            setSheetName: {
+                                value: function(input) {
+                                    return instanceOptions.sheetName = input, api;
+                                }
+                            },
+                            setHeaderAnchorToken: {
+                                value: function(input) {
+                                    return instanceOptions.headerAnchorToken = input, api;
+                                }
+                            },
+                            setColumnFilter: {
+                                value: function(input) {
+                                    return instanceOptions.columnFilter = input, api;
+                                }
+                            },
+                            setExportAttributes: {
+                                value: function(input) {
+                                    return instanceOptions.exportAttributes = input, api;
+                                }
+                            },
+                            setExportOnlySelected: {
+                                value: function(input) {
+                                    return instanceOptions.exportOnlySelected = input, api;
+                                }
+                            },
+                            setWriteLevel: {
+                                value: function(input) {
+                                    return instanceOptions.writeLevel = input, api;
+                                }
+                            },
+                            setAutoResizeColumns: {
+                                value: function(input) {
+                                    return instanceOptions.autoResizeColumns = input, api;
+                                }
+                            },
+                            setComputedProperties: {
+                                value: function(input) {
+                                    return instanceOptions.computedProperties = input, api;
+                                }
+                            },
+                            setUniqueColumnId: {
+                                value: function(input) {
+                                    return instanceOptions.uniqueColumnId = input, api;
+                                }
+                            }
+                        }), api;
+                    } catch (e) {
+                        throw new Error("TableProxy.mount failed: ".concat(e));
+                    }
+                },
+                TOP: _CONSTANTS__WEBPACK_IMPORTED_MODULE_7__["g"],
+                BOTTOM: _CONSTANTS__WEBPACK_IMPORTED_MODULE_7__["a"],
+                WRITE_LEVEL_CELL: _CONSTANTS__WEBPACK_IMPORTED_MODULE_7__["i"],
+                WRITE_LEVEL_ROW: _CONSTANTS__WEBPACK_IMPORTED_MODULE_7__["j"],
+                WRITE_LEVEL_TABLE: _CONSTANTS__WEBPACK_IMPORTED_MODULE_7__["k"],
+                COLORS: _CONSTANTS__WEBPACK_IMPORTED_MODULE_7__["b"]
             };
         };
         global.TableProxy = TableProxy();
