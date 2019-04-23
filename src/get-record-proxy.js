@@ -53,6 +53,7 @@ export default function getRecordProxy(
       requestedAttributesSet.forEach(attribute => {
         Object.defineProperty(columnProxy, attribute, {
           enumerable: true,
+          configurable: false,
           get: () => {
             return dataController.getColumnByIndex(attribute, columnIndex);
           },
@@ -67,7 +68,12 @@ export default function getRecordProxy(
   });
 
   try {
-    Object.defineProperties(recordProxy, instanceOptions.computedProperties);
+    Object.keys(instanceOptions.computedProperties).forEach(key => {
+      recordProxy[key] = Object.defineProperty({}, 'value', {
+        enumerable: true,
+        get: instanceOptions.computedProperties[key].bind(recordProxy)
+      });
+    });
   } catch (e) {
     throw new Error(
       `there was a problem creating a record proxy with the specified computedProperties: ${e}`

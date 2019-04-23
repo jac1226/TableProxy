@@ -854,6 +854,7 @@ function TableProxy() {
                 requestedAttributesSet.forEach(function(attribute) {
                     Object.defineProperty(columnProxy, attribute, {
                         enumerable: !0,
+                        configurable: !1,
                         get: function() {
                             return dataController.getColumnByIndex(attribute, columnIndex);
                         },
@@ -865,7 +866,12 @@ function TableProxy() {
             }
         });
         try {
-            Object.defineProperties(recordProxy, instanceOptions.computedProperties);
+            Object.keys(instanceOptions.computedProperties).forEach(function(key) {
+                recordProxy[key] = Object.defineProperty({}, "value", {
+                    enumerable: !0,
+                    get: instanceOptions.computedProperties[key].bind(recordProxy)
+                });
+            });
         } catch (e) {
             throw new Error("there was a problem creating a record proxy with the specified computedProperties: ".concat(e));
         }
@@ -1000,8 +1006,7 @@ function TableProxy() {
                                     return instanceOptions.uniqueId = input, api;
                                 }
                             }
-                        }), instanceOptions.uniqueId && api.setUniqueId(instanceOptions.uniqueId), Browser.msgBox(JSON.stringify(instanceOptions.uniqueId)), 
-                        api;
+                        }), instanceOptions.uniqueId && api.setUniqueId(instanceOptions.uniqueId), api;
                     } catch (e) {
                         throw new Error("TableProxy.mount failed: ".concat(e));
                     }

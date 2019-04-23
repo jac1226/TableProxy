@@ -149,11 +149,6 @@ const TableProxy = () => {
         }
       });
 
-      Object.defineProperty(api, 'export', {
-        enumerable: true,
-        value
-      });
-
       /**
        * Establish options setters
        */
