@@ -9,7 +9,8 @@ import RowIndexCursor from './row-index-cursor';
 import QueryDriver from './query-driver';
 import UniqueSet from './unique-set';
 import processQuery from './process-query';
-import { isString, isNumeric, inArray, getTimeStamp } from './utilities';
+import processUniqueId from './process-unique-id';
+import { isString, isNumeric, inArray, getTimeStamp, getTimeDiff } from './utilities';
 
 import {
   TOP,
@@ -18,7 +19,8 @@ import {
   WRITE_LEVEL_ROW,
   WRITE_LEVEL_TABLE,
   COLORS,
-  SUPPORTED_ATTRIBUTES
+  SUPPORTED_ATTRIBUTES,
+  DEFAULT_ATTRIBUTE
 } from './CONSTANTS';
 
 const TableProxy = () => {
@@ -48,6 +50,7 @@ const TableProxy = () => {
           );
 
           recordsContainer = queryReturn.returnContainer.records;
+          Logger.log(queryReturn.logStamp);
           return this;
         }
       });
@@ -61,62 +64,70 @@ const TableProxy = () => {
             throw new Error(`unique method requires a string or number columnName`);
           }
           if (attribute && !inArray(attribute, SUPPORTED_ATTRIBUTES)) {
-            throw new Error(`invalid data attribute specified: ${attribute}`);
+            throw new Error(`unique method receieved invalid attribute: ${attribute}`);
           }
 
-          const attr = attribute || 'value';
+          const attr = attribute || DEFAULT_ATTRIBUTE;
           const aggregator = new UniqueSet();
           const queryDriver = new QueryDriver(r => {
             aggregator.push(r[columnName][attr]);
           }, 'unique');
           queryDriver.requestedAttributesSet.push(attr);
 
-          processQuery(queryDriver, sheetAccessor, rowIndexCursor, instanceOptions);
+          const queryReturn = processQuery(
+            queryDriver,
+            sheetAccessor,
+            rowIndexCursor,
+            instanceOptions
+          );
+
+          Logger.log(queryReturn.logStamp);
           return aggregator.values;
         }
       });
 
-      Object.defineProperty(api, 'setUniqueIdColumn', {
-        enumerable:true,
-        configurable:false,
-        value: columnName => {
-          const setUniqueIdColumnStartTime=getTimeStamp();
-
-          if(!isString(columnName) && !isNumeric(columnName)){
-            throw new Error(`setUniqueId method requires a string or number columnName`);
+      Object.defineProperty(api, 'testUniqueId', {
+        enumerable: true,
+        configurable: false,
+        value: input => {
+          const startTime = getTimeStamp();
+          const uniqueId = processUniqueId(input);
+          const columnIndex = sheetAccessor.getHeaderRow().indexOf(uniqueId.columnName);
+          if (columnIndex === -1) {
+            throw new Error(`uniqueIdColumnName ${uniqueId.columnName} is invalid.`);
           }
-  
-          var zeroIndexedColumnPosition=headerRowRetriever().indexOf(columnName);
-          if(zeroIndexedColumnPosition==-1){throw 'setUniqueId requires a valid column name';}
-  
-          /** Grab data from that column - map 2d array to 1d */
-          var columnData=sheetDataAccessor.value.getColumnByZeroIndex(zeroIndexedColumnPosition)
-          .map(function(item){return item[0];});
-  
+          const columnData = sheetAccessor[uniqueId.attribute]
+            .getRecordsColumn(columnIndex)
+            .map(i => {
+              return i[0];
+            });
           /**
-          * Begin testing of column data
-          * 1. Must be of ONLY one data type or indexing will not work - throw exception if not.
-          * 2. Non-null values MUST be unique or indexing will be ambiguous - throw exception if not.
-          */
-  
-          /** get unique values minus blank, throw exception if set does not have pure datatype*/
-          var uniqueValues=(new UniqueSet(columnData)).remove('');
-          //uniqueColumnValues.remove('');//**
-          if(!uniqueValues.pure){throw 'setUniqueId requires that the column have either all string or all integer data types';}
-  
-          /** get non null set of values including duplicates */
-          var nonBlankValueCount=columnData.filter(function(item){if(item!==''){return true;}}).length;
-  
-          /** throw exception if nonNullValueCount is not the same length as uniqueValues - implies duplicates*/
-          if(uniqueValues.length!==nonBlankValueCount){
-            throw 'setUniqueId requires that non-blank values are unique';
+           * Test column data
+           * 1. Must be of ONLY one data type or indexing will not work - throw exception if not.
+           * 2. Non-null values MUST be unique or indexing will be ambiguous - throw exception if not.
+           */
+          const uniqueNonBlankValues = new UniqueSet(columnData).remove('');
+          if (!uniqueNonBlankValues.pure) {
+            throw new Error(
+              `multiple data types exist in ${
+                uniqueId.columnName
+              }: ${uniqueNonBlankValues.holds.toString()}`
+            );
           }
-  
-          /** set uniqueIdColumn in instanceOptions */
-          instanceOptions.uniqueIdColumn=columnName;
-  
-          /** stop timer */
-          Logger.log('setUniqueIdColumn for sheet "'+instanceOptions.sheetName+'" completed in '+getTimeDiff(setUniqueIdColumnStartTime)+'ms');
+          const nonBlankValueCount = columnData.filter(item => {
+            return item !== '';
+          }).length;
+
+          if (uniqueNonBlankValues.length !== nonBlankValueCount) {
+            throw new Error(`Duplicates detected: non-blank values are not unique.`);
+          }
+
+          Logger.log(
+            `setUniqueIdColumn for sheet ${instanceOptions.sheetName} completed in ${getTimeDiff(
+              startTime
+            )}ms`
+          );
+          return true;
         }
       });
 
@@ -136,6 +147,11 @@ const TableProxy = () => {
         get: () => {
           return recordsContainer;
         }
+      });
+
+      Object.defineProperty(api, 'export', {
+        enumerable: true,
+        value
       });
 
       /**
@@ -190,13 +206,25 @@ const TableProxy = () => {
             return api;
           }
         },
-        setUniqueColumnId: {
+        setUniqueId: {
           value: input => {
-            instanceOptions.uniqueColumnId = input;
+            try {
+              api.testUniqueId(input);
+            } catch (e) {
+              throw new Error(`setUniqueId failed: ${e}.`);
+            }
+            instanceOptions.uniqueId = input;
             return api;
           }
         }
       });
+
+      /**
+       * Force instanceOptions.uniqueId through setUniqueId
+       */
+      if (instanceOptions.uniqueId) {
+        api.setUniqueId(instanceOptions.uniqueId);
+      }
 
       return api;
     } catch (e) {

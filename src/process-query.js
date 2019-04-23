@@ -9,7 +9,7 @@ import DataController from './data-controller';
 import RowIndexCursor from './row-index-cursor';
 import QueryReturn from './query-return';
 import getRecordProxy from './get-record-proxy';
-import simpleClone from './simple-clone';
+import clone from './simple-clone';
 
 export default function processQuery(queryDriver, sheetAccessor, rowIndexCursor, instanceOptions) {
   if (!(queryDriver instanceof QueryDriver)) {
@@ -59,7 +59,7 @@ export default function processQuery(queryDriver, sheetAccessor, rowIndexCursor,
     if (query(recordProxy)) {
       queryReturn.push(index);
       if (queryDriver.withRecords) {
-        queryReturn.returnContainer.records[index] = simpleClone(recordProxy);
+        queryReturn.returnContainer.records[index] = clone(recordProxy);
       }
     }
   });

@@ -26,6 +26,10 @@ export default class QueryReturn {
     return this.resultSet.length;
   }
 
+  get logStamp() {
+    return `${this.type} query "${this.query.toString()}" completed in ${this.queryDuration}ms`;
+  }
+
   push(input) {
     this.resultSet.push(input);
   }

@@ -41,3 +41,5 @@ export const SUPPORTED_ATTRIBUTES = [
   'fontfamily',
   'fontweight'
 ];
+
+export const DEFAULT_ATTRIBUTE = 'value';

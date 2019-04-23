@@ -7,23 +7,25 @@ import {
   DEFAULT_HEADER_ANCHOR,
   VALID_WRITE_LEVELS,
   DEFAULT_WRITE_LEVEL,
-  IS_TEST_MODE
+  IS_TEST_MODE,
+  DEFAULT_ATTRIBUTE
 } from './CONSTANTS';
 import { isSpreadsheet, isSheet } from './sheets-utilities';
-import simpleClone from './simple-clone';
-import { isString, isArray, isBoolean, isObject, isNumeric } from './utilities';
+import clone from './simple-clone';
+import processUniqueId from './process-unique-id';
+import { isString, isArray, isBoolean, isObject } from './utilities';
 
 export default class InstanceOptions {
   constructor(sheetNameOrOptions) {
     this.pvt_sheetName = null;
     this.pvt_headerAnchorToken = DEFAULT_HEADER_ANCHOR;
     this.pvt_columnFilter = [];
-    this.pvt_exportAttributes = ['value'];
+    this.pvt_exportAttributes = [DEFAULT_ATTRIBUTE];
     this.pvt_exportOnlySelected = true;
     this.pvt_writeLevel = DEFAULT_WRITE_LEVEL;
     this.pvt_autoResizeColumns = false;
     this.pvt_computedProperties = {};
-    this.pvt_uniqueColumnId = null;
+    this.pvt_uniqueId = null;
 
     this.pvt_spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
     this.pvt_sheet = null;
@@ -45,7 +47,7 @@ export default class InstanceOptions {
     try {
       this.pvt_sheet = this.pvt_spreadsheet.getSheetByName(input);
     } catch (e) {
-      throw new Error(`set sheetName exception: ${e}`);
+      throw new Error(`set sheetName exception: ${e}.`);
     }
     this.pvt_sheetName = input;
     return this.pvt_sheetName;
@@ -71,7 +73,7 @@ export default class InstanceOptions {
     if (!isArray(input)) {
       throw new TypeError(`columnFilter must be an array.`);
     }
-    this.pvt_columnFilter = simpleClone(input);
+    this.pvt_columnFilter = clone(input);
     return this.pvt_columnFilter;
   }
 
@@ -83,7 +85,7 @@ export default class InstanceOptions {
     if (!isArray(input)) {
       throw new TypeError(`exportAttributes must be an array.`);
     }
-    this.pvt_exportAttributes = simpleClone(input);
+    this.pvt_exportAttributes = clone(input);
     return this.pvt_exportAttributes;
   }
 
@@ -128,16 +130,13 @@ export default class InstanceOptions {
     return this.pvt_autoResizeColumns;
   }
 
-  get uniqueColumnId() {
-    return this.pvt_uniqueColumnId;
+  get uniqueId() {
+    return this.pvt_uniqueId;
   }
 
-  set uniqueColumnId(input) {
-    if (!isString(input) && !isNumeric(input)) {
-      throw new TypeError(`uniqueColumnId must be a string or number.`);
-    }
-    this.pvt_uniqueColumnId = input;
-    return this.pvt_uniqueColumnId;
+  set uniqueId(input) {
+    this.pvt_uniqueId = processUniqueId(input);
+    return this.pvt_uniqueId;
   }
 
   get computedProperties() {
@@ -146,7 +145,7 @@ export default class InstanceOptions {
 
   set computedProperties(input) {
     if (!isObject(input)) {
-      throw new TypeError(`computedProperties must be a property descriptor object`);
+      throw new TypeError(`computedProperties must be a property descriptor object.`);
     }
     this.pvt_computedProperties = input;
     return this.pvt_computedProperties;

@@ -93,6 +93,9 @@ export default class SheetAccessor {
       },
       getAllRecords: () => {
         return this.range.getAll(this.headerRowIndex, 0);
+      },
+      getRecordsColumn: columnIndex => {
+        return this.range.getColumn(columnIndex, this.headerRowIndex + 1);
       }
     };
 
