@@ -39,12 +39,7 @@ export default function processQuery(core, queryDriver) {
   /**
    * Build recordProxy
    */
-  const recordProxy = getRecordProxy(
-    core.heetAccessor,
-    core.dataController,
-    core.instanceOptions,
-    queryDriver.requestedAttributesSet
-  );
+  const recordProxy = getRecordProxy(core, dataController, queryDriver.requestedAttributesSet);
 
   /**
    * Get query from queryDriver and bind to recordProxy
@@ -54,7 +49,7 @@ export default function processQuery(core, queryDriver) {
   /**
    * Iterate through rowIndexCursor & apply query
    */
-  rowIndexCursor.forEach(index => {
+  core.rowIndexCursor.forEach(index => {
     dataController.setRowIndex(index);
     if (query(recordProxy)) {
       queryReturn.push(index);

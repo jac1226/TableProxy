@@ -12,20 +12,15 @@ import SheetAccessor from './sheet-accessor';
 import DataController from './data-controller';
 import InstanceOptions from './instance-options';
 
-export default function getRecordProxy(
-  sheetAccessor,
-  dataController,
-  instanceOptions,
-  requestedAttributesSet
-) {
-  if (!(sheetAccessor instanceof SheetAccessor)) {
+export default function getRecordProxy(core, dataController, requestedAttributesSet) {
+  if (!(core.sheetAccessor instanceof SheetAccessor)) {
     throw new Error(`getRecordProxy requires a SheetAccessor instance.`);
+  }
+  if (!(core.instanceOptions instanceof InstanceOptions)) {
+    throw new Error(`getRecordProxy requires an InstanceOptions instance.`);
   }
   if (!(dataController instanceof DataController)) {
     throw new Error(`getRecordProxy requires a DataController instance.`);
-  }
-  if (!(instanceOptions instanceof InstanceOptions)) {
-    throw new Error(`getRecordProxy requires an InstanceOptions instance.`);
   }
   if (!(requestedAttributesSet instanceof UniqueSet)) {
     throw new Error(
@@ -33,7 +28,7 @@ export default function getRecordProxy(
     );
   }
 
-  const { columnFilter } = instanceOptions;
+  const { columnFilter } = core.instanceOptions;
   function columnIsValid(column) {
     if (column === null || column === undefined) {
       return false;
@@ -46,7 +41,7 @@ export default function getRecordProxy(
 
   const recordProxy = {};
 
-  sheetAccessor.getHeaderRow().forEach((column, columnIndex) => {
+  core.sheetAccessor.getHeaderRow().forEach((column, columnIndex) => {
     if (columnIsValid(column)) {
       const columnProxy = {};
 
@@ -68,10 +63,10 @@ export default function getRecordProxy(
   });
 
   try {
-    Object.keys(instanceOptions.computedProperties).forEach(key => {
+    Object.keys(core.instanceOptions.computedProperties).forEach(key => {
       recordProxy[key] = Object.defineProperty({}, 'value', {
         enumerable: true,
-        get: instanceOptions.computedProperties[key].bind(recordProxy)
+        get: core.instanceOptions.computedProperties[key].bind(recordProxy)
       });
     });
   } catch (e) {

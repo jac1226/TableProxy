@@ -16,7 +16,7 @@ export default function getUnique(core, columnName, attribute) {
   if (attribute && !inArray(attribute, SUPPORTED_ATTRIBUTES)) {
     throw new Error(`unique method receieved invalid attribute: ${attribute}`);
   }
-  
+
   const attr = attribute || DEFAULT_ATTRIBUTE;
   const aggregator = new UniqueSet();
   const queryDriver = new QueryDriver(r => {
