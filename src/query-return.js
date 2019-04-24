@@ -3,9 +3,10 @@
  * @return {Object}
  */
 
-import { getTimeStamp, getTimeDiff } from './utilities';
 import UniqueSet from './unique-set';
 import QueryDriver from './query-driver';
+import RecordsContainer from './records-container';
+import { getTimeStamp, getTimeDiff } from './utilities';
 
 export default class QueryReturn {
   constructor(queryDriver) {
@@ -17,9 +18,7 @@ export default class QueryReturn {
     this.resultSet = new UniqueSet();
     this.queryStartTime = getTimeStamp();
     this.queryDuration = null;
-    this.returnContainer = {
-      records: {}
-    };
+    this.recordsContainer = new RecordsContainer();
   }
 
   get count() {

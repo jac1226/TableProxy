@@ -45,51 +45,8 @@ function TableProxy() {
         return __webpack_require__.d(getter, "a", getter), getter;
     }, __webpack_require__.o = function(object, property) {
         return Object.prototype.hasOwnProperty.call(object, property);
-    }, __webpack_require__.p = "", __webpack_require__(__webpack_require__.s = 10);
+    }, __webpack_require__.p = "", __webpack_require__(__webpack_require__.s = 13);
 }([ function(module, __webpack_exports__, __webpack_require__) {
-    "use strict";
-    __webpack_require__.d(__webpack_exports__, "d", function() {
-        return isArray;
-    }), __webpack_require__.d(__webpack_exports__, "i", function() {
-        return isString;
-    }), __webpack_require__.d(__webpack_exports__, "g", function() {
-        return isNumeric;
-    }), __webpack_require__.d(__webpack_exports__, "f", function() {
-        return isFunction;
-    }), __webpack_require__.d(__webpack_exports__, "h", function() {
-        return isObject;
-    }), __webpack_require__.d(__webpack_exports__, "e", function() {
-        return isBoolean;
-    }), __webpack_require__.d(__webpack_exports__, "c", function() {
-        return inArray;
-    }), __webpack_require__.d(__webpack_exports__, "b", function() {
-        return getTimeStamp;
-    }), __webpack_require__.d(__webpack_exports__, "a", function() {
-        return getTimeDiff;
-    });
-    __webpack_require__(1);
-    var isArray = function isArray(input) {
-        return "[object Array]" === toString.call(input);
-    }, isString = function isString(input) {
-        return "[object String]" === toString.call(input);
-    }, isNumeric = function isNumeric(input) {
-        return "[object Number]" === toString.call(input);
-    }, isFunction = function isFunction(input) {
-        return "[object Function]" === toString.call(input);
-    }, isObject = function isObject(input) {
-        return "[object Object]" === toString.call(input);
-    }, isBoolean = function isBoolean(input) {
-        return "[object Boolean]" === toString.call(input);
-    }, inArray = function inArray(needle, haystack) {
-        return -1 !== haystack.indexOf(needle);
-    }, getTimeStamp = function getTimeStamp(precision) {
-        var time = new Date().getTime();
-        return precision ? time.toFixed(precision) : time;
-    }, getTimeDiff = function getTimeDiff(oldTime, precision) {
-        var newTime = getTimeStamp();
-        return precision ? (newTime - oldTime).toFixed(precision) : newTime - oldTime;
-    };
-}, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
     __webpack_require__.d(__webpack_exports__, "f", function() {
         return IS_TEST_MODE;
@@ -131,6 +88,49 @@ function TableProxy() {
         YELLOW: "yellow",
         LIGHT_GREY: "#E5DEDE"
     }, SUPPORTED_ATTRIBUTES = [ "value", "background", "fontcolor", "note", "fontsize", "fontstyle", "fontfamily", "fontweight" ], DEFAULT_ATTRIBUTE = "value";
+}, function(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
+    __webpack_require__.d(__webpack_exports__, "d", function() {
+        return isArray;
+    }), __webpack_require__.d(__webpack_exports__, "i", function() {
+        return isString;
+    }), __webpack_require__.d(__webpack_exports__, "g", function() {
+        return isNumeric;
+    }), __webpack_require__.d(__webpack_exports__, "f", function() {
+        return isFunction;
+    }), __webpack_require__.d(__webpack_exports__, "h", function() {
+        return isObject;
+    }), __webpack_require__.d(__webpack_exports__, "e", function() {
+        return isBoolean;
+    }), __webpack_require__.d(__webpack_exports__, "c", function() {
+        return inArray;
+    }), __webpack_require__.d(__webpack_exports__, "b", function() {
+        return getTimeStamp;
+    }), __webpack_require__.d(__webpack_exports__, "a", function() {
+        return getTimeDiff;
+    });
+    __webpack_require__(0);
+    var isArray = function isArray(input) {
+        return "[object Array]" === toString.call(input);
+    }, isString = function isString(input) {
+        return "[object String]" === toString.call(input);
+    }, isNumeric = function isNumeric(input) {
+        return "[object Number]" === toString.call(input);
+    }, isFunction = function isFunction(input) {
+        return "[object Function]" === toString.call(input);
+    }, isObject = function isObject(input) {
+        return "[object Object]" === toString.call(input);
+    }, isBoolean = function isBoolean(input) {
+        return "[object Boolean]" === toString.call(input);
+    }, inArray = function inArray(needle, haystack) {
+        return -1 !== haystack.indexOf(needle);
+    }, getTimeStamp = function getTimeStamp(precision) {
+        var time = new Date().getTime();
+        return precision ? time.toFixed(precision) : time;
+    }, getTimeDiff = function getTimeDiff(oldTime, precision) {
+        var newTime = getTimeStamp();
+        return precision ? (newTime - oldTime).toFixed(precision) : newTime - oldTime;
+    };
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
     function _defineProperties(target, props) {
@@ -268,7 +268,7 @@ function TableProxy() {
     __webpack_require__.d(__webpack_exports__, "a", function() {
         return SheetAccessor;
     });
-    var _instance_options__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4), _utilities__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(0);
+    var _instance_options__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4), _utilities__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
     function _toConsumableArray(arr) {
         return function _arrayWithoutHoles(arr) {
             if (Array.isArray(arr)) {
@@ -381,24 +381,10 @@ function TableProxy() {
     };
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
-    var CONSTANTS = __webpack_require__(1);
-    function _typeof(obj) {
-        return (_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function _typeof(obj) {
-            return typeof obj;
-        } : function _typeof(obj) {
-            return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-        })(obj);
-    }
-    function getSheetsObjectType(input) {
-        var returnType;
-        if ("object" === _typeof(input)) try {
-            returnType = input.getGibberish();
-        } catch (e) {
-            returnType = e.message.split(" object ")[1].replace(".", "");
-        }
-        return returnType;
-    }
-    var simple_clone = __webpack_require__(5), process_unique_id = __webpack_require__(7), utilities = __webpack_require__(0);
+    __webpack_require__.d(__webpack_exports__, "a", function() {
+        return InstanceOptions;
+    });
+    var _CONSTANTS__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0), _sheets_utilities__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6), _clone__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7), _utilities__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1);
     function _defineProperties(target, props) {
         for (var i = 0; i < props.length; i++) {
             var descriptor = props[i];
@@ -406,17 +392,14 @@ function TableProxy() {
             "value" in descriptor && (descriptor.writable = !0), Object.defineProperty(target, descriptor.key, descriptor);
         }
     }
-    __webpack_require__.d(__webpack_exports__, "a", function() {
-        return instance_options_InstanceOptions;
-    });
-    var instance_options_InstanceOptions = function() {
+    var InstanceOptions = function() {
         function InstanceOptions(sheetNameOrOptions) {
             !function _classCallCheck(instance, Constructor) {
                 if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
-            }(this, InstanceOptions), this.pvt_sheetName = null, this.pvt_headerAnchorToken = CONSTANTS["d"], 
-            this.pvt_columnFilter = [], this.pvt_exportAttributes = [ CONSTANTS["c"] ], this.pvt_exportOnlySelected = !0, 
-            this.pvt_writeLevel = CONSTANTS["e"], this.pvt_autoResizeColumns = !1, this.pvt_computedProperties = {}, 
-            this.pvt_uniqueId = null, this.pvt_spreadsheet = SpreadsheetApp.getActiveSpreadsheet(), 
+            }(this, InstanceOptions), this.pvt_sheetName = null, this.pvt_headerAnchorToken = _CONSTANTS__WEBPACK_IMPORTED_MODULE_0__["d"], 
+            this.pvt_columnFilter = [], this.pvt_exportAttributes = [ _CONSTANTS__WEBPACK_IMPORTED_MODULE_0__["c"] ], 
+            this.pvt_exportOnlySelected = !0, this.pvt_writeLevel = _CONSTANTS__WEBPACK_IMPORTED_MODULE_0__["e"], 
+            this.pvt_autoResizeColumns = !1, this.pvt_computedProperties = {}, this.pvt_spreadsheet = SpreadsheetApp.getActiveSpreadsheet(), 
             this.pvt_sheet = null, this.processInput(sheetNameOrOptions);
         }
         return function _createClass(Constructor, protoProps, staticProps) {
@@ -425,9 +408,7 @@ function TableProxy() {
         }(InstanceOptions, [ {
             key: "sheetIsSet",
             value: function() {
-                return !!CONSTANTS["f"] || function isSheet(input) {
-                    return "Sheet" === getSheetsObjectType(input);
-                }(this.pvt_sheet);
+                return !!_CONSTANTS__WEBPACK_IMPORTED_MODULE_0__["f"] || Object(_sheets_utilities__WEBPACK_IMPORTED_MODULE_1__["a"])(this.pvt_sheet);
             }
         }, {
             key: "processInput",
@@ -457,7 +438,7 @@ function TableProxy() {
                 return this.pvt_sheetName;
             },
             set: function(input) {
-                if (!Object(utilities["i"])(input)) throw new TypeError("sheetName must be a string.");
+                if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["i"])(input)) throw new TypeError("sheetName must be a string.");
                 if (this.pvt_sheet) throw new Error("sheetName was already set to ".concat(this.pvt_sheetName, " and cannot be changed."));
                 try {
                     this.pvt_sheet = this.pvt_spreadsheet.getSheetByName(input);
@@ -472,7 +453,7 @@ function TableProxy() {
                 return this.pvt_headerAnchorToken;
             },
             set: function(input) {
-                if (!Object(utilities["i"])(input)) throw new TypeError("headerAnchorToken must be a string.");
+                if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["i"])(input)) throw new TypeError("headerAnchorToken must be a string.");
                 return this.pvt_headerAnchorToken = input, this.pvt_headerAnchorToken;
             }
         }, {
@@ -481,8 +462,9 @@ function TableProxy() {
                 return this.pvt_columnFilter;
             },
             set: function(input) {
-                if (!Object(utilities["d"])(input)) throw new TypeError("columnFilter must be an array.");
-                return this.pvt_columnFilter = Object(simple_clone["a"])(input), this.pvt_columnFilter;
+                if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["d"])(input)) throw new TypeError("columnFilter must be an array.");
+                return this.pvt_columnFilter = Object(_clone__WEBPACK_IMPORTED_MODULE_2__["a"])(input), 
+                this.pvt_columnFilter;
             }
         }, {
             key: "exportAttributes",
@@ -490,8 +472,9 @@ function TableProxy() {
                 return this.pvt_exportAttributes;
             },
             set: function(input) {
-                if (!Object(utilities["d"])(input)) throw new TypeError("exportAttributes must be an array.");
-                return this.pvt_exportAttributes = Object(simple_clone["a"])(input), this.pvt_exportAttributes;
+                if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["d"])(input)) throw new TypeError("exportAttributes must be an array.");
+                return this.pvt_exportAttributes = Object(_clone__WEBPACK_IMPORTED_MODULE_2__["a"])(input), 
+                this.pvt_exportAttributes;
             }
         }, {
             key: "exportOnlySelected",
@@ -499,7 +482,7 @@ function TableProxy() {
                 return this.pvt_exportOnlySelected;
             },
             set: function(input) {
-                if (!Object(utilities["e"])(input)) throw new TypeError("exportOnlySelected must be a boolean.");
+                if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["e"])(input)) throw new TypeError("exportOnlySelected must be a boolean.");
                 return this.pvt_exportOnlySelected = input, this.pvt_exportOnlySelected;
             }
         }, {
@@ -508,8 +491,8 @@ function TableProxy() {
                 return this.pvt_writeLevel;
             },
             set: function(input) {
-                if (!Object(utilities["i"])(input)) throw new TypeError("exportOnlySelected must be a string.");
-                if (-1 === CONSTANTS["i"].indexOf(input)) throw new Error("writeLevel must be one of ".concat(CONSTANTS["i"].toString(), " received ").concat(input));
+                if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["i"])(input)) throw new TypeError("exportOnlySelected must be a string.");
+                if (-1 === _CONSTANTS__WEBPACK_IMPORTED_MODULE_0__["i"].indexOf(input)) throw new Error("writeLevel must be one of ".concat(_CONSTANTS__WEBPACK_IMPORTED_MODULE_0__["i"].toString(), " received ").concat(input));
                 return this.pvt_writeLevel = input, this.pvt_writeLevel;
             }
         }, {
@@ -518,16 +501,8 @@ function TableProxy() {
                 return this.pvt_autoResizeColumns;
             },
             set: function(input) {
-                if (!Object(utilities["e"])(input)) throw new TypeError("autoResizeColumns must be a boolean.");
+                if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["e"])(input)) throw new TypeError("autoResizeColumns must be a boolean.");
                 return this.pvt_autoResizeColumns = input, this.pvt_autoResizeColumns;
-            }
-        }, {
-            key: "uniqueId",
-            get: function() {
-                return this.pvt_uniqueId;
-            },
-            set: function(input) {
-                return this.pvt_uniqueId = Object(process_unique_id["a"])(input), this.pvt_uniqueId;
             }
         }, {
             key: "computedProperties",
@@ -535,15 +510,13 @@ function TableProxy() {
                 return this.pvt_computedProperties;
             },
             set: function(input) {
-                if (!Object(utilities["h"])(input)) throw new TypeError("computedProperties must be a property descriptor object.");
+                if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["h"])(input)) throw new TypeError("computedProperties must be a property descriptor object.");
                 return this.pvt_computedProperties = input, this.pvt_computedProperties;
             }
         }, {
             key: "spreadsheet",
             set: function(input) {
-                if (!CONSTANTS["f"] && !function isSpreadsheet(input) {
-                    return "Spreadsheet" === getSheetsObjectType(input);
-                }(input)) throw new TypeError("spreadsheet must be a spreadsheet object.");
+                if (!_CONSTANTS__WEBPACK_IMPORTED_MODULE_0__["f"] && !Object(_sheets_utilities__WEBPACK_IMPORTED_MODULE_1__["b"])(input)) throw new TypeError("spreadsheet must be a spreadsheet object.");
                 return this.pvt_spreadsheet = input, this.pvt_spreadsheet;
             }
         }, {
@@ -553,6 +526,77 @@ function TableProxy() {
             }
         } ]), InstanceOptions;
     }();
+}, function(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
+    __webpack_require__.d(__webpack_exports__, "a", function() {
+        return QueryDriver;
+    });
+    var _unique_set__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2), _CONSTANTS__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(0), _utilities__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1);
+    function _defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+            var descriptor = props[i];
+            descriptor.enumerable = descriptor.enumerable || !1, descriptor.configurable = !0, 
+            "value" in descriptor && (descriptor.writable = !0), Object.defineProperty(target, descriptor.key, descriptor);
+        }
+    }
+    var QueryDriver = function() {
+        function QueryDriver(query, type) {
+            !function _classCallCheck(instance, Constructor) {
+                if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
+            }(this, QueryDriver), this.query = null, this.type = type.toUpperCase(), this.writeToCursor = !1, 
+            this.withRecords = !1, this.requestedAttributesSet = new _unique_set__WEBPACK_IMPORTED_MODULE_0__["a"](), 
+            this.loadQuery(query);
+        }
+        return function _createClass(Constructor, protoProps, staticProps) {
+            return protoProps && _defineProperties(Constructor.prototype, protoProps), staticProps && _defineProperties(Constructor, staticProps), 
+            Constructor;
+        }(QueryDriver, [ {
+            key: "loadQuery",
+            value: function(query) {
+                var _this = this;
+                if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_2__["f"])(query)) throw new TypeError("loadQuery requires accepts a function callback");
+                var queryAsString = (this.query = query).toString();
+                _CONSTANTS__WEBPACK_IMPORTED_MODULE_1__["g"].forEach(function(attribute) {
+                    var re1 = new RegExp("[[]{1}['|\"]{1}".concat(attribute, "['|\"]{1}[]]{1}"), "g"), re2 = new RegExp("[.]{1}".concat(attribute, "[^a-zA-Z0-9]"), "g");
+                    (re1.test(queryAsString) || re2.test(queryAsString)) && _this.requestedAttributesSet.push(attribute);
+                });
+            }
+        } ]), QueryDriver;
+    }();
+}, function(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
+    function _typeof(obj) {
+        return (_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function _typeof(obj) {
+            return typeof obj;
+        } : function _typeof(obj) {
+            return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+        })(obj);
+    }
+    function getSheetsObjectType(input) {
+        var returnType;
+        if ("object" === _typeof(input)) try {
+            returnType = input.getGibberish();
+        } catch (e) {
+            returnType = e.message.split(" object ")[1].replace(".", "");
+        }
+        return returnType;
+    }
+    function isSpreadsheet(input) {
+        return "Spreadsheet" === getSheetsObjectType(input);
+    }
+    function isSheet(input) {
+        return "Sheet" === getSheetsObjectType(input);
+    }
+    function log(input) {
+        Logger.log(input);
+    }
+    __webpack_require__.d(__webpack_exports__, "b", function() {
+        return isSpreadsheet;
+    }), __webpack_require__.d(__webpack_exports__, "a", function() {
+        return isSheet;
+    }), __webpack_require__.d(__webpack_exports__, "c", function() {
+        return log;
+    });
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
     function clone(input) {
@@ -593,71 +637,9 @@ function TableProxy() {
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
     __webpack_require__.d(__webpack_exports__, "a", function() {
-        return QueryDriver;
-    });
-    var _unique_set__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2), _CONSTANTS__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1), _utilities__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(0);
-    function _defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-            var descriptor = props[i];
-            descriptor.enumerable = descriptor.enumerable || !1, descriptor.configurable = !0, 
-            "value" in descriptor && (descriptor.writable = !0), Object.defineProperty(target, descriptor.key, descriptor);
-        }
-    }
-    var QueryDriver = function() {
-        function QueryDriver(query, type) {
-            !function _classCallCheck(instance, Constructor) {
-                if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
-            }(this, QueryDriver), this.query = null, this.type = type.toUpperCase(), this.writeToCursor = !1, 
-            this.withRecords = !1, this.requestedAttributesSet = new _unique_set__WEBPACK_IMPORTED_MODULE_0__["a"](), 
-            this.loadQuery(query);
-        }
-        return function _createClass(Constructor, protoProps, staticProps) {
-            return protoProps && _defineProperties(Constructor.prototype, protoProps), staticProps && _defineProperties(Constructor, staticProps), 
-            Constructor;
-        }(QueryDriver, [ {
-            key: "loadQuery",
-            value: function(query) {
-                var _this = this;
-                if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_2__["f"])(query)) throw new TypeError("loadQuery requires accepts a function callback");
-                var queryAsString = (this.query = query).toString();
-                _CONSTANTS__WEBPACK_IMPORTED_MODULE_1__["g"].forEach(function(attribute) {
-                    var re1 = new RegExp("[[]{1}['|\"]{1}".concat(attribute, "['|\"]{1}[]]{1}"), "g"), re2 = new RegExp("[.]{1}".concat(attribute, "[^a-zA-Z0-9]"), "g");
-                    (re1.test(queryAsString) || re2.test(queryAsString)) && _this.requestedAttributesSet.push(attribute);
-                });
-            }
-        } ]), QueryDriver;
-    }();
-}, function(module, __webpack_exports__, __webpack_require__) {
-    "use strict";
-    __webpack_require__.d(__webpack_exports__, "a", function() {
-        return processUniqueId;
-    });
-    var _simple_clone__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5), _utilities__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(0), _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1);
-    function _extends() {
-        return (_extends = Object.assign || function(target) {
-            for (var i = 1; i < arguments.length; i++) {
-                var source = arguments[i];
-                for (var key in source) Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
-            }
-            return target;
-        }).apply(this, arguments);
-    }
-    function processUniqueId(input) {
-        if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_1__["h"])(input)) throw new TypeError("uniqueId must be an object.");
-        if (!Object.hasOwnProperty.call(input, "columnName")) throw new TypeError("uniqueId must be an object with columnName property.");
-        if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_1__["i"])(input.columnName) && !Object(_utilities__WEBPACK_IMPORTED_MODULE_1__["g"])(input.columnName)) throw new TypeError("uniqueId.columnName must be a string or number.");
-        if (Object.hasOwnProperty.call(input, "attribute") && !Object(_utilities__WEBPACK_IMPORTED_MODULE_1__["c"])(input.attribute, _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["g"])) throw new TypeError("uniqueId.attribute must be a supported attribute.");
-        return _extends({
-            columnName: null,
-            attribute: _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["c"]
-        }, Object(_simple_clone__WEBPACK_IMPORTED_MODULE_0__["a"])(input));
-    }
-}, function(module, __webpack_exports__, __webpack_require__) {
-    "use strict";
-    __webpack_require__.d(__webpack_exports__, "a", function() {
         return RowIndexCursor;
     });
-    var _utilities__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0), _unique_set__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2), _sheet_accessor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3);
+    var _utilities__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1), _unique_set__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2), _sheet_accessor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3);
     function _defineProperties(target, props) {
         for (var i = 0; i < props.length; i++) {
             var descriptor = props[i];
@@ -735,7 +717,33 @@ function TableProxy() {
     }();
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
-    var query_driver = __webpack_require__(6), sheet_accessor = __webpack_require__(3), CONSTANTS = __webpack_require__(1), instance_options = __webpack_require__(4), unique_set = __webpack_require__(2);
+    function _extends() {
+        return (_extends = Object.assign || function(target) {
+            for (var i = 1; i < arguments.length; i++) {
+                var source = arguments[i];
+                for (var key in source) Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+            }
+            return target;
+        }).apply(this, arguments);
+    }
+    function RecordsContainer() {}
+    __webpack_require__.d(__webpack_exports__, "a", function() {
+        return RecordsContainer;
+    }), (RecordsContainer.prototype = {}).index = -1, RecordsContainer.prototype.push = function(value, index) {
+        return index === undefined ? this[this.prototype.index += 1] = value : this[index] = value, 
+        this;
+    }, RecordsContainer.prototype.flush = function() {
+        var self = this;
+        return Object.keys(this).forEach(function(index) {
+            delete self[index];
+        }), this;
+    }, RecordsContainer.prototype.absorb = function(input) {
+        if (!(input instanceof RecordsContainer)) throw new Error("shit");
+        return this.flush(), _extends(this, input), this;
+    };
+}, function(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
+    var query_driver = __webpack_require__(5), sheet_accessor = __webpack_require__(3), CONSTANTS = __webpack_require__(0), instance_options = __webpack_require__(4), unique_set = __webpack_require__(2);
     function _defineProperties(target, props) {
         for (var i = 0; i < props.length; i++) {
             var descriptor = props[i];
@@ -795,7 +803,7 @@ function TableProxy() {
                 }), this.pvt_changedAttributes.flush()), this.pvt_instanceOptions.writeLevel === CONSTANTS["k"] && this.writeCurrentRow();
             }
         } ]), DataController;
-    }(), row_index_cursor = __webpack_require__(8), utilities = __webpack_require__(0);
+    }(), row_index_cursor = __webpack_require__(8), records_container = __webpack_require__(9), utilities = __webpack_require__(1);
     function query_return_defineProperties(target, props) {
         for (var i = 0; i < props.length; i++) {
             var descriptor = props[i];
@@ -809,9 +817,7 @@ function TableProxy() {
                 if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
             }(this, QueryReturn), !(queryDriver instanceof query_driver["a"])) throw new TypeError("QueryResult constructor requires QueryDriver input.");
             this.query = queryDriver.query, this.type = queryDriver.type, this.resultSet = new unique_set["a"](), 
-            this.queryStartTime = Object(utilities["b"])(), this.queryDuration = null, this.returnContainer = {
-                records: {}
-            };
+            this.queryStartTime = Object(utilities["b"])(), this.queryDuration = null, this.recordsContainer = new records_container["a"]();
         }
         return function query_return_createClass(Constructor, protoProps, staticProps) {
             return protoProps && query_return_defineProperties(Constructor.prototype, protoProps), 
@@ -877,7 +883,7 @@ function TableProxy() {
         }
         return recordProxy;
     }
-    var simple_clone = __webpack_require__(5);
+    var clone = __webpack_require__(7);
     function processQuery(queryDriver, sheetAccessor, rowIndexCursor, instanceOptions) {
         if (!(queryDriver instanceof query_driver["a"])) throw new Error("queryProcessor requires a QueryDriver instance.");
         if (!(sheetAccessor instanceof sheet_accessor["a"])) throw new Error("queryProcessor requires a SheetAccessor instance.");
@@ -885,7 +891,7 @@ function TableProxy() {
         var queryReturn = new query_return_QueryReturn(queryDriver), dataController = new data_controller_DataController(sheetAccessor, instanceOptions, queryDriver.requestedAttributesSet), recordProxy = getRecordProxy(sheetAccessor, dataController, instanceOptions, queryDriver.requestedAttributesSet), query = queryDriver.query.bind(recordProxy);
         return rowIndexCursor.forEach(function(index) {
             dataController.setRowIndex(index), query(recordProxy) && (queryReturn.push(index), 
-            queryDriver.withRecords && (queryReturn.returnContainer.records[index] = Object(simple_clone["a"])(recordProxy)));
+            queryDriver.withRecords && queryReturn.recordsContainer.push(Object(clone["a"])(recordProxy), index));
         }), dataController.capWrite(), queryDriver.writeToCursor && rowIndexCursor.consumeSelection(queryReturn.resultSet), 
         instanceOptions.autoResizeColumns && sheetAccessor.resizeColumns(), queryReturn.done();
     }
@@ -894,66 +900,69 @@ function TableProxy() {
     });
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
+    __webpack_require__.d(__webpack_exports__, "a", function() {
+        return getUniqueDescriptor;
+    });
+    var _unique_set__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2), _query_driver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5), _process_query__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(10), _utilities__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1), _CONSTANTS__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(0), _sheets_utilities__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6);
+    function getUniqueDescriptor(sheetAccessor, rowIndexCursor, instanceOptions) {
+        return {
+            enumerable: !0,
+            configurable: !1,
+            value: function(columnName, attribute) {
+                if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["i"])(columnName) && !Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["g"])(columnName)) throw new Error("unique method requires a string or number columnName");
+                if (attribute && !Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["c"])(attribute, _CONSTANTS__WEBPACK_IMPORTED_MODULE_4__["g"])) throw new Error("unique method receieved invalid attribute: ".concat(attribute));
+                var attr = attribute || _CONSTANTS__WEBPACK_IMPORTED_MODULE_4__["c"], aggregator = new _unique_set__WEBPACK_IMPORTED_MODULE_0__["a"](), queryDriver = new _query_driver__WEBPACK_IMPORTED_MODULE_1__["a"](function(r) {
+                    aggregator.push(r[columnName][attr]);
+                }, "unique");
+                queryDriver.requestedAttributesSet.push(attr);
+                var queryReturn = Object(_process_query__WEBPACK_IMPORTED_MODULE_2__["a"])(queryDriver, sheetAccessor, rowIndexCursor, instanceOptions);
+                return Object(_sheets_utilities__WEBPACK_IMPORTED_MODULE_5__["c"])(queryReturn.logStamp), 
+                aggregator.values;
+            }
+        };
+    }
+}, function(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
+    __webpack_require__.d(__webpack_exports__, "a", function() {
+        return getQueryDescriptor;
+    });
+    var _query_driver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5), _process_query__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(10), _sheets_utilities__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6);
+    function getQueryDescriptor(api, mainRecordsContainer, sheetAccessor, rowIndexCursor, instanceOptions) {
+        return {
+            enumerable: !0,
+            configurable: !1,
+            writable: !1,
+            value: function(query) {
+                var queryDriver = new _query_driver__WEBPACK_IMPORTED_MODULE_0__["a"](query, "query");
+                queryDriver.writeToCursor = !0, queryDriver.withRecords = !0;
+                var queryReturn = Object(_process_query__WEBPACK_IMPORTED_MODULE_1__["a"])(queryDriver, sheetAccessor, rowIndexCursor, instanceOptions);
+                return mainRecordsContainer.absorb(queryReturn.returnContainer.records), Object(_sheets_utilities__WEBPACK_IMPORTED_MODULE_2__["c"])(queryReturn.logStamp), 
+                api;
+            }
+        };
+    }
+}, function(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
     __webpack_require__.r(__webpack_exports__), function(global) {
-        var _instance_options__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4), _sheet_accessor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3), _row_index_cursor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8), _query_driver__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6), _unique_set__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(2), _process_query__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9), _process_unique_id__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(7), _utilities__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(0), _CONSTANTS__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1), TableProxy = function TableProxy() {
+        var _instance_options__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4), _sheet_accessor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3), _row_index_cursor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8), _records_container__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(9), _api_method_unique__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(11), _api_method_query__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(12), _CONSTANTS__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(0), TableProxy = function TableProxy() {
             return {
                 mount: function mount(sheetNameOrOptions) {
                     var _this = this;
                     try {
-                        var instanceOptions = new _instance_options__WEBPACK_IMPORTED_MODULE_0__["a"](sheetNameOrOptions), sheetAccessor = new _sheet_accessor__WEBPACK_IMPORTED_MODULE_1__["a"](instanceOptions), rowIndexCursor = new _row_index_cursor__WEBPACK_IMPORTED_MODULE_2__["a"](sheetAccessor), recordsContainer = {}, api = {};
-                        return Object.defineProperty(api, "query", {
-                            enumerable: !0,
-                            configurable: !1,
-                            writable: !1,
-                            value: function(query) {
-                                var queryDriver = new _query_driver__WEBPACK_IMPORTED_MODULE_3__["a"](query, "query");
-                                queryDriver.writeToCursor = !0, queryDriver.withRecords = !0;
-                                var queryReturn = Object(_process_query__WEBPACK_IMPORTED_MODULE_5__["a"])(queryDriver, sheetAccessor, rowIndexCursor, instanceOptions);
-                                return recordsContainer = queryReturn.returnContainer.records, Logger.log(queryReturn.logStamp), 
-                                _this;
-                            }
-                        }), Object.defineProperty(api, "unique", {
-                            enumerable: !0,
-                            configurable: !1,
-                            writable: !1,
-                            value: function(columnName, attribute) {
-                                if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_7__["i"])(columnName) && !Object(_utilities__WEBPACK_IMPORTED_MODULE_7__["g"])(columnName)) throw new Error("unique method requires a string or number columnName");
-                                if (attribute && !Object(_utilities__WEBPACK_IMPORTED_MODULE_7__["c"])(attribute, _CONSTANTS__WEBPACK_IMPORTED_MODULE_8__["g"])) throw new Error("unique method receieved invalid attribute: ".concat(attribute));
-                                var attr = attribute || _CONSTANTS__WEBPACK_IMPORTED_MODULE_8__["c"], aggregator = new _unique_set__WEBPACK_IMPORTED_MODULE_4__["a"](), queryDriver = new _query_driver__WEBPACK_IMPORTED_MODULE_3__["a"](function(r) {
-                                    aggregator.push(r[columnName][attr]);
-                                }, "unique");
-                                queryDriver.requestedAttributesSet.push(attr);
-                                var queryReturn = Object(_process_query__WEBPACK_IMPORTED_MODULE_5__["a"])(queryDriver, sheetAccessor, rowIndexCursor, instanceOptions);
-                                return Logger.log(queryReturn.logStamp), aggregator.values;
-                            }
-                        }), Object.defineProperty(api, "testUniqueId", {
-                            enumerable: !0,
-                            configurable: !1,
-                            value: function(input) {
-                                var startTime = Object(_utilities__WEBPACK_IMPORTED_MODULE_7__["b"])(), uniqueId = Object(_process_unique_id__WEBPACK_IMPORTED_MODULE_6__["a"])(input), columnIndex = sheetAccessor.getHeaderRow().indexOf(uniqueId.columnName);
-                                if (-1 === columnIndex) throw new Error("uniqueIdColumnName ".concat(uniqueId.columnName, " is invalid."));
-                                var columnData = sheetAccessor[uniqueId.attribute].getRecordsColumn(columnIndex).map(function(i) {
-                                    return i[0];
-                                }), uniqueNonBlankValues = new _unique_set__WEBPACK_IMPORTED_MODULE_4__["a"](columnData).remove("");
-                                if (!uniqueNonBlankValues.pure) throw new Error("multiple data types exist in ".concat(uniqueId.columnName, ": ").concat(uniqueNonBlankValues.holds.toString()));
-                                var nonBlankValueCount = columnData.filter(function(item) {
-                                    return "" !== item;
-                                }).length;
-                                if (uniqueNonBlankValues.length !== nonBlankValueCount) throw new Error("Duplicates detected: non-blank values are not unique.");
-                                return Logger.log("setUniqueIdColumn for sheet ".concat(instanceOptions.sheetName, " completed in ").concat(Object(_utilities__WEBPACK_IMPORTED_MODULE_7__["a"])(startTime), "ms")), 
-                                !0;
-                            }
-                        }), Object.defineProperty(api, "flush", {
+                        var instanceOptions = new _instance_options__WEBPACK_IMPORTED_MODULE_0__["a"](sheetNameOrOptions), sheetAccessor = new _sheet_accessor__WEBPACK_IMPORTED_MODULE_1__["a"](instanceOptions), rowIndexCursor = new _row_index_cursor__WEBPACK_IMPORTED_MODULE_2__["a"](sheetAccessor), mainRecordsContainer = new _records_container__WEBPACK_IMPORTED_MODULE_3__["a"](), api = {};
+                        return Object.defineProperty(api, "query", Object(_api_method_query__WEBPACK_IMPORTED_MODULE_5__["a"])(api, mainRecordsContainer, sheetAccessor, rowIndexCursor, instanceOptions)), 
+                        Object.defineProperty(api, "unique", Object(_api_method_unique__WEBPACK_IMPORTED_MODULE_4__["a"])(sheetAccessor, rowIndexCursor, instanceOptions)), 
+                        Object.defineProperty(api, "flush", {
                             enumerable: !0,
                             configurable: !1,
                             writable: !1,
                             value: function() {
-                                return rowIndexCursor.flush(), recordsContainer = {}, _this;
+                                return rowIndexCursor.flush(), mainRecordsContainer.flush(), _this;
                             }
                         }), Object.defineProperty(api, "records", {
                             enumerable: !0,
                             get: function() {
-                                return recordsContainer;
+                                return mainRecordsContainer;
                             }
                         }), Object.defineProperties(api, {
                             setSheetName: {
@@ -995,32 +1004,22 @@ function TableProxy() {
                                 value: function(input) {
                                     return instanceOptions.computedProperties = input, api;
                                 }
-                            },
-                            setUniqueId: {
-                                value: function(input) {
-                                    try {
-                                        api.testUniqueId(input);
-                                    } catch (e) {
-                                        throw new Error("setUniqueId failed: ".concat(e, "."));
-                                    }
-                                    return instanceOptions.uniqueId = input, api;
-                                }
                             }
-                        }), instanceOptions.uniqueId && api.setUniqueId(instanceOptions.uniqueId), api;
+                        }), api;
                     } catch (e) {
                         throw new Error("TableProxy.mount failed: ".concat(e));
                     }
                 },
-                TOP: _CONSTANTS__WEBPACK_IMPORTED_MODULE_8__["h"],
-                BOTTOM: _CONSTANTS__WEBPACK_IMPORTED_MODULE_8__["a"],
-                WRITE_LEVEL_CELL: _CONSTANTS__WEBPACK_IMPORTED_MODULE_8__["j"],
-                WRITE_LEVEL_ROW: _CONSTANTS__WEBPACK_IMPORTED_MODULE_8__["k"],
-                WRITE_LEVEL_TABLE: _CONSTANTS__WEBPACK_IMPORTED_MODULE_8__["l"],
-                COLORS: _CONSTANTS__WEBPACK_IMPORTED_MODULE_8__["b"]
+                TOP: _CONSTANTS__WEBPACK_IMPORTED_MODULE_6__["h"],
+                BOTTOM: _CONSTANTS__WEBPACK_IMPORTED_MODULE_6__["a"],
+                WRITE_LEVEL_CELL: _CONSTANTS__WEBPACK_IMPORTED_MODULE_6__["j"],
+                WRITE_LEVEL_ROW: _CONSTANTS__WEBPACK_IMPORTED_MODULE_6__["k"],
+                WRITE_LEVEL_TABLE: _CONSTANTS__WEBPACK_IMPORTED_MODULE_6__["l"],
+                COLORS: _CONSTANTS__WEBPACK_IMPORTED_MODULE_6__["b"]
             };
         };
         global.TableProxy = TableProxy();
-    }.call(this, __webpack_require__(11));
+    }.call(this, __webpack_require__(14));
 }, function(module, exports) {
     var g;
     g = function() {

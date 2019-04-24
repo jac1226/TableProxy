@@ -1,4 +1,4 @@
-import clone from './simple-clone';
+import clone from './clone';
 import { isString, isNumeric, inArray, isObject } from './utilities';
 import { SUPPORTED_ATTRIBUTES, DEFAULT_ATTRIBUTE } from './CONSTANTS';
 

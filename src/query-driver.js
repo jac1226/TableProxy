@@ -11,7 +11,6 @@ export default class QueryDriver {
   constructor(query, type) {
     this.query = null;
     this.type = type.toUpperCase();
-    this.writeToCursor = false;
     this.withRecords = false;
     this.requestedAttributesSet = new UniqueSet();
     this.loadQuery(query);

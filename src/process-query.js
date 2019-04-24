@@ -9,16 +9,16 @@ import DataController from './data-controller';
 import RowIndexCursor from './row-index-cursor';
 import QueryReturn from './query-return';
 import getRecordProxy from './get-record-proxy';
-import clone from './simple-clone';
+import clone from './clone';
 
-export default function processQuery(queryDriver, sheetAccessor, rowIndexCursor, instanceOptions) {
+export default function processQuery(core, queryDriver) {
   if (!(queryDriver instanceof QueryDriver)) {
     throw new Error(`queryProcessor requires a QueryDriver instance.`);
   }
-  if (!(sheetAccessor instanceof SheetAccessor)) {
+  if (!(core.sheetAccessor instanceof SheetAccessor)) {
     throw new Error(`queryProcessor requires a SheetAccessor instance.`);
   }
-  if (!(rowIndexCursor instanceof RowIndexCursor)) {
+  if (!(core.rowIndexCursor instanceof RowIndexCursor)) {
     throw new Error(`queryProcessor requires a RowIndexCursor instance.`);
   }
 
@@ -31,8 +31,8 @@ export default function processQuery(queryDriver, sheetAccessor, rowIndexCursor,
    * Build dataController
    */
   const dataController = new DataController(
-    sheetAccessor,
-    instanceOptions,
+    core.sheetAccessor,
+    core.instanceOptions,
     queryDriver.requestedAttributesSet
   );
 
@@ -40,9 +40,9 @@ export default function processQuery(queryDriver, sheetAccessor, rowIndexCursor,
    * Build recordProxy
    */
   const recordProxy = getRecordProxy(
-    sheetAccessor,
-    dataController,
-    instanceOptions,
+    core.heetAccessor,
+    core.dataController,
+    core.instanceOptions,
     queryDriver.requestedAttributesSet
   );
 
@@ -59,7 +59,7 @@ export default function processQuery(queryDriver, sheetAccessor, rowIndexCursor,
     if (query(recordProxy)) {
       queryReturn.push(index);
       if (queryDriver.withRecords) {
-        queryReturn.returnContainer.records[index] = clone(recordProxy);
+        queryReturn.recordsContainer.push(clone(recordProxy), index);
       }
     }
   });
@@ -72,15 +72,8 @@ export default function processQuery(queryDriver, sheetAccessor, rowIndexCursor,
   /**
    * write the resultSet to the cursor if needed
    */
-  if (queryDriver.writeToCursor) {
-    rowIndexCursor.consumeSelection(queryReturn.resultSet);
-  }
-
-  /**
-   * write the resultSet to the cursor if needed
-   */
-  if (instanceOptions.autoResizeColumns) {
-    sheetAccessor.resizeColumns();
+  if (core.instanceOptions.autoResizeColumns) {
+    core.sheetAccessor.resizeColumns();
   }
 
   /**

@@ -381,3 +381,32 @@ const exportSS = IS_TEST_MODE ? SpreadsheetAppFake : SpreadsheetApp;
 export default exportSS;
 
 
+/**
+ *
+      Object.defineProperty(api, 'query', {
+        enumerable: true,
+        configurable: false,
+        writable: false,
+        value: query => {
+          const queryDriver = new QueryDriver(query, 'query');
+          queryDriver.writeToCursor = true;
+          queryDriver.withRecords = true;
+
+          const queryReturn = processQuery(
+            queryDriver,
+            sheetAccessor,
+            rowIndexCursor,
+            instanceOptions
+          );
+
+          recordsContainer = queryReturn.returnContainer.records;
+          Logger.log(queryReturn.logStamp);
+          return this;
+        }
+      });
+ * 
+ * 
+ * 
+ * 
+ */
+

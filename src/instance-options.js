@@ -11,8 +11,7 @@ import {
   DEFAULT_ATTRIBUTE
 } from './CONSTANTS';
 import { isSpreadsheet, isSheet } from './sheets-utilities';
-import clone from './simple-clone';
-import processUniqueId from './process-unique-id';
+import clone from './clone';
 import { isString, isArray, isBoolean, isObject } from './utilities';
 
 export default class InstanceOptions {
@@ -25,7 +24,6 @@ export default class InstanceOptions {
     this.pvt_writeLevel = DEFAULT_WRITE_LEVEL;
     this.pvt_autoResizeColumns = false;
     this.pvt_computedProperties = {};
-    this.pvt_uniqueId = null;
 
     this.pvt_spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
     this.pvt_sheet = null;
@@ -128,15 +126,6 @@ export default class InstanceOptions {
     }
     this.pvt_autoResizeColumns = input;
     return this.pvt_autoResizeColumns;
-  }
-
-  get uniqueId() {
-    return this.pvt_uniqueId;
-  }
-
-  set uniqueId(input) {
-    this.pvt_uniqueId = processUniqueId(input);
-    return this.pvt_uniqueId;
   }
 
   get computedProperties() {

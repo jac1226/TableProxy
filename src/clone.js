@@ -1,5 +1,5 @@
 /**
- * Simple cloning - supports input types {null,undefined,Date,Array,Object,String,Number)
+ * Basic cloning - supports input types {null,undefined,Date,Array,Object,String,Number)
  * @desc taken from https://stackoverflow.com/questions/728360/how-do-i-correctly-clone-a-javascript-object
  */
 
