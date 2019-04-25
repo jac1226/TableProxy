@@ -6,7 +6,7 @@
 import UniqueSet from './unique-set';
 import QueryDriver from './query-driver';
 import RecordsContainer from './records-container';
-import { getTimeStamp, getTimeDiff } from './utilities';
+import Timer from './timer';
 
 export default class QueryReturn {
   constructor(queryDriver) {
@@ -15,9 +15,8 @@ export default class QueryReturn {
     }
     this.query = queryDriver.query;
     this.type = queryDriver.type;
+    this.timer = new Timer(`${queryDriver.type}`);
     this.resultSet = new UniqueSet();
-    this.queryStartTime = getTimeStamp();
-    this.queryDuration = null;
     this.recordsContainer = new RecordsContainer();
   }
 
@@ -25,16 +24,12 @@ export default class QueryReturn {
     return this.resultSet.length;
   }
 
-  get logStamp() {
-    return `${this.type} query "${this.query.toString()}" completed in ${this.queryDuration}ms`;
-  }
-
   push(input) {
     this.resultSet.push(input);
   }
 
   done() {
-    this.queryDuration = getTimeDiff(this.queryStartTime);
+    this.timer.stop(this.query.toString());
     return this;
   }
 }

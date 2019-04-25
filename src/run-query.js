@@ -1,5 +1,5 @@
 /**
- * API method query
+ * query
  */
 
 import QueryDriver from './query-driver';

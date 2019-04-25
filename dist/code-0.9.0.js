@@ -45,7 +45,7 @@ function TableProxy() {
         return __webpack_require__.d(getter, "a", getter), getter;
     }, __webpack_require__.o = function(object, property) {
         return Object.prototype.hasOwnProperty.call(object, property);
-    }, __webpack_require__.p = "", __webpack_require__(__webpack_require__.s = 13);
+    }, __webpack_require__.p = "", __webpack_require__(__webpack_require__.s = 14);
 }([ function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
     __webpack_require__.d(__webpack_exports__, "f", function() {
@@ -384,7 +384,7 @@ function TableProxy() {
     __webpack_require__.d(__webpack_exports__, "a", function() {
         return InstanceOptions;
     });
-    var _CONSTANTS__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0), _sheets_utilities__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6), _clone__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7), _utilities__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1);
+    var _CONSTANTS__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0), _sheets_utilities__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7), _clone__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8), _utilities__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1);
     function _defineProperties(target, props) {
         for (var i = 0; i < props.length; i++) {
             var descriptor = props[i];
@@ -562,6 +562,39 @@ function TableProxy() {
                 });
             }
         } ]), QueryDriver;
+    }();
+}, function(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
+    __webpack_require__.d(__webpack_exports__, "a", function() {
+        return Timer;
+    });
+    var _utilities__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1), _sheets_utilities__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7);
+    function _defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+            var descriptor = props[i];
+            descriptor.enumerable = descriptor.enumerable || !1, descriptor.configurable = !0, 
+            "value" in descriptor && (descriptor.writable = !0), Object.defineProperty(target, descriptor.key, descriptor);
+        }
+    }
+    var Timer = function() {
+        function Timer(text) {
+            if (function _classCallCheck(instance, Constructor) {
+                if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
+            }(this, Timer), !Object(_utilities__WEBPACK_IMPORTED_MODULE_0__["i"])(text)) throw new Error("Timer requires text.");
+            this.text = text, this.startTime = Object(_utilities__WEBPACK_IMPORTED_MODULE_0__["b"])(), 
+            this.duration = null;
+        }
+        return function _createClass(Constructor, protoProps, staticProps) {
+            return protoProps && _defineProperties(Constructor.prototype, protoProps), staticProps && _defineProperties(Constructor, staticProps), 
+            Constructor;
+        }(Timer, [ {
+            key: "stop",
+            value: function(text) {
+                var endText = Object(_utilities__WEBPACK_IMPORTED_MODULE_0__["i"])(text) ? "\n".concat(text) : "";
+                this.duration = Object(_utilities__WEBPACK_IMPORTED_MODULE_0__["a"])(this.startTime, 0), 
+                Object(_sheets_utilities__WEBPACK_IMPORTED_MODULE_1__["c"])("".concat(this.text, " operation completed in ").concat(this.duration, "ms").concat(endText));
+            }
+        } ]), Timer;
     }();
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
@@ -803,7 +836,7 @@ function TableProxy() {
                 }), this.pvt_changedAttributes.flush()), this.pvt_instanceOptions.writeLevel === CONSTANTS["k"] && this.writeCurrentRow();
             }
         } ]), DataController;
-    }(), row_index_cursor = __webpack_require__(8), records_container = __webpack_require__(9), utilities = __webpack_require__(1);
+    }(), row_index_cursor = __webpack_require__(9), records_container = __webpack_require__(10), timer = __webpack_require__(6);
     function query_return_defineProperties(target, props) {
         for (var i = 0; i < props.length; i++) {
             var descriptor = props[i];
@@ -816,8 +849,8 @@ function TableProxy() {
             if (function query_return_classCallCheck(instance, Constructor) {
                 if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
             }(this, QueryReturn), !(queryDriver instanceof query_driver["a"])) throw new TypeError("QueryResult constructor requires QueryDriver input.");
-            this.query = queryDriver.query, this.type = queryDriver.type, this.resultSet = new unique_set["a"](), 
-            this.queryStartTime = Object(utilities["b"])(), this.queryDuration = null, this.recordsContainer = new records_container["a"]();
+            this.query = queryDriver.query, this.type = queryDriver.type, this.timer = new timer["a"]("".concat(queryDriver.type)), 
+            this.resultSet = new unique_set["a"](), this.recordsContainer = new records_container["a"]();
         }
         return function query_return_createClass(Constructor, protoProps, staticProps) {
             return protoProps && query_return_defineProperties(Constructor.prototype, protoProps), 
@@ -830,18 +863,12 @@ function TableProxy() {
         }, {
             key: "done",
             value: function() {
-                return this.queryDuration = Object(utilities["a"])(this.queryStartTime), Logger.log("".concat(this.type, " operation completed in ").concat(this.queryDuration, " ms.\n ").concat(this.query.toString())), 
-                this;
+                return this.timer.stop(this.query.toString()), this;
             }
         }, {
             key: "count",
             get: function() {
                 return this.resultSet.length;
-            }
-        }, {
-            key: "logStamp",
-            get: function() {
-                return "".concat(this.type, ' query "').concat(this.query.toString(), '" completed in ').concat(this.queryDuration, "ms");
             }
         } ]), QueryReturn;
     }();
@@ -883,7 +910,7 @@ function TableProxy() {
         }
         return recordProxy;
     }
-    var clone = __webpack_require__(7);
+    var clone = __webpack_require__(8);
     function processQuery(core, queryDriver) {
         if (!(queryDriver instanceof query_driver["a"])) throw new Error("queryProcessor requires a QueryDriver instance.");
         if (!(core.sheetAccessor instanceof sheet_accessor["a"])) throw new Error("queryProcessor requires a SheetAccessor instance.");
@@ -903,7 +930,7 @@ function TableProxy() {
     __webpack_require__.d(__webpack_exports__, "a", function() {
         return getUnique;
     });
-    var _unique_set__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2), _query_driver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5), _process_query__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(10), _utilities__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1), _CONSTANTS__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(0), _sheets_utilities__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6);
+    var _unique_set__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2), _query_driver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5), _process_query__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(11), _utilities__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1), _CONSTANTS__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(0);
     function getUnique(core, columnName, attribute) {
         if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["i"])(columnName) && !Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["g"])(columnName)) throw new Error("unique method requires a string or number columnName");
         if (attribute && !Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["c"])(attribute, _CONSTANTS__WEBPACK_IMPORTED_MODULE_4__["g"])) throw new Error("unique method receieved invalid attribute: ".concat(attribute));
@@ -912,26 +939,22 @@ function TableProxy() {
         }, "unique");
         queryDriver.requestedAttributesSet.push(attr);
         var queryReturn = Object(_process_query__WEBPACK_IMPORTED_MODULE_2__["a"])(core, queryDriver);
-        return queryReturn.resultSet.copyItems(aggregator), Object(_sheets_utilities__WEBPACK_IMPORTED_MODULE_5__["c"])(queryReturn.logStamp), 
-        queryReturn;
+        return queryReturn.resultSet.copyItems(aggregator), queryReturn;
     }
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
     __webpack_require__.d(__webpack_exports__, "a", function() {
         return runQuery;
     });
-    var _query_driver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5), _process_query__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(10), _sheets_utilities__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6);
+    var _query_driver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5), _process_query__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
     function runQuery(core, query, withRecords) {
         var queryDriver = new _query_driver__WEBPACK_IMPORTED_MODULE_0__["a"](query, "query");
-        queryDriver.withRecords = withRecords || !1;
-        var queryReturn = Object(_process_query__WEBPACK_IMPORTED_MODULE_1__["a"])(core, queryDriver);
-        return Object(_sheets_utilities__WEBPACK_IMPORTED_MODULE_2__["c"])(queryReturn.logStamp), 
-        queryReturn;
+        return queryDriver.withRecords = withRecords || !1, Object(_process_query__WEBPACK_IMPORTED_MODULE_1__["a"])(core, queryDriver);
     }
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
     __webpack_require__.r(__webpack_exports__), function(global) {
-        var _instance_options__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4), _sheet_accessor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3), _row_index_cursor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8), _records_container__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(9), _get_unique__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(11), _run_query__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(12), _CONSTANTS__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(0), TableProxy = function TableProxy() {
+        var _instance_options__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4), _sheet_accessor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3), _row_index_cursor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9), _records_container__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(10), _timer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6), _run_unique__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(12), _run_query__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(13), _CONSTANTS__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(0), TableProxy = function TableProxy() {
             return {
                 mount: function mount(sheetNameOrOptions) {
                     var _this = this;
@@ -947,23 +970,25 @@ function TableProxy() {
                             configurable: !1,
                             writable: !1,
                             value: function(query, withRecords) {
-                                var queryReturn = Object(_run_query__WEBPACK_IMPORTED_MODULE_5__["a"])(core, query, withRecords);
+                                var timer = new _timer__WEBPACK_IMPORTED_MODULE_4__["a"]("API query call"), queryReturn = Object(_run_query__WEBPACK_IMPORTED_MODULE_6__["a"])(core, query, withRecords);
                                 return mainRecordsContainer.absorb(queryReturn.recordsContainer), rowIndexCursor.consumeSelection(queryReturn.resultSet), 
-                                _this;
+                                timer.stop(), _this;
                             }
                         }), Object.defineProperty(api, "unique", {
                             enumerable: !0,
                             configurable: !1,
                             writable: !1,
                             value: function(columnName, attribute) {
-                                return Object(_get_unique__WEBPACK_IMPORTED_MODULE_4__["a"])(core, columnName, attribute).resultSet.values;
+                                var timer = new _timer__WEBPACK_IMPORTED_MODULE_4__["a"]("API unique call"), queryReturn = Object(_run_unique__WEBPACK_IMPORTED_MODULE_5__["a"])(core, columnName, attribute);
+                                return timer.stop(), queryReturn.resultSet.values;
                             }
                         }), Object.defineProperty(api, "flush", {
                             enumerable: !0,
                             configurable: !1,
                             writable: !1,
                             value: function() {
-                                return rowIndexCursor.flush(), mainRecordsContainer.flush(), _this;
+                                var timer = new _timer__WEBPACK_IMPORTED_MODULE_4__["a"]("API flush call");
+                                return rowIndexCursor.flush(), mainRecordsContainer.flush(), timer.stop(), _this;
                             }
                         }), Object.defineProperty(api, "records", {
                             enumerable: !0,
@@ -1016,16 +1041,16 @@ function TableProxy() {
                         throw new Error("TableProxy.mount failed: ".concat(e));
                     }
                 },
-                TOP: _CONSTANTS__WEBPACK_IMPORTED_MODULE_6__["h"],
-                BOTTOM: _CONSTANTS__WEBPACK_IMPORTED_MODULE_6__["a"],
-                WRITE_LEVEL_CELL: _CONSTANTS__WEBPACK_IMPORTED_MODULE_6__["j"],
-                WRITE_LEVEL_ROW: _CONSTANTS__WEBPACK_IMPORTED_MODULE_6__["k"],
-                WRITE_LEVEL_TABLE: _CONSTANTS__WEBPACK_IMPORTED_MODULE_6__["l"],
-                COLORS: _CONSTANTS__WEBPACK_IMPORTED_MODULE_6__["b"]
+                TOP: _CONSTANTS__WEBPACK_IMPORTED_MODULE_7__["h"],
+                BOTTOM: _CONSTANTS__WEBPACK_IMPORTED_MODULE_7__["a"],
+                WRITE_LEVEL_CELL: _CONSTANTS__WEBPACK_IMPORTED_MODULE_7__["j"],
+                WRITE_LEVEL_ROW: _CONSTANTS__WEBPACK_IMPORTED_MODULE_7__["k"],
+                WRITE_LEVEL_TABLE: _CONSTANTS__WEBPACK_IMPORTED_MODULE_7__["l"],
+                COLORS: _CONSTANTS__WEBPACK_IMPORTED_MODULE_7__["b"]
             };
         };
         global.TableProxy = TableProxy();
-    }.call(this, __webpack_require__(14));
+    }.call(this, __webpack_require__(15));
 }, function(module, exports) {
     var g;
     g = function() {

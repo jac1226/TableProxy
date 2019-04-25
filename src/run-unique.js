@@ -1,5 +1,5 @@
 /**
- * API method unique
+ * unique
  */
 
 import UniqueSet from './unique-set';
@@ -7,7 +7,6 @@ import QueryDriver from './query-driver';
 import processQuery from './process-query';
 import { isString, isNumeric, inArray } from './utilities';
 import { DEFAULT_ATTRIBUTE, SUPPORTED_ATTRIBUTES } from './CONSTANTS';
-import { log } from './sheets-utilities';
 
 export default function getUnique(core, columnName, attribute) {
   if (!isString(columnName) && !isNumeric(columnName)) {
@@ -27,6 +26,5 @@ export default function getUnique(core, columnName, attribute) {
   const queryReturn = processQuery(core, queryDriver);
   queryReturn.resultSet.copyItems(aggregator);
 
-  log(queryReturn.logStamp);
   return queryReturn;
 }

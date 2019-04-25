@@ -7,7 +7,8 @@ import InstanceOptions from './instance-options';
 import SheetAccessor from './sheet-accessor';
 import RowIndexCursor from './row-index-cursor';
 import RecordsContainer from './records-container';
-import getUnique from './get-unique';
+import Timer from './timer';
+import getUnique from './run-unique';
 import runQuery from './run-query';
 
 import {
@@ -41,9 +42,12 @@ const TableProxy = () => {
         configurable: false,
         writable: false,
         value: (query, withRecords) => {
+          const timer = new Timer(`API query call`);
           const queryReturn = runQuery(core, query, withRecords);
           mainRecordsContainer.absorb(queryReturn.recordsContainer);
           rowIndexCursor.consumeSelection(queryReturn.resultSet);
+          timer.stop();
+
           return this;
         }
       });
@@ -53,7 +57,10 @@ const TableProxy = () => {
         configurable: false,
         writable: false,
         value: (columnName, attribute) => {
+          const timer = new Timer(`API unique call`);
           const queryReturn = getUnique(core, columnName, attribute);
+          timer.stop();
+
           return queryReturn.resultSet.values;
         }
       });
@@ -63,8 +70,11 @@ const TableProxy = () => {
         configurable: false,
         writable: false,
         value: () => {
+          const timer = new Timer(`API flush call`);
           rowIndexCursor.flush();
           mainRecordsContainer.flush();
+          timer.stop();
+
           return this;
         }
       });
