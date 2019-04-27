@@ -8,7 +8,7 @@
 import { WRITE_LEVEL_CELL, WRITE_LEVEL_ROW, WRITE_LEVEL_TABLE } from './CONSTANTS';
 import SheetAccessor from './sheet-accessor';
 import InstanceOptions from './instance-options';
-import UniqueSet from './unique-set';
+import UniqueSet from './unique-handling';
 
 export default class DataController {
   constructor(sheetAccessor, instanceOptions, requestedAttributesSet) {

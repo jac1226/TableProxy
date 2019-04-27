@@ -1,12 +1,15 @@
 /**
+ * Unique Handling - for String, Number, Date ONLY - the types that sheets supports
+ */
+
+/**
  * UniqueSet - ac class used to speed up handling lists which must be unique
- * @desc Using indexOf to prevent duplicates is nearly 100 times slower
- * @desc Using Map shim is approximately 300 times slower
+ * @desc Using indexOf to prevent duplicates is much faster for less than 3700 items, then goes to hell
+ * @desc Using Map shim is much slower
  * @desc Handles String, Number, Date - the types that sheets supports
  * @constructor UniqueSet
  * @return {UniqueSet}
  */
-
 export default class UniqueSet {
   constructor(...args) {
     this.pvt_strings = {};
@@ -16,6 +19,31 @@ export default class UniqueSet {
     Object.keys(args).forEach(i => {
       this.push(args[i]);
     });
+  }
+
+  testUnique(...args) {
+    const testSet = new UniqueSet(args[0]);
+    return testSet.length === args.length;
+  }
+
+  has(input) {
+    const type = toString.call(input);
+    switch(type){
+      case '[object Number]':
+        if (this.pvt_numbers.hasOwnProperty(input)) {
+          return true;
+        }
+      case '[object String]':
+        if (this.pvt_strings.hasOwnProperty(input)) {
+          return true;
+        }
+      case '[object String]':
+        if (this.pvt_dates.hasOwnProperty(input)) {
+          return true;
+        }
+      default:
+        return false;
+    }
   }
 
   push(input) {
@@ -133,4 +161,38 @@ export default class UniqueSet {
   get length() {
     return this.values.length;
   }
+}
+
+/**
+ * getDuplicates - returns an UniqueSet of duplicates
+ * @desc Uses UniqueSet
+ * @return {UniqueSet}
+ */
+export function getDuplicates(...args) {
+  const duplicates = new UniqueSet();
+  const input = toString.call(args[0]) === '[object Array]' ? args[0] : args;
+  const testSet = new UniqueSet();
+  input.forEach(v => {
+      if (!testSet.has(v)) {
+          testSet.push(v);
+      } else {
+          duplicates.push(v);
+      }
+  });
+  return duplicates;
+}
+
+/**
+ * testUnique - determines if a set of items is unique
+ * @desc Uses getDuplicates
+ * @return {boolean}
+ */
+export function testUnique(...args) {
+  let result;
+  if (toString.call(args[0]) === '[object Array]') {
+      result = getDuplicates(args[0]).length === 0;
+  } else {
+      result = getDuplicates(args).length === 0;
+  }
+  return result;
 }

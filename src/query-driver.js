@@ -3,7 +3,7 @@
  * @return {Object}
  */
 
-import UniqueSet from './unique-set';
+import UniqueSet from './unique-handling';
 import { SUPPORTED_ATTRIBUTES } from './CONSTANTS';
 import { isFunction } from './utilities';
 

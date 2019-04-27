@@ -3,7 +3,7 @@
  * @return {Object}
  */
 
-import UniqueSet from './unique-set';
+import UniqueSet from './unique-handling';
 import QueryDriver from './query-driver';
 import RecordsContainer from './records-container';
 import Timer from './timer';
@@ -24,8 +24,12 @@ export default class QueryReturn {
     return this.resultSet.length;
   }
 
-  push(input) {
-    this.resultSet.push(input);
+  push(index) {
+    this.resultSet.push(index);
+  }
+
+  has(index) {
+    return this.resultSet.has(index);
   }
 
   done() {

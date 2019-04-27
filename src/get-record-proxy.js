@@ -7,7 +7,7 @@
  * @return {Object} record proxy
  */
 
-import UniqueSet from './unique-set';
+import UniqueSet from './unique-handling';
 import SheetAccessor from './sheet-accessor';
 import DataController from './data-controller';
 import InstanceOptions from './instance-options';

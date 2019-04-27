@@ -8,7 +8,7 @@
  */
 
 import { getTimeStamp, getTimeDiff } from './utilities';
-import UniqueSet from './unique-set';
+import UniqueSet from './unique-handling';
 import SheetAccessor from './sheet-accessor';
 
 export default class RowIndexCursor {

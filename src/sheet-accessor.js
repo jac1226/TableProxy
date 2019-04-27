@@ -12,7 +12,6 @@ export default class SheetAccessor {
       throw new TypeError(`DataController requires an instance of InstanceOptions object.`);
     }
 
-    this.pvt_instanceOptions = instanceOptions;
     this.range = {};
     this.value = {};
     this.background = {};
@@ -31,12 +30,12 @@ export default class SheetAccessor {
     /**
      * flesh out headerRowIndex, headerColumnIndex
      */
-    const notesData = this.pvt_instanceOptions.sheet.getDataRange().getNotes();
+    const notesData = instanceOptions.sheet.getDataRange().getNotes();
     const rowCount = notesData.length;
     const columnCount = notesData[0].length;
 
     for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
-      if (notesData[rowIndex].join('').indexOf(this.pvt_instanceOptions.headerAnchorToken) !== -1) {
+      if (notesData[rowIndex].join('').indexOf(instanceOptions.headerAnchorToken) !== -1) {
         this.headerRowIndex = rowIndex;
         break;
       }
@@ -44,7 +43,7 @@ export default class SheetAccessor {
     for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
       if (
         notesData[this.headerRowIndex][columnIndex].indexOf(
-          this.pvt_instanceOptions.headerAnchorToken
+          instanceOptions.headerAnchorToken
         ) !== -1
       ) {
         this.headerColumnIndex = columnIndex;
@@ -57,11 +56,11 @@ export default class SheetAccessor {
      */
     this.range = {
       getCell: (rowIndex, columnIndex) => {
-        return this.pvt_instanceOptions.sheet.getRange(rowIndex + 1, columnIndex + 1);
+        return instanceOptions.sheet.getRange(rowIndex + 1, columnIndex + 1);
       },
       getRow: rowIndex => {
-        const dataRange = this.pvt_instanceOptions.sheet.getDataRange();
-        return this.pvt_instanceOptions.sheet.getRange(
+        const dataRange = instanceOptions.sheet.getDataRange();
+        return instanceOptions.sheet.getRange(
           rowIndex + 1,
           1,
           1,
@@ -69,9 +68,9 @@ export default class SheetAccessor {
         );
       },
       getColumn: (columnIndex, startRowIndex) => {
-        const dataRange = this.pvt_instanceOptions.sheet.getDataRange();
+        const dataRange = instanceOptions.sheet.getDataRange();
         const startRowIndx = isNumeric(startRowIndex) ? startRowIndex : 0;
-        return this.pvt_instanceOptions.sheet.getRange(
+        return instanceOptions.sheet.getRange(
           startRowIndx + 1,
           columnIndex + 1,
           dataRange.getNumRows() - startRowIndx,
@@ -79,12 +78,12 @@ export default class SheetAccessor {
         );
       },
       getAll: (startRowIndex, startColumnIndex) => {
-        const dataRange = this.pvt_instanceOptions.sheet.getDataRange();
+        const dataRange = instanceOptions.sheet.getDataRange();
         const startRowIndx = isNumeric(startRowIndex) ? startRowIndex : 0;
 
         const startColumnIndx = isNumeric(startColumnIndex) ? startColumnIndex : 0;
 
-        return this.pvt_instanceOptions.sheet.getRange(
+        return instanceOptions.sheet.getRange(
           startRowIndx + 1,
           startColumnIndx + 1,
           dataRange.getNumRows() - startRowIndx,
@@ -151,7 +150,7 @@ export default class SheetAccessor {
      */
     this.resizeColumns = () => {
       this.getHeaderRow().forEach((columnName, index) => {
-        this.pvt_instanceOptions.sheet.autoResizeColumn(index + 1);
+        instanceOptions.sheet.autoResizeColumn(index + 1);
       });
     };
   }

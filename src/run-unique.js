@@ -2,7 +2,7 @@
  * unique
  */
 
-import UniqueSet from './unique-set';
+import UniqueSet from './unique-handling';
 import QueryDriver from './query-driver';
 import processQuery from './process-query';
 import { isString, isNumeric, inArray } from './utilities';
