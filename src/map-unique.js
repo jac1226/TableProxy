@@ -147,7 +147,6 @@ export class Map {
     if (!(map instanceof Map)) {
       throw new TypeError('copyItems accepts only Map input.');
     }
-    this.clear();
     map.entries().forEach(entry => {
       this.set(entry[0], entry[1]);
     });

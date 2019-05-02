@@ -1,14 +1,12 @@
 /**
  * Main
  */
-import SpreadsheetApp from './spreadsheet-simulator';
-import Browser from './browser-simulator';
+import { expSpreadsheetApp as SpreadsheetApp } from './simulation-utils';
 import InstanceOptions from './instance-options';
 import SheetAccessor from './sheet-accessor';
 import MainCursor from './main-cursor';
 import Timer from './timer';
-import getUnique from './run-unique';
-import runQuery from './run-query';
+import { getUnique, runQuery } from './operations';
 import {
   TOP,
   BOTTOM,
@@ -33,7 +31,6 @@ const TableProxy = () => {
         mainCursor
       };
 
-      Browser.msgBox('shit');
       const api = {};
 
       Object.defineProperty(api, 'query', {
@@ -42,8 +39,8 @@ const TableProxy = () => {
         writable: false,
         value: (query, withRecords) => {
           const timer = new Timer(`API query call`);
-          Browser.msgBox(query.toString());
           const queryReturn = runQuery(core, query, withRecords);
+          console.log(queryReturn);
           // mainRecordsContainer.absorb(queryReturn.recordsContainer);
           mainCursor.consumeSelection(queryReturn.resultSet);
           timer.stop();

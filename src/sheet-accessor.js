@@ -4,8 +4,10 @@
  */
 
 import InstanceOptions from './instance-options';
+import { Map } from './map-unique';
 import { isNumeric } from './utilities';
 import { DataPayload, AttributesSet } from './data-payload';
+import { DEFAULT_ATTRIBUTE } from './CONSTANTS';
 
 export default class SheetAccessor {
   constructor(instanceOptions) {
@@ -142,15 +144,15 @@ export default class SheetAccessor {
     /**
      * flesh out getAllRecordIndices method
      */
-    this.getAllRecordIndices = () => {
-      const indices = [];
+    this.getAllRecordIndexer = () => {
+      const indexer = new Map();
       const numRows = this.range.getAllRecords().getNumRows();
       let i = this.headerRowIndex + 1;
-      while (i < numRows) {
-        indices.push(i);
+      while (i <= numRows) {
+        indexer.set(i);
         i += 1;
       }
-      return indices;
+      return indexer;
     };
 
     /**
@@ -169,13 +171,15 @@ export default class SheetAccessor {
       if (!(requestedAttributesSet instanceof AttributesSet)) {
         throw new TypeError(`getDataPayload expects a AttributesSet instance.`);
       }
+      requestedAttributesSet.push(DEFAULT_ATTRIBUTE);
       return new DataPayload(
-        /* eslint no-param-reassign: ["error", { "props": true, "ignorePropertyModificationsFor": ["dataObject"] }] */
         requestedAttributesSet.values.reduce((dataObject, attribute) => {
+          // eslint-disable-next-line no-param-reassign
           dataObject[attribute] = this[attribute].getAll();
           return dataObject;
         }, {}),
-        this.getHeaderRow()
+        this.headerRowIndex,
+        this.headerColumnIndex
       );
     };
   }

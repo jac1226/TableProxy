@@ -3,8 +3,8 @@
  * @return {Object}
  */
 
-import { UniqueSet } from './map-unique';
 import { SUPPORTED_ATTRIBUTES } from './CONSTANTS';
+import { AttributesSet } from './data-payload';
 import { isFunction } from './utilities';
 
 export default class QueryDriver {
@@ -12,7 +12,7 @@ export default class QueryDriver {
     this.type = type.toUpperCase();
     this.query = null;
     this.returnWithRecords = false;
-    this.requestedAttributesSet = new UniqueSet();
+    this.requestedAttributesSet = new AttributesSet();
     this.writeIndexColumnName = null;
     this.writeIndexAttribute = null;
     this.recordsToWrite = null;
@@ -23,7 +23,7 @@ export default class QueryDriver {
     if (!isFunction(query)) {
       throw new TypeError('loadQuery requires accepts a function callback');
     }
-    this.pvt_query = query;
+    this.query = query;
     const queryAsString = query.toString();
     SUPPORTED_ATTRIBUTES.forEach(attribute => {
       const re1 = new RegExp(`[[]{1}['|"]{1}${attribute}['|"]{1}[]]{1}`, 'g');
@@ -36,7 +36,7 @@ export default class QueryDriver {
   }
 
   setReturnWithRecords(bool) {
-    this.withRecords = bool === true;
+    this.returnWithRecords = bool === true;
     return this;
   }
 

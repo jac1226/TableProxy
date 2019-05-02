@@ -1,6 +1,5 @@
 /**
- * Fake SpreadsheetApp for testing.
- * let sheet=SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test');
+ * Fake Stuff for testing
  */
 
 import { IS_TEST_MODE } from './CONSTANTS';
@@ -515,6 +514,22 @@ const SpreadsheetAppFake = {
     return new ActiveSpreadsheet();
   }
 };
+export const expSpreadsheetApp = IS_TEST_MODE ? SpreadsheetAppFake : SpreadsheetApp;
 
-const exportSS = IS_TEST_MODE ? SpreadsheetAppFake : SpreadsheetApp;
-export default exportSS;
+const BrowserFake = {
+  msgBox: note => {
+    console.log(`Browser.msgBox---->`);
+    console.log(note);
+    console.log(`<----Browser.msgBox`);
+  }
+};
+export const expBrowser = IS_TEST_MODE ? BrowserFake : Browser;
+
+const LoggerFake = {
+  log: note => {
+    console.log(`Logger.log---->`);
+    console.log(note);
+    console.log(`<----Logger.log`);
+  }
+};
+export const expLogger = IS_TEST_MODE ? LoggerFake : Logger;

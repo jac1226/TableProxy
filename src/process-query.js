@@ -54,11 +54,11 @@ export default function processQuery(core, queryDriver) {
    * Iterate through rowIndexCursor & apply query
    */
   if ([OP_UNIQUE, OP_QUERY].indexOf(queryDriver.type) !== -1) {
-    core.mainCursor.forEach(index => {
+    core.mainCursor.indices.forEach(index => {
       dataController.setRowIndex(index);
       if (query(recordProxy, index)) {
-        if (queryDriver.withRecords) {
-          queryReturn.recordsContainer.push(index, clone(recordProxy));
+        if (queryDriver.returnWithRecords) {
+          queryReturn.resultSet.push(index, clone(recordProxy));
         } else {
           queryReturn.push(index);
         }

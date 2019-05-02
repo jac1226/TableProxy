@@ -24,57 +24,61 @@ export default class DataController {
       );
     }
 
-    this.pvt_sheetAccessor = sheetAccessor;
-    this.pvt_instanceOptions = instanceOptions;
-    this.pvt_rowIndex = null;
-    this.pvt_changedAttributes = new AttributesSet();
-    this.pvt_dataPayload = sheetAccessor.getDataPayload(requestedAttributesSet);
+    this.sheetAccessor = sheetAccessor;
+    this.instanceOptions = instanceOptions;
+    this.rowIndex = null;
+    this.changedAttributes = new AttributesSet();
+    this.dataPayload = sheetAccessor.getDataPayload(requestedAttributesSet);
   }
 
   getColumnByIndex(attribute, columnIndex) {
-    return this.pvt_dataPayload[attribute][this.pvt_rowIndex][columnIndex];
+    return this.dataPayload.dataObject[attribute][this.rowIndex][columnIndex];
   }
 
   updateColumnByIndex(attribute, columnIndex, updatedValue) {
-    this.pvt_dataPayload[attribute][this.pvt_rowIndex][columnIndex] = updatedValue;
-    if (this.pvt_instanceOptions.writeLevel === WRITE_LEVEL_CELL) {
-      this.pvt_sheetAccessor[attribute].setCell(this.pvt_rowIndex, columnIndex, [[updatedValue]]);
+    console.log('updateColumnByIndex');
+    this.dataPayload[attribute][this.rowIndex][columnIndex] = updatedValue;
+    if (this.instanceOptions.writeLevel === WRITE_LEVEL_CELL) {
+      this.sheetAccessor[attribute].setCell(this.rowIndex, columnIndex, [[updatedValue]]);
     } else {
-      this.pvt_changedAttributes.push(attribute);
+      this.changedAttributes.push(attribute);
     }
     return this;
   }
 
   setRowIndex(rowIndex) {
-    if (this.pvt_instanceOptions.writeLevel === WRITE_LEVEL_ROW && this.pvt_rowIndex !== null) {
+    if (this.instanceOptions.writeLevel === WRITE_LEVEL_ROW && this.rowIndex !== null) {
       this.writeCurrentRow();
     }
-    this.pvt_rowIndex = rowIndex;
+    this.rowIndex = rowIndex;
     return this;
   }
 
   getRowIndex() {
-    return this.pvt_rowIndex;
+    console.log('getRowIndex');
+    return this.rowIndex;
   }
 
   writeCurrentRow() {
-    this.pvt_changedAttributes.forEach(attribute => {
-      this.pvt_sheetAccessor[attribute].setRow(this.pvt_rowIndex, [
-        this.pvt_dataPayload[attribute][this.pvt_rowIndex]
+    console.log('writeCurrentRow');
+    this.changedAttributes.forEach(attribute => {
+      this.sheetAccessor[attribute].setRow(this.rowIndex, [
+        this.dataPayload[attribute][this.rowIndex]
       ]);
     });
-    this.pvt_changedAttributes.flush();
+    this.changedAttributes.flush();
     return this;
   }
 
   capWrite() {
-    if (this.pvt_instanceOptions.writeLevel === WRITE_LEVEL_TABLE) {
-      this.pvt_changedAttributes.forEach(attribute => {
-        this.pvt_sheetAccessor[attribute].setAllRecords(this.pvt_dataPayload[attribute]);
+    console.log('capWrite');
+    if (this.instanceOptions.writeLevel === WRITE_LEVEL_TABLE) {
+      this.changedAttributes.forEach(attribute => {
+        this.sheetAccessor[attribute].setAllRecords(this.dataPayload[attribute]);
       });
-      this.pvt_changedAttributes.flush();
+      this.changedAttributes.flush();
     }
-    if (this.pvt_instanceOptions.writeLevel === WRITE_LEVEL_ROW) {
+    if (this.instanceOptions.writeLevel === WRITE_LEVEL_ROW) {
       this.writeCurrentRow();
     }
   }

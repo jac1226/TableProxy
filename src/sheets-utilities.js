@@ -3,6 +3,8 @@
  * @desc Various Google Sheets utilities
  */
 
+import { expLogger as Logger } from './simulation-utils';
+
 /**
  * Determines Google Sheet object type
  * @param {Object} input - The object to be tested
