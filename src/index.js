@@ -1,16 +1,14 @@
 /**
- * DataController sheetAccessor, instanceOptions, requestedAttributesSet
- * QueryDriver query,type
+ * Main
  */
-
+import SpreadsheetApp from './spreadsheet-simulator';
+import Browser from './browser-simulator';
 import InstanceOptions from './instance-options';
 import SheetAccessor from './sheet-accessor';
-import RowIndexCursor from './row-index-cursor';
-import RecordsContainer from './records-container';
+import MainCursor from './main-cursor';
 import Timer from './timer';
 import getUnique from './run-unique';
 import runQuery from './run-query';
-
 import {
   TOP,
   BOTTOM,
@@ -20,21 +18,22 @@ import {
   COLORS
 } from './CONSTANTS';
 
+global.SpreadsheetApp = SpreadsheetApp;
+
 const TableProxy = () => {
   function mount(sheetNameOrOptions) {
     try {
       const instanceOptions = new InstanceOptions(sheetNameOrOptions);
       const sheetAccessor = new SheetAccessor(instanceOptions);
-      const rowIndexCursor = new RowIndexCursor(sheetAccessor);
-      const mainRecordsContainer = new RecordsContainer();
+      const mainCursor = new MainCursor(sheetAccessor);
 
       const core = {
         instanceOptions,
         sheetAccessor,
-        rowIndexCursor,
-        mainRecordsContainer
+        mainCursor
       };
 
+      Browser.msgBox('shit');
       const api = {};
 
       Object.defineProperty(api, 'query', {
@@ -43,9 +42,10 @@ const TableProxy = () => {
         writable: false,
         value: (query, withRecords) => {
           const timer = new Timer(`API query call`);
+          Browser.msgBox(query.toString());
           const queryReturn = runQuery(core, query, withRecords);
-          mainRecordsContainer.absorb(queryReturn.recordsContainer);
-          rowIndexCursor.consumeSelection(queryReturn.resultSet);
+          // mainRecordsContainer.absorb(queryReturn.recordsContainer);
+          mainCursor.consumeSelection(queryReturn.resultSet);
           timer.stop();
 
           return this;
@@ -71,8 +71,7 @@ const TableProxy = () => {
         writable: false,
         value: () => {
           const timer = new Timer(`API flush call`);
-          rowIndexCursor.flush();
-          mainRecordsContainer.flush();
+          mainCursor.flush();
           timer.stop();
 
           return this;
@@ -82,7 +81,7 @@ const TableProxy = () => {
       Object.defineProperty(api, 'records', {
         enumerable: true,
         get: () => {
-          return mainRecordsContainer;
+          return mainCursor.getRecords();
         }
       });
 

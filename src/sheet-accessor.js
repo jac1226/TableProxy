@@ -5,6 +5,7 @@
 
 import InstanceOptions from './instance-options';
 import { isNumeric } from './utilities';
+import { DataPayload, AttributesSet } from './data-payload';
 
 export default class SheetAccessor {
   constructor(instanceOptions) {
@@ -12,6 +13,7 @@ export default class SheetAccessor {
       throw new TypeError(`DataController requires an instance of InstanceOptions object.`);
     }
 
+    this.sheet = instanceOptions.sheet;
     this.range = {};
     this.value = {};
     this.background = {};
@@ -24,13 +26,16 @@ export default class SheetAccessor {
     this.headerRowIndex = 0;
     this.headerColumnIndex = 0;
     this.getHeaderRow = null;
+    this.getColumnIndex = null;
+    this.columnExists = null;
     this.getAllRecordIndices = null;
     this.resizeColumns = null;
+    this.getDataPayload = null;
 
     /**
      * flesh out headerRowIndex, headerColumnIndex
      */
-    const notesData = instanceOptions.sheet.getDataRange().getNotes();
+    const notesData = this.sheet.getDataRange().getNotes();
     const rowCount = notesData.length;
     const columnCount = notesData[0].length;
 
@@ -42,9 +47,8 @@ export default class SheetAccessor {
     }
     for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
       if (
-        notesData[this.headerRowIndex][columnIndex].indexOf(
-          instanceOptions.headerAnchorToken
-        ) !== -1
+        notesData[this.headerRowIndex][columnIndex].indexOf(instanceOptions.headerAnchorToken) !==
+        -1
       ) {
         this.headerColumnIndex = columnIndex;
         break;
@@ -56,21 +60,15 @@ export default class SheetAccessor {
      */
     this.range = {
       getCell: (rowIndex, columnIndex) => {
-        return instanceOptions.sheet.getRange(rowIndex + 1, columnIndex + 1);
+        return this.sheet.getRange(rowIndex + 1, columnIndex + 1);
       },
       getRow: rowIndex => {
-        const dataRange = instanceOptions.sheet.getDataRange();
-        return instanceOptions.sheet.getRange(
-          rowIndex + 1,
-          1,
-          1,
-          dataRange.getNumColumns()
-        );
+        return this.sheet.getRange(rowIndex + 1, 1, 1, this.sheet.getDataRange().getNumColumns());
       },
       getColumn: (columnIndex, startRowIndex) => {
-        const dataRange = instanceOptions.sheet.getDataRange();
+        const dataRange = this.sheet.getDataRange();
         const startRowIndx = isNumeric(startRowIndex) ? startRowIndex : 0;
-        return instanceOptions.sheet.getRange(
+        return this.sheet.getRange(
           startRowIndx + 1,
           columnIndex + 1,
           dataRange.getNumRows() - startRowIndx,
@@ -78,12 +76,12 @@ export default class SheetAccessor {
         );
       },
       getAll: (startRowIndex, startColumnIndex) => {
-        const dataRange = instanceOptions.sheet.getDataRange();
+        const dataRange = this.sheet.getDataRange();
         const startRowIndx = isNumeric(startRowIndex) ? startRowIndex : 0;
 
         const startColumnIndx = isNumeric(startColumnIndex) ? startColumnIndex : 0;
 
-        return instanceOptions.sheet.getRange(
+        return this.sheet.getRange(
           startRowIndx + 1,
           startColumnIndx + 1,
           dataRange.getNumRows() - startRowIndx,
@@ -129,11 +127,21 @@ export default class SheetAccessor {
     });
 
     /**
-     * flesh out getHeaderRow, getAllRecordIndices methods
+     * flesh out getHeaderRow, getColumnIndex, columnExists methods
      */
     this.getHeaderRow = () => {
       return this.value.getRow(this.headerRowIndex)[0];
     };
+    this.getColumnIndex = columnName => {
+      return this.getHeaderRow().indexOf(columnName);
+    };
+    this.columnExists = columnName => {
+      return this.getColumnIndex(columnName) !== -1;
+    };
+
+    /**
+     * flesh out getAllRecordIndices method
+     */
     this.getAllRecordIndices = () => {
       const indices = [];
       const numRows = this.range.getAllRecords().getNumRows();
@@ -150,8 +158,25 @@ export default class SheetAccessor {
      */
     this.resizeColumns = () => {
       this.getHeaderRow().forEach((columnName, index) => {
-        instanceOptions.sheet.autoResizeColumn(index + 1);
+        this.sheet.autoResizeColumn(index + 1);
       });
+    };
+
+    /**
+     * flesh out getDataPayload method
+     */
+    this.getDataPayload = requestedAttributesSet => {
+      if (!(requestedAttributesSet instanceof AttributesSet)) {
+        throw new TypeError(`getDataPayload expects a AttributesSet instance.`);
+      }
+      return new DataPayload(
+        /* eslint no-param-reassign: ["error", { "props": true, "ignorePropertyModificationsFor": ["dataObject"] }] */
+        requestedAttributesSet.values.reduce((dataObject, attribute) => {
+          dataObject[attribute] = this[attribute].getAll();
+          return dataObject;
+        }, {}),
+        this.getHeaderRow()
+      );
     };
   }
 }

@@ -3,9 +3,8 @@
  * @return {Object}
  */
 
-import UniqueSet from './unique-handling';
 import QueryDriver from './query-driver';
-import RecordsContainer from './records-container';
+import { Map } from './map-unique';
 import Timer from './timer';
 
 export default class QueryReturn {
@@ -13,19 +12,20 @@ export default class QueryReturn {
     if (!(queryDriver instanceof QueryDriver)) {
       throw new TypeError('QueryResult constructor requires QueryDriver input.');
     }
-    this.query = queryDriver.query;
     this.type = queryDriver.type;
+    this.query = queryDriver.query;
     this.timer = new Timer(`${queryDriver.type}`);
-    this.resultSet = new UniqueSet();
-    this.recordsContainer = new RecordsContainer();
+    this.resultSet = new Map();
+    this.otherResults = new Map();
   }
 
   get count() {
     return this.resultSet.length;
   }
 
-  push(index) {
-    this.resultSet.push(index);
+  push(index, record) {
+    this.resultSet.set(index, record);
+    return this;
   }
 
   has(index) {

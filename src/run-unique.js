@@ -2,7 +2,7 @@
  * unique
  */
 
-import UniqueSet from './unique-handling';
+import { UniqueSet } from './map-unique';
 import QueryDriver from './query-driver';
 import processQuery from './process-query';
 import { isString, isNumeric, inArray } from './utilities';
@@ -18,13 +18,14 @@ export default function getUnique(core, columnName, attribute) {
 
   const attr = attribute || DEFAULT_ATTRIBUTE;
   const aggregator = new UniqueSet();
-  const queryDriver = new QueryDriver(r => {
-    aggregator.push(r[columnName][attr]);
-  }, 'unique');
-  queryDriver.requestedAttributesSet.push(attr);
+  const queryDriver = new QueryDriver('unique')
+    .setQuery(r => {
+      aggregator.push(r[columnName][attr]);
+    })
+    .addAttribute(attr);
 
   const queryReturn = processQuery(core, queryDriver);
-  queryReturn.resultSet.copyItems(aggregator);
+  // queryReturn.resultSet.copyItems(aggregator);
 
   return queryReturn;
 }

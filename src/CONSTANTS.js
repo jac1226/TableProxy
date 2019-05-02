@@ -2,7 +2,7 @@
  * CONSTANTS - various constants
  */
 
-export const IS_TEST_MODE = false;
+export const IS_TEST_MODE = true;
 
 export const DEFAULT_HEADER_ANCHOR = 'HEADER_ANCHOR';
 
@@ -42,4 +42,11 @@ export const SUPPORTED_ATTRIBUTES = [
   'fontweight'
 ];
 
+export const OP_UNIQUE = 'UNIQUE';
+export const OP_QUERY = 'QUERY';
+export const OP_UPDATE = 'UPDATE';
+export const SUPPORTED_OPS = [OP_UNIQUE, OP_QUERY, OP_UPDATE];
+
 export const DEFAULT_ATTRIBUTE = 'value';
+
+export const INDEX = ' ';

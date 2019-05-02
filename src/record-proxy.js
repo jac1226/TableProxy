@@ -7,12 +7,13 @@
  * @return {Object} record proxy
  */
 
-import UniqueSet from './unique-handling';
+import { UniqueSet } from './map-unique';
 import SheetAccessor from './sheet-accessor';
 import DataController from './data-controller';
 import InstanceOptions from './instance-options';
+import { INDEX } from './CONSTANTS';
 
-export default function getRecordProxy(core, dataController, requestedAttributesSet) {
+export function getRecordProxy(core, dataController, requestedAttributesSet) {
   if (!(core.sheetAccessor instanceof SheetAccessor)) {
     throw new Error(`getRecordProxy requires a SheetAccessor instance.`);
   }
@@ -41,6 +42,13 @@ export default function getRecordProxy(core, dataController, requestedAttributes
 
   const recordProxy = {};
 
+  Object.defineProperty(recordProxy, INDEX, {
+    enumerable: true,
+    get: () => {
+      return dataController.getRowIndex();
+    }
+  });
+
   core.sheetAccessor.getHeaderRow().forEach((column, columnIndex) => {
     if (columnIsValid(column)) {
       const columnProxy = {};
@@ -48,7 +56,6 @@ export default function getRecordProxy(core, dataController, requestedAttributes
       requestedAttributesSet.forEach(attribute => {
         Object.defineProperty(columnProxy, attribute, {
           enumerable: true,
-          configurable: false,
           get: () => {
             return dataController.getColumnByIndex(attribute, columnIndex);
           },
@@ -76,4 +83,12 @@ export default function getRecordProxy(core, dataController, requestedAttributes
   }
 
   return recordProxy;
+}
+
+export function writeToRecordProxy(recordProxy, updateObject) {
+  Object.keys(recordProxy).forEach(columnName => {
+    if (Object.prototype.hasOwnProperty.call(updateObject, columnName)) {
+      Object.assign(recordProxy[columnName], updateObject[columnName]);
+    }
+  });
 }

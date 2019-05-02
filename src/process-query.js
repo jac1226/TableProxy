@@ -6,10 +6,11 @@
 import QueryDriver from './query-driver';
 import SheetAccessor from './sheet-accessor';
 import DataController from './data-controller';
-import RowIndexCursor from './row-index-cursor';
+import MainCursor from './main-cursor';
 import QueryReturn from './query-return';
-import getRecordProxy from './get-record-proxy';
+import { getRecordProxy } from './record-proxy';
 import clone from './clone';
+import { OP_UNIQUE, OP_QUERY, OP_UPDATE, SUPPORTED_OPS } from './CONSTANTS';
 
 export default function processQuery(core, queryDriver) {
   if (!(queryDriver instanceof QueryDriver)) {
@@ -18,8 +19,11 @@ export default function processQuery(core, queryDriver) {
   if (!(core.sheetAccessor instanceof SheetAccessor)) {
     throw new Error(`queryProcessor requires a SheetAccessor instance.`);
   }
-  if (!(core.rowIndexCursor instanceof RowIndexCursor)) {
-    throw new Error(`queryProcessor requires a RowIndexCursor instance.`);
+  if (!(core.mainCursor instanceof MainCursor)) {
+    throw new Error(`queryProcessor requires a MainCursor instance.`);
+  }
+  if (SUPPORTED_OPS.indexOf(queryDriver.type) === -1) {
+    throw new Error(`queryDriver had invalid type "${queryDriver.type}"`);
   }
 
   /**
@@ -49,15 +53,45 @@ export default function processQuery(core, queryDriver) {
   /**
    * Iterate through rowIndexCursor & apply query
    */
-  core.rowIndexCursor.forEach(index => {
-    dataController.setRowIndex(index);
-    if (query(recordProxy, index)) {
-      queryReturn.push(index);
-      if (queryDriver.withRecords) {
-        queryReturn.recordsContainer.push(clone(recordProxy), index);
+  if ([OP_UNIQUE, OP_QUERY].indexOf(queryDriver.type) !== -1) {
+    core.mainCursor.forEach(index => {
+      dataController.setRowIndex(index);
+      if (query(recordProxy, index)) {
+        if (queryDriver.withRecords) {
+          queryReturn.recordsContainer.push(index, clone(recordProxy));
+        } else {
+          queryReturn.push(index);
+        }
       }
-    }
-  });
+    });
+  }
+
+  if ([OP_UPDATE].indexOf(queryDriver.type) !== -1) {
+    const indexer = dataController.getIndexOn(
+      queryDriver.writeIndexColumnName,
+      queryDriver.writeIndexAttribute
+    );
+
+    // this.recordsToWrite = null;
+    // this.writeIffIndexUnique = true;
+    // writeToRecordProxy
+    // this.withRecords = false;
+    // this.requestedAttributesSet = new UniqueSet();
+    // this.indexColumnName;
+    // this.indexAttribute;
+
+    core.mainCursor.forEach(index => {
+      dataController.setRowIndex(index);
+      if (query(recordProxy, index)) {
+        if (queryDriver.withRecords) {
+          queryReturn.recordsContainer.push(index, clone(recordProxy));
+        } else {
+          queryReturn.push(index);
+        }
+      }
+    });
+    return indexer;
+  }
 
   /**
    * capWrite the iteration

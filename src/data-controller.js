@@ -5,10 +5,10 @@
  * @param {Object} requestedAttributes - UniqueSet instance
  */
 
-import { WRITE_LEVEL_CELL, WRITE_LEVEL_ROW, WRITE_LEVEL_TABLE } from './CONSTANTS';
 import SheetAccessor from './sheet-accessor';
 import InstanceOptions from './instance-options';
-import UniqueSet from './unique-handling';
+import { AttributesSet } from './data-payload';
+import { WRITE_LEVEL_CELL, WRITE_LEVEL_ROW, WRITE_LEVEL_TABLE } from './CONSTANTS';
 
 export default class DataController {
   constructor(sheetAccessor, instanceOptions, requestedAttributesSet) {
@@ -18,22 +18,17 @@ export default class DataController {
     if (!(instanceOptions instanceof InstanceOptions)) {
       throw new TypeError(`DataController requires an instance of InstanceOptions object.`);
     }
-    if (!(requestedAttributesSet instanceof UniqueSet) || requestedAttributesSet.length < 1) {
+    if (!(requestedAttributesSet instanceof AttributesSet) || requestedAttributesSet.length < 1) {
       throw new TypeError(
-        `DataController requires a UniqueSet instance with at least one value for for requestedAttributesSet.`
+        `DataController requires a RequestedAttributesSet instance containing at least one attribute.`
       );
     }
 
     this.pvt_sheetAccessor = sheetAccessor;
-    this.pvt_requestedAttributesSet = requestedAttributesSet;
     this.pvt_instanceOptions = instanceOptions;
     this.pvt_rowIndex = null;
-    this.pvt_changedAttributes = new UniqueSet();
-    this.pvt_dataPayload = {};
-
-    this.pvt_requestedAttributesSet.forEach(attribute => {
-      this.pvt_dataPayload[attribute] = this.pvt_sheetAccessor[attribute].getAll();
-    });
+    this.pvt_changedAttributes = new AttributesSet();
+    this.pvt_dataPayload = sheetAccessor.getDataPayload(requestedAttributesSet);
   }
 
   getColumnByIndex(attribute, columnIndex) {
@@ -56,6 +51,10 @@ export default class DataController {
     }
     this.pvt_rowIndex = rowIndex;
     return this;
+  }
+
+  getRowIndex() {
+    return this.pvt_rowIndex;
   }
 
   writeCurrentRow() {
