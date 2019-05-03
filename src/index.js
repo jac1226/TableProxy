@@ -6,7 +6,7 @@ import InstanceOptions from './instance-options';
 import SheetAccessor from './sheet-accessor';
 import MainCursor from './main-cursor';
 import Timer from './timer';
-import { getUnique, runQuery } from './operations';
+import { getUnique, runQuery, getExportObject } from './operations';
 import {
   TOP,
   BOTTOM,
@@ -19,11 +19,15 @@ import {
 global.SpreadsheetApp = SpreadsheetApp;
 
 const TableProxy = () => {
-  function mount(sheetNameOrOptions) {
+  function mount(sheetNameOrOptions, headerAnchorToken) {
     try {
-      const instanceOptions = new InstanceOptions(sheetNameOrOptions);
+      const instanceOptions = new InstanceOptions(sheetNameOrOptions, headerAnchorToken);
       const sheetAccessor = new SheetAccessor(instanceOptions);
       const mainCursor = new MainCursor(sheetAccessor);
+
+      if (!instanceOptions.uniqueIdColumnName) {
+        instanceOptions.idColumnName = sheetAccessor.getDefaultIdColumn();
+      }
 
       const core = {
         instanceOptions,
@@ -35,37 +39,43 @@ const TableProxy = () => {
 
       Object.defineProperty(api, 'query', {
         enumerable: true,
-        configurable: false,
-        writable: false,
         value: (query, withRecords) => {
           const timer = new Timer(`API query call`);
           const queryReturn = runQuery(core, query, withRecords);
-          console.log(queryReturn);
-          // mainRecordsContainer.absorb(queryReturn.recordsContainer);
-          mainCursor.consumeSelection(queryReturn.resultSet);
+          mainCursor.consumeReturn(queryReturn);
           timer.stop();
 
           return this;
         }
       });
 
-      Object.defineProperty(api, 'unique', {
+      Object.defineProperty(api, 'records', {
         enumerable: true,
-        configurable: false,
-        writable: false,
-        value: (columnName, attribute) => {
-          const timer = new Timer(`API unique call`);
-          const queryReturn = getUnique(core, columnName, attribute);
+        value: () => {
+          const timer = new Timer(`API retrieve records`);
+          if (mainCursor.isDirty) {
+            const queryReturn = runQuery(core, () => true, true, mainCursor.attributesSet);
+            mainCursor.consumeReturn(queryReturn);
+          }
           timer.stop();
 
-          return queryReturn.resultSet.values;
+          return mainCursor.values();
+        }
+      });
+
+      Object.defineProperty(api, 'unique', {
+        enumerable: true,
+        value: (columnName, attribute) => {
+          const timer = new Timer(`API unique call`);
+          const uniqueValues = getUnique(core, columnName, attribute);
+          timer.stop();
+
+          return uniqueValues;
         }
       });
 
       Object.defineProperty(api, 'flush', {
         enumerable: true,
-        configurable: false,
-        writable: false,
         value: () => {
           const timer = new Timer(`API flush call`);
           mainCursor.flush();
@@ -75,10 +85,14 @@ const TableProxy = () => {
         }
       });
 
-      Object.defineProperty(api, 'records', {
+      Object.defineProperty(api, 'getExportObject', {
         enumerable: true,
-        get: () => {
-          return mainCursor.getRecords();
+        value: withRawData => {
+          const timer = new Timer(`API retrieve exportObject`);
+          const exportObject = getExportObject(core, withRawData);
+          timer.stop();
+
+          return exportObject;
         }
       });
 
@@ -87,50 +101,58 @@ const TableProxy = () => {
        */
       Object.defineProperties(api, {
         setSheetName: {
+          enumerable: true,
           value: input => {
             instanceOptions.sheetName = input;
             return api;
           }
         },
-        setHeaderAnchorToken: {
-          value: input => {
-            instanceOptions.headerAnchorToken = input;
-            return api;
-          }
-        },
         setColumnFilter: {
+          enumerable: true,
           value: input => {
             instanceOptions.columnFilter = input;
             return api;
           }
         },
         setExportAttributes: {
+          enumerable: true,
           value: input => {
             instanceOptions.exportAttributes = input;
             return api;
           }
         },
-        setExportOnlySelected: {
-          value: input => {
-            instanceOptions.exportOnlySelected = input;
-            return api;
-          }
-        },
         setWriteLevel: {
+          enumerable: true,
           value: input => {
             instanceOptions.writeLevel = input;
             return api;
           }
         },
         setAutoResizeColumns: {
+          enumerable: true,
           value: input => {
             instanceOptions.autoResizeColumns = input;
             return api;
           }
         },
         setComputedProperties: {
+          enumerable: true,
           value: input => {
             instanceOptions.computedProperties = input;
+            return api;
+          }
+        },
+        setIdColumnName: {
+          enumerable: true,
+          value: input => {
+            instanceOptions.idColumnName = input;
+            return api;
+          }
+        },
+        setIdAttributeName: {
+          enumerable: true,
+          value: input => {
+            instanceOptions.idAttributeName = input;
             return api;
           }
         }

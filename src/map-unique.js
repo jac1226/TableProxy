@@ -213,6 +213,34 @@ export class UniqueSet extends Map {
     });
   }
 
+  copyValues(input) {
+    if (!(input instanceof UniqueSet)) {
+      throw new TypeError('copyValues accepts only UniqueSet input.');
+    }
+    input.keys().forEach(key => {
+      this.push(key);
+    });
+    return this;
+  }
+
+  hasSame(input) {
+    if (!(input instanceof UniqueSet)) {
+      throw new TypeError('hasSame expects a UniqueSet instance.');
+    }
+    let hasSame = true;
+    if (this.length !== input.length) {
+      hasSame = false;
+    }
+    const thisValues = this.values.sort();
+    const inputValues = input.values.sort();
+    thisValues.forEach((value, index) => {
+      if (value !== inputValues[index]) {
+        hasSame = false;
+      }
+    });
+    return hasSame;
+  }
+
   get values() {
     return this.keys();
   }

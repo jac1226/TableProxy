@@ -21,7 +21,7 @@ export default function update(core, data, matchColumnName, matchAttribute) {
     throw new TypeError(`update expects a valid supported attribute input.`);
   }
   
-  const colIndex = core.sheetAccessor.getHeaderRow().indexOf(matchColumnName);
+  const colIndex = core.sheetAccessor.headerRow.indexOf(matchColumnName);
   if (columnIndex === -1) {
     throw new Error(`update can't match on columnName ${matchColumnName}.`);
   }

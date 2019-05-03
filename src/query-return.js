@@ -6,6 +6,7 @@
 import QueryDriver from './query-driver';
 import { Map } from './map-unique';
 import Timer from './timer';
+import { AttributesSet } from './data-payload';
 
 export default class QueryReturn {
   constructor(queryDriver) {
@@ -16,7 +17,9 @@ export default class QueryReturn {
     this.query = queryDriver.query;
     this.timer = new Timer(`${queryDriver.type}`);
     this.resultSet = new Map();
-    this.otherResults = new Map();
+    this.otherResults = queryDriver.otherResults;
+    this.attributesSet = new AttributesSet().copyValues(queryDriver.requestedAttributesSet);
+    this.returnWithRecords = queryDriver.returnWithRecords;
   }
 
   get count() {

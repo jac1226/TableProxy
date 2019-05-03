@@ -13,7 +13,7 @@ export const WRITE_LEVEL_CELL = 'WRITE_LEVEL_CELL';
 export const WRITE_LEVEL_ROW = 'WRITE_LEVEL_ROW';
 export const WRITE_LEVEL_TABLE = 'WRITE_LEVEL_TABLE';
 export const VALID_WRITE_LEVELS = [WRITE_LEVEL_CELL, WRITE_LEVEL_ROW, WRITE_LEVEL_TABLE];
-export const DEFAULT_WRITE_LEVEL = WRITE_LEVEL_TABLE;
+export const DEFAULT_WRITE_LEVEL = WRITE_LEVEL_CELL;
 
 export const COLORS = {
   SUCCESS: '#DFFFB4',
@@ -49,4 +49,4 @@ export const SUPPORTED_OPS = [OP_UNIQUE, OP_QUERY, OP_UPDATE];
 
 export const DEFAULT_ATTRIBUTE = 'value';
 
-export const INDEX = ' ';
+export const INDEX = ' # ';

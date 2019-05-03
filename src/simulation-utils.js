@@ -8,7 +8,7 @@ const defaults = {};
 
 defaults.values = '';
 const values = [
-  ['1-1 Value', '1-2 Value', '1-3 Value', '1-4 Value', '1-5 Value'],
+  ['C1', 'C2', 'C3', 'C4', 'C5'],
   ['2-1 Value', '2-2 Value', '2-3 Value', '2-4 Value', '2-5 Value'],
   ['3-1 Value', '3-2 Value', '3-3 Value', '3-4 Value', '3-5 Value'],
   ['4-1 Value', '4-2 Value', '4-3 Value', '4-4 Value', '4-5 Value'],
@@ -491,7 +491,8 @@ class Sheet {
 }
 
 class ActiveSpreadsheet {
-  constructor() {
+  constructor(div) {
+    this.div = div;
     this.sheets = {
       Test: new Sheet('Test')
     };
@@ -505,31 +506,39 @@ class ActiveSpreadsheet {
     if (Object.keys(this.sheets).indexOf(name) === -1) {
       throw new Error(`sheet named "${name}" does not exist.`);
     }
-    return this.sheets[name];
+    const sheet = this.sheets[name];
+    if (toString.call(this.div) === '[object HTMLDivElement]') {
+      sheet.setDiv(this.div);
+    }
+    return sheet;
   }
 }
 
 const SpreadsheetAppFake = {
+  div: null,
   getActiveSpreadsheet: () => {
-    return new ActiveSpreadsheet();
+    return new ActiveSpreadsheet(SpreadsheetAppFake.div);
   }
 };
 export const expSpreadsheetApp = IS_TEST_MODE ? SpreadsheetAppFake : SpreadsheetApp;
 
+const noop = () => {
+  return null;
+};
+export const expNoop = noop;
+
 const BrowserFake = {
   msgBox: note => {
-    console.log(`Browser.msgBox---->`);
-    console.log(note);
-    console.log(`<----Browser.msgBox`);
+    noop(note);
+    // console.log(note);
   }
 };
 export const expBrowser = IS_TEST_MODE ? BrowserFake : Browser;
 
 const LoggerFake = {
   log: note => {
-    console.log(`Logger.log---->`);
-    console.log(note);
-    console.log(`<----Logger.log`);
+    noop(note);
+    // console.log(note);
   }
 };
 export const expLogger = IS_TEST_MODE ? LoggerFake : Logger;

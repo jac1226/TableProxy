@@ -7,15 +7,70 @@
 <body>
     <div id='table'></div>
     <script>
-        SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test').setDiv(document.getElementById('table'));
-        const t = TableProxy.mount('Test');
-        const query = function(r){
-            if (r['2-1 Value'].value === '3-1 Value') {
-                return true;
+        window.addEventListener("load", function () {
+            SpreadsheetApp.div = document.getElementById('table');
+            SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test');
+
+            const iterations = 1;
+            const t = TableProxy.mount('Test').setColumnFilter(['2-4 Value','2-5 Value']).setExportAttributes(['fontcolor']);
+            const query = function (r) {
+                // console.log(JSON.parse(JSON.stringify(r)));
+                if (r['2-4 Value'].value.indexOf('-4') !== -1) {
+                    r['2-5 Value'].background = 'red'; //OK
+                    r['2-5 Value'].fontsize = 20; //OK
+                    r['2-5 Value'].fontweight = 'bold'; //OK
+                    r['2-5 Value'].note = 'fuckoff';
+                    r['2-5 Value'].fontfamily = 'Georgia'; //OK
+                    r['2-5 Value'].fontstyle = 'italic'; //OK
+                    r['2-5 Value'].fontcolor = 'green';
+
+                    return true;
+                }
             }
+            t.query(query, true);
+            console.log(t.getExportObject());
+            //console.log(t.unique('2-4 Value'));
+            //console.log(t);
+
+            /* t.setWriteLevel(TableProxy.WRITE_LEVEL_CELL);
+            const st1 = Date.now()
+            for(let i = 0; i< iterations; i++){
+                t.query(query, true);
+            }
+            console.log(`${iterations} at cell write in ${Date.now()-st1}`);
+            
+
+            t.setWriteLevel(TableProxy.WRITE_LEVEL_ROW);
+            const st2 = Date.now()
+            for(let i = 0; i< iterations; i++){
+                t.query(query, true);
+            }
+            console.log(`${iterations} at row write in ${Date.now()-st2}`);
+
+
+            t.setWriteLevel(TableProxy.WRITE_LEVEL_TABLE);
+            const st3 = Date.now()
+            for(let i = 0; i< iterations; i++){
+                t.query(query, true);
+            }
+            console.log(`${iterations} at row write in ${Date.now()-st3}`);
+ */
+        });
+
+
+        //console.log(t.records);
+
+        //const s=SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test').setDiv(document.getElementById('table'));
+        //s.getRange(5,3).setNotes([['test']]).setFontSizes([[30]]).setFontColors([['green']]);
+
+        function z() {
+            s.getRange(4, 3, 2, 2).setBackgrounds([['blue', 'green'], ['orange', 'purple']]);
         }
-        t.query(query);
     </script>
+
+
+
+
 </body>
 
 </html>

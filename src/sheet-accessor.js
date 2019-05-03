@@ -27,7 +27,7 @@ export default class SheetAccessor {
     this.fontweight = {};
     this.headerRowIndex = 0;
     this.headerColumnIndex = 0;
-    this.getHeaderRow = null;
+    this.headerRow = null;
     this.getColumnIndex = null;
     this.columnExists = null;
     this.getAllRecordIndices = null;
@@ -35,7 +35,7 @@ export default class SheetAccessor {
     this.getDataPayload = null;
 
     /**
-     * flesh out headerRowIndex, headerColumnIndex
+     * flesh out headerRowIndex, headerColumnIndex, headerRow
      */
     const notesData = this.sheet.getDataRange().getNotes();
     const rowCount = notesData.length;
@@ -56,6 +56,7 @@ export default class SheetAccessor {
         break;
       }
     }
+    this.headerRow = this.value.getRow(this.headerRowIndex)[0];
 
     /**
      * flesh out range retrievers
@@ -91,7 +92,7 @@ export default class SheetAccessor {
         );
       },
       getAllRecords: () => {
-        return this.range.getAll(this.headerRowIndex, 0);
+        return this.range.getAll(this.headerRowIndex + 1, 0);
       },
       getRecordsColumn: columnIndex => {
         return this.range.getColumn(columnIndex, this.headerRowIndex + 1);
@@ -129,16 +130,16 @@ export default class SheetAccessor {
     });
 
     /**
-     * flesh out getHeaderRow, getColumnIndex, columnExists methods
+     * flesh out getColumnIndex, columnExists methods
      */
-    this.getHeaderRow = () => {
-      return this.value.getRow(this.headerRowIndex)[0];
-    };
     this.getColumnIndex = columnName => {
-      return this.getHeaderRow().indexOf(columnName);
+      return this.headerRow.indexOf(columnName);
     };
     this.columnExists = columnName => {
       return this.getColumnIndex(columnName) !== -1;
+    };
+    this.getDefaultIdColumn = () => {
+      return this.headerRow[this.headerColumnIndex];
     };
 
     /**
@@ -146,9 +147,9 @@ export default class SheetAccessor {
      */
     this.getAllRecordIndexer = () => {
       const indexer = new Map();
-      const numRows = this.range.getAllRecords().getNumRows();
+      const numRows = this.range.getAll().getNumRows();
       let i = this.headerRowIndex + 1;
-      while (i <= numRows) {
+      while (i < numRows) {
         indexer.set(i);
         i += 1;
       }
@@ -159,7 +160,7 @@ export default class SheetAccessor {
      * flesh out autoResizeColumns method
      */
     this.resizeColumns = () => {
-      this.getHeaderRow().forEach((columnName, index) => {
+      this.headerRow.forEach((columnName, index) => {
         this.sheet.autoResizeColumn(index + 1);
       });
     };
@@ -171,15 +172,22 @@ export default class SheetAccessor {
       if (!(requestedAttributesSet instanceof AttributesSet)) {
         throw new TypeError(`getDataPayload expects a AttributesSet instance.`);
       }
-      requestedAttributesSet.push(DEFAULT_ATTRIBUTE);
+      if (requestedAttributesSet.length === 0) {
+        requestedAttributesSet.push(DEFAULT_ATTRIBUTE);
+      }
+      console.log('out');
+      console.log(requestedAttributesSet.values);
       return new DataPayload(
         requestedAttributesSet.values.reduce((dataObject, attribute) => {
+          console.log(`shit ${JSON.stringify(dataObject)}`);
           // eslint-disable-next-line no-param-reassign
           dataObject[attribute] = this[attribute].getAll();
+          console.log(`shit ${JSON.stringify(dataObject)}`);
           return dataObject;
         }, {}),
         this.headerRowIndex,
-        this.headerColumnIndex
+        this.headerColumnIndex,
+        this.headerRow
       );
     };
   }

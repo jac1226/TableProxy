@@ -4,8 +4,9 @@
  */
 
 import { SUPPORTED_ATTRIBUTES } from './CONSTANTS';
+import { Map } from './map-unique';
 import { AttributesSet } from './data-payload';
-import { isFunction } from './utilities';
+import { isFunction, inArray } from './utilities';
 
 export default class QueryDriver {
   constructor(type) {
@@ -17,6 +18,7 @@ export default class QueryDriver {
     this.writeIndexAttribute = null;
     this.recordsToWrite = null;
     this.writeIffIndexUnique = true;
+    this.otherResults = new Map();
   }
 
   setQuery(query) {
@@ -51,11 +53,21 @@ export default class QueryDriver {
     return this;
   }
 
+  setRequestedAttributes(attributesSet) {
+    if (attributesSet) {
+      if (!(attributesSet instanceof AttributesSet)) {
+        throw new TypeError(`setRequestedAttributes accepts AttributeSet instances.`);
+      }
+      this.requestedAttributesSet.copyValues(attributesSet);
+    }
+    return this;
+  }
+
   addAttribute(attribute) {
-    if (SUPPORTED_ATTRIBUTES.indexOf(attribute) === -1) {
+    if (!inArray(attribute, SUPPORTED_ATTRIBUTES)) {
       throw new TypeError(`invalid attribute ${attribute}`);
     }
-    this.requestedAttributeSet.push(attribute);
+    this.requestedAttributesSet.push(attribute);
     return this;
   }
 

@@ -10,6 +10,7 @@ import MainCursor from './main-cursor';
 import QueryReturn from './query-return';
 import { getRecordProxy } from './record-proxy';
 import clone from './clone';
+import { inArray } from './utilities';
 import { OP_UNIQUE, OP_QUERY, OP_UPDATE, SUPPORTED_OPS } from './CONSTANTS';
 
 export default function processQuery(core, queryDriver) {
@@ -22,7 +23,7 @@ export default function processQuery(core, queryDriver) {
   if (!(core.mainCursor instanceof MainCursor)) {
     throw new Error(`queryProcessor requires a MainCursor instance.`);
   }
-  if (SUPPORTED_OPS.indexOf(queryDriver.type) === -1) {
+  if (!inArray(queryDriver.type, SUPPORTED_OPS)) {
     throw new Error(`queryDriver had invalid type "${queryDriver.type}"`);
   }
 
@@ -30,7 +31,8 @@ export default function processQuery(core, queryDriver) {
    * Build queryResult
    */
   const queryReturn = new QueryReturn(queryDriver);
-
+  console.log('proc');
+  console.log(queryDriver.requestedAttributesSet.values);
   /**
    * Build dataController
    */
@@ -40,6 +42,8 @@ export default function processQuery(core, queryDriver) {
     queryDriver.requestedAttributesSet
   );
 
+  console.log('teetah');
+  console.log(queryDriver.requestedAttributesSet.values);
   /**
    * Build recordProxy
    */
@@ -53,21 +57,22 @@ export default function processQuery(core, queryDriver) {
   /**
    * Iterate through rowIndexCursor & apply query
    */
-  if ([OP_UNIQUE, OP_QUERY].indexOf(queryDriver.type) !== -1) {
+  if (inArray(queryDriver.type, [OP_UNIQUE, OP_QUERY])) {
     core.mainCursor.indices.forEach(index => {
       dataController.setRowIndex(index);
       if (query(recordProxy, index)) {
         if (queryDriver.returnWithRecords) {
-          queryReturn.resultSet.push(index, clone(recordProxy));
+          queryReturn.resultSet.set(index, clone(recordProxy));
         } else {
-          queryReturn.push(index);
+          queryReturn.resultSet.set(index);
         }
       }
     });
   }
 
-  if ([OP_UPDATE].indexOf(queryDriver.type) !== -1) {
+  if (inArray(queryDriver.type, [OP_UPDATE])) {
     const indexer = dataController.getIndexOn(
+      // add getIndexOn to dataPayload
       queryDriver.writeIndexColumnName,
       queryDriver.writeIndexAttribute
     );

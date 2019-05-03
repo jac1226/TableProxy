@@ -8,6 +8,8 @@
 
 import { Map } from './map-unique';
 import SheetAccessor from './sheet-accessor';
+import { AttributesSet } from './data-payload';
+import QueryReturn from './query-return';
 
 export default class MainCursor extends Map {
   constructor(sheetAccessor) {
@@ -16,6 +18,7 @@ export default class MainCursor extends Map {
       throw new TypeError(`MainCursor constructor requires a SheetAccessor.`);
     }
     this.sheetAccessor = sheetAccessor;
+    this.attributesSet = new AttributesSet();
     this.dirty = true;
     this.flush();
   }
@@ -24,27 +27,23 @@ export default class MainCursor extends Map {
     return this.keys();
   }
 
-  setDirty() {
-    this.dirty = true;
-    return this;
-  }
-
-  setClean() {
-    this.dirty = false;
-    return this;
+  get isDirty() {
+    return this.dirty;
   }
 
   flush() {
-    return this.clear()
-      .setDirty()
-      .copyItems(this.sheetAccessor.getAllRecordIndexer());
+    this.attributesSet.flush();
+    this.dirty = true;
+    return this.clear().copyItems(this.sheetAccessor.getAllRecordIndexer());
   }
 
-  consumeSelection(selectionSet) {
-    if (!(selectionSet instanceof Map)) {
-      throw new TypeError('consumeSelections accepts only Map input.');
+  consumeReturn(queryReturn) {
+    if (!(queryReturn instanceof QueryReturn)) {
+      throw new TypeError('consumeSelections accepts QueryReturn input.');
     }
-    this.clear().copyItems(selectionSet);
+    this.dirty = !queryReturn.returnWithRecords;
+    this.attributesSet.copyValues(queryReturn.attributesSet);
+    this.clear().copyItems(queryReturn.resultSet);
     return this;
   }
 }

@@ -3,32 +3,51 @@
  * @return {InstanceOptions}
  */
 
+import { AttributesSet } from './data-payload';
 import {
   DEFAULT_HEADER_ANCHOR,
   VALID_WRITE_LEVELS,
   DEFAULT_WRITE_LEVEL,
   IS_TEST_MODE,
-  DEFAULT_ATTRIBUTE
+  DEFAULT_ATTRIBUTE,
+  SUPPORTED_ATTRIBUTES
 } from './CONSTANTS';
 import { isSpreadsheet, isSheet } from './sheets-utilities';
+import { isString, isArray, isBoolean, isObject, inArray, isFunction } from './utilities';
 import clone from './clone';
-import { isString, isArray, isBoolean, isObject } from './utilities';
 
 export default class InstanceOptions {
-  constructor(sheetNameOrOptions) {
+  constructor(sheetNameOrOptions, headerAnchorToken) {
     this.pvt_sheetName = null;
-    this.pvt_headerAnchorToken = DEFAULT_HEADER_ANCHOR;
+    this.pvt_headerAnchorToken = null;
     this.pvt_columnFilter = [];
-    this.pvt_exportAttributes = [DEFAULT_ATTRIBUTE];
+    this.pvt_exportAttributes = new AttributesSet().push(DEFAULT_ATTRIBUTE);
     this.pvt_exportOnlySelected = true;
     this.pvt_writeLevel = DEFAULT_WRITE_LEVEL;
     this.pvt_autoResizeColumns = false;
     this.pvt_computedProperties = {};
-
+    this.pvt_idColumnName = null;
+    this.pvt_idAttributeName = DEFAULT_ATTRIBUTE;
     this.pvt_spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
     this.pvt_sheet = null;
 
+    this.setHeaderAnchorToken(headerAnchorToken);
     this.processInput(sheetNameOrOptions);
+  }
+
+  setHeaderAnchorToken(input) {
+    if (isString(this.pvt_headerAnchorToken)) {
+      throw new Error(`headerAnchorToken can only be set at mount.`);
+    }
+    if (input !== undefined && !isString(input)) {
+      throw new TypeError(`headerAnchorToken must be a string.`);
+    }
+    this.pvt_headerAnchorToken = input === undefined ? DEFAULT_HEADER_ANCHOR : input;
+    return this;
+  }
+
+  get headerAnchorToken() {
+    return this.pvt_headerAnchorToken;
   }
 
   get sheetName() {
@@ -51,18 +70,6 @@ export default class InstanceOptions {
     return this.pvt_sheetName;
   }
 
-  get headerAnchorToken() {
-    return this.pvt_headerAnchorToken;
-  }
-
-  set headerAnchorToken(input) {
-    if (!isString(input)) {
-      throw new TypeError(`headerAnchorToken must be a string.`);
-    }
-    this.pvt_headerAnchorToken = input;
-    return this.pvt_headerAnchorToken;
-  }
-
   get columnFilter() {
     return this.pvt_columnFilter;
   }
@@ -83,20 +90,11 @@ export default class InstanceOptions {
     if (!isArray(input)) {
       throw new TypeError(`exportAttributes must be an array.`);
     }
-    this.pvt_exportAttributes = clone(input);
+    this.pvt_exportAttributes.flush(); // .push(DEFAULT_ATTRIBUTE);
+    input.forEach(attribute => {
+      this.pvt_exportAttributes.push(attribute);
+    });
     return this.pvt_exportAttributes;
-  }
-
-  get exportOnlySelected() {
-    return this.pvt_exportOnlySelected;
-  }
-
-  set exportOnlySelected(input) {
-    if (!isBoolean(input)) {
-      throw new TypeError(`exportOnlySelected must be a boolean.`);
-    }
-    this.pvt_exportOnlySelected = input;
-    return this.pvt_exportOnlySelected;
   }
 
   get writeLevel() {
@@ -107,7 +105,7 @@ export default class InstanceOptions {
     if (!isString(input)) {
       throw new TypeError(`exportOnlySelected must be a string.`);
     }
-    if (VALID_WRITE_LEVELS.indexOf(input) === -1) {
+    if (!inArray(input, VALID_WRITE_LEVELS)) {
       throw new Error(
         `writeLevel must be one of ${VALID_WRITE_LEVELS.toString()} received ${input}`
       );
@@ -134,10 +132,42 @@ export default class InstanceOptions {
 
   set computedProperties(input) {
     if (!isObject(input)) {
-      throw new TypeError(`computedProperties must be a property descriptor object.`);
+      throw new TypeError(`computedProperties must be an object.`);
     }
+    Object.keys(input).forEach(key => {
+      if (!isFunction(input[key])) {
+        throw new Error(`non-function provided for computedProperty value.`);
+      }
+    });
     this.pvt_computedProperties = input;
     return this.pvt_computedProperties;
+  }
+
+  get idColumnName() {
+    return this.pvt_idColumnName;
+  }
+
+  set idColumnName(input) {
+    if (!isString(input)) {
+      throw new TypeError(`idColumnName must be a string.`);
+    }
+    this.pvt_idColumnName = input;
+    return this;
+  }
+
+  get idAttributeName() {
+    return this.pvt_idAttributeName;
+  }
+
+  set idAttributeName(input) {
+    if (!isString(input)) {
+      throw new TypeError(`idAttributeName must be a string.`);
+    }
+    if (!inArray(input, SUPPORTED_ATTRIBUTES)) {
+      throw new Error(`${input} is not a valid idAttributeName.`);
+    }
+    this.pvt_idAttributeName = input;
+    return this;
   }
 
   set spreadsheet(input) {

@@ -7,10 +7,11 @@
  * @return {Object} record proxy
  */
 
-import { UniqueSet } from './map-unique';
 import SheetAccessor from './sheet-accessor';
 import DataController from './data-controller';
 import InstanceOptions from './instance-options';
+import { AttributesSet } from './data-payload';
+import { inArray } from './utilities';
 import { INDEX } from './CONSTANTS';
 
 export function getRecordProxy(core, dataController, requestedAttributesSet) {
@@ -23,7 +24,7 @@ export function getRecordProxy(core, dataController, requestedAttributesSet) {
   if (!(dataController instanceof DataController)) {
     throw new Error(`getRecordProxy requires a DataController instance.`);
   }
-  if (!(requestedAttributesSet instanceof UniqueSet)) {
+  if (!(requestedAttributesSet instanceof AttributesSet)) {
     throw new Error(
       `getRecordProxy requires an UniqueSet instance for input parameter requestedAttributesSet.`
     );
@@ -34,7 +35,7 @@ export function getRecordProxy(core, dataController, requestedAttributesSet) {
     if (column === null || column === undefined) {
       return false;
     }
-    if (columnFilter.length > 0 && columnFilter.indexOf(column) === -1) {
+    if (columnFilter.length > 0 && !inArray(column, columnFilter)) {
       return false;
     }
     return true;
@@ -49,18 +50,19 @@ export function getRecordProxy(core, dataController, requestedAttributesSet) {
     }
   });
 
-  core.sheetAccessor.getHeaderRow().forEach((column, columnIndex) => {
+  core.sheetAccessor.headerRow.forEach((column, columnIndex) => {
     if (columnIsValid(column)) {
       const columnProxy = {};
-
+      console.log('ttt');
+      console.log(requestedAttributesSet.values);
       requestedAttributesSet.forEach(attribute => {
         Object.defineProperty(columnProxy, attribute, {
           enumerable: true,
           get: () => {
             return dataController.getColumnByIndex(attribute, columnIndex);
           },
-          set: value => {
-            return dataController.updateColumnByIndex(attribute, columnIndex, value);
+          set: input => {
+            return dataController.updateColumnByIndex(attribute, columnIndex, input);
           }
         });
       });

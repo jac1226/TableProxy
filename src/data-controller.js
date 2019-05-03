@@ -29,6 +29,8 @@ export default class DataController {
     this.rowIndex = null;
     this.changedAttributes = new AttributesSet();
     this.dataPayload = sheetAccessor.getDataPayload(requestedAttributesSet);
+    console.log('shit');
+    console.log(this.dataPayload);
   }
 
   getColumnByIndex(attribute, columnIndex) {
@@ -36,8 +38,7 @@ export default class DataController {
   }
 
   updateColumnByIndex(attribute, columnIndex, updatedValue) {
-    console.log('updateColumnByIndex');
-    this.dataPayload[attribute][this.rowIndex][columnIndex] = updatedValue;
+    this.dataPayload.dataObject[attribute][this.rowIndex][columnIndex] = updatedValue;
     if (this.instanceOptions.writeLevel === WRITE_LEVEL_CELL) {
       this.sheetAccessor[attribute].setCell(this.rowIndex, columnIndex, [[updatedValue]]);
     } else {
@@ -55,15 +56,13 @@ export default class DataController {
   }
 
   getRowIndex() {
-    console.log('getRowIndex');
     return this.rowIndex;
   }
 
   writeCurrentRow() {
-    console.log('writeCurrentRow');
     this.changedAttributes.forEach(attribute => {
       this.sheetAccessor[attribute].setRow(this.rowIndex, [
-        this.dataPayload[attribute][this.rowIndex]
+        this.dataPayload.dataObject[attribute][this.rowIndex]
       ]);
     });
     this.changedAttributes.flush();
@@ -71,10 +70,10 @@ export default class DataController {
   }
 
   capWrite() {
-    console.log('capWrite');
     if (this.instanceOptions.writeLevel === WRITE_LEVEL_TABLE) {
       this.changedAttributes.forEach(attribute => {
-        this.sheetAccessor[attribute].setAllRecords(this.dataPayload[attribute]);
+        this.dataPayload.dataObject[attribute].splice(0, this.sheetAccessor.headerRowIndex + 1);
+        this.sheetAccessor[attribute].setAllRecords(this.dataPayload.dataObject[attribute]);
       });
       this.changedAttributes.flush();
     }

@@ -4,13 +4,14 @@
  */
 
 import { Map, UniqueSet } from './map-unique';
+import { inArray } from './utilities';
 import { SUPPORTED_ATTRIBUTES, DEFAULT_ATTRIBUTE } from './CONSTANTS';
 
 export class DataPayload {
-  constructor(dataObject, headerRowIndex, headerColumnIndex) {
+  constructor(dataObject, headerRowIndex, headerColumnIndex, headerRow) {
     this.headerRowIndex = headerRowIndex;
     this.headerColumnIndex = headerColumnIndex;
-    this.headerRow = dataObject[DEFAULT_ATTRIBUTE][headerRowIndex];
+    this.headerRow = headerRow;
     this.dataObject = dataObject;
   }
 
@@ -29,7 +30,7 @@ export class DataPayload {
           `getIndexOn failed: column ${columnName} does not exist in this TableProxy instance.`
         );
       }
-      if (SUPPORTED_ATTRIBUTES.indexOf(attr) === -1) {
+      if (!inArray(attr, SUPPORTED_ATTRIBUTES)) {
         throw new Error(`getIndexOn failed: attribute ${attribute} is not supported.`);
       }
 
@@ -46,7 +47,7 @@ export class DataPayload {
 
 export class AttributesSet extends UniqueSet {
   push(attribute) {
-    if (SUPPORTED_ATTRIBUTES.indexOf(attribute) === -1) {
+    if (!inArray(attribute, SUPPORTED_ATTRIBUTES)) {
       throw new Error(`${attribute} is not a supported attribute.`);
     }
     return this.set(attribute);
