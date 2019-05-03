@@ -6,10 +6,10 @@
  */
 
 /**
- * Map - same functionality as native Map plus some additional features
+ * Map - same api as native Map plus a few other computed properties
  * @desc Supports ONLY String, Number, Date - the types that sheets supports
- * @desc Could be enhanced for regexp, null, undefined if needed.
- * @desc Handling objects & arrays keys will be more difficult
+ * @desc Could be enhanced for regexp, if needed.
+ * @desc Handling objects & arrays keys is not possible.
  * @desc Is about 10 times slower than native JS Map for about 100,000 elements
  * @desc Suffers indexOf slowness for key deletion
  * @constructor Map

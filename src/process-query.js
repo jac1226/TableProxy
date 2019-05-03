@@ -31,8 +31,7 @@ export default function processQuery(core, queryDriver) {
    * Build queryResult
    */
   const queryReturn = new QueryReturn(queryDriver);
-  console.log('proc');
-  console.log(queryDriver.requestedAttributesSet.values);
+
   /**
    * Build dataController
    */
@@ -42,8 +41,6 @@ export default function processQuery(core, queryDriver) {
     queryDriver.requestedAttributesSet
   );
 
-  console.log('teetah');
-  console.log(queryDriver.requestedAttributesSet.values);
   /**
    * Build recordProxy
    */
@@ -69,13 +66,10 @@ export default function processQuery(core, queryDriver) {
       }
     });
   }
-
+  
   if (inArray(queryDriver.type, [OP_UPDATE])) {
-    const indexer = dataController.getIndexOn(
-      // add getIndexOn to dataPayload
-      queryDriver.writeIndexColumnName,
-      queryDriver.writeIndexAttribute
-    );
+    const dataIndex = dataController
+      .getDataIndex(queryDriver.matchColumnName, queryDriver.matchAttributeName);
 
     // this.recordsToWrite = null;
     // this.writeIffIndexUnique = true;
@@ -84,6 +78,15 @@ export default function processQuery(core, queryDriver) {
     // this.requestedAttributesSet = new UniqueSet();
     // this.indexColumnName;
     // this.indexAttribute;
+
+    this.query = null;
+    this.returnWithRecords = false;
+    this.requestedAttributesSet = new AttributesSet();
+    this.matchColumnName = null;
+    this.matchAttributeName = null;
+    this.matchUnique = true;
+    this.recordsToWrite = null;
+    this.otherResults = new Map();
 
     core.mainCursor.forEach(index => {
       dataController.setRowIndex(index);

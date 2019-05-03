@@ -3,7 +3,7 @@
  * @return {Object}
  */
 
-import { SUPPORTED_ATTRIBUTES } from './CONSTANTS';
+import { SUPPORTED_ATTRIBUTES, SUPPORTED_OPS } from './CONSTANTS';
 import { Map } from './map-unique';
 import { AttributesSet } from './data-payload';
 import { isFunction, inArray } from './utilities';
@@ -14,16 +14,23 @@ export default class QueryDriver {
     this.query = null;
     this.returnWithRecords = false;
     this.requestedAttributesSet = new AttributesSet();
-    this.writeIndexColumnName = null;
-    this.writeIndexAttribute = null;
+    this.matchColumnName = null;
+    this.matchAttributeName = null;
+    this.matchUnique = true;
     this.recordsToWrite = null;
-    this.writeIffIndexUnique = true;
     this.otherResults = new Map();
+  }
+
+  setType(type) {
+    if (!inArray(type.toUpperCase(), SUPPORTED_OPS)) {
+      throw new Error(`invalid query type: ${type}.`);
+    }
+    this.type = type.toUpperCase();
   }
 
   setQuery(query) {
     if (!isFunction(query)) {
-      throw new TypeError('loadQuery requires accepts a function callback');
+      throw new TypeError('query must be a function.');
     }
     this.query = query;
     const queryAsString = query.toString();
@@ -42,12 +49,14 @@ export default class QueryDriver {
     return this;
   }
 
-  setRecordsToWrite(arrayOfRecords) {
-    if (toString.call(arrayOfRecords) !== '[object Array]') {
-      throw new TypeError(`setRecordsToWrite expects an array.`);
+  setRecordObjectsToWrite(arrayOfRecords) {
+    if (!isArray(arrayOfRecords)) {
+      throw new TypeError(`expecting an array of record objects.`);
     }
-    SUPPORTED_ATTRIBUTES.forEach(attribute => {
-      this.requestedAttributesSet.push(attribute);
+    arrayOfRecords.forEach((record, index) => {
+      if (!isObject(record)) {
+        throw new TypeError(`record object array contained ${toString.call(record)} at index ${index}.`);
+      }
     });
     this.recordsToWrite = arrayOfRecords;
     return this;
@@ -71,18 +80,18 @@ export default class QueryDriver {
     return this;
   }
 
-  setWriteIndexColumnName(columnName) {
-    this.indexColumnName = columnName.trim();
+  setMatchColumnName(columnName) {
+    this.matchColumnName = columnName.trim();
     return this;
   }
 
-  setWriteIndexAttribute(attribute) {
-    this.indexAttribute = attribute.trim();
+  setMatchAttributeName(attribute) {
+    this.matchAttributeName = attribute.trim();
     return this;
   }
 
-  setWriteIffIndexUnique(bool) {
-    this.writeIffIndexUnique = bool === true;
+  setMatchUnique(bool) {
+    this.matchUnique = bool !== false;
     return this;
   }
 }

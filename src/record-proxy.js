@@ -53,8 +53,6 @@ export function getRecordProxy(core, dataController, requestedAttributesSet) {
   core.sheetAccessor.headerRow.forEach((column, columnIndex) => {
     if (columnIsValid(column)) {
       const columnProxy = {};
-      console.log('ttt');
-      console.log(requestedAttributesSet.values);
       requestedAttributesSet.forEach(attribute => {
         Object.defineProperty(columnProxy, attribute, {
           enumerable: true,

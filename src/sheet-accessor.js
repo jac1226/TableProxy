@@ -37,10 +37,9 @@ export default class SheetAccessor {
     /**
      * flesh out headerRowIndex, headerColumnIndex, headerRow
      */
-    const notesData = this.sheet.getDataRange().getNotes();
-    const rowCount = notesData.length;
-    const columnCount = notesData[0].length;
-
+    let notesData = this.sheet.getDataRange().getNotes();
+    let rowCount = notesData.length;
+    let columnCount = notesData[0].length;
     for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
       if (notesData[rowIndex].join('').indexOf(instanceOptions.headerAnchorToken) !== -1) {
         this.headerRowIndex = rowIndex;
@@ -56,7 +55,11 @@ export default class SheetAccessor {
         break;
       }
     }
-    this.headerRow = this.value.getRow(this.headerRowIndex)[0];
+    notesData = null;
+    rowCount = null;
+    columnCount = null;
+
+    this.headerRow = this.sheet.getDataRange().getValues()[this.headerRowIndex];
 
     /**
      * flesh out range retrievers
@@ -175,14 +178,10 @@ export default class SheetAccessor {
       if (requestedAttributesSet.length === 0) {
         requestedAttributesSet.push(DEFAULT_ATTRIBUTE);
       }
-      console.log('out');
-      console.log(requestedAttributesSet.values);
       return new DataPayload(
         requestedAttributesSet.values.reduce((dataObject, attribute) => {
-          console.log(`shit ${JSON.stringify(dataObject)}`);
           // eslint-disable-next-line no-param-reassign
           dataObject[attribute] = this[attribute].getAll();
-          console.log(`shit ${JSON.stringify(dataObject)}`);
           return dataObject;
         }, {}),
         this.headerRowIndex,

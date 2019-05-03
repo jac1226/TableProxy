@@ -29,8 +29,6 @@ export default class DataController {
     this.rowIndex = null;
     this.changedAttributes = new AttributesSet();
     this.dataPayload = sheetAccessor.getDataPayload(requestedAttributesSet);
-    console.log('shit');
-    console.log(this.dataPayload);
   }
 
   getColumnByIndex(attribute, columnIndex) {
@@ -80,5 +78,9 @@ export default class DataController {
     if (this.instanceOptions.writeLevel === WRITE_LEVEL_ROW) {
       this.writeCurrentRow();
     }
+  }
+
+  get getDataIndex() {
+    return this.dataPayload.getDataIndex;
   }
 }

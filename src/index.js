@@ -49,6 +49,24 @@ const TableProxy = () => {
         }
       });
 
+      Object.defineProperty(api, 'update', {
+        enumerable: true,
+        value: (records, matchColumnName, matchAttributeName, matchUnique) => {
+          const timer = new Timer(`API update call`);
+          const updateReturn = runUpdate(
+            core,
+            records,
+            matchColumnName,
+            matchAttributeName,
+            matchUnique
+          );
+          mainCursor.consumeReturn(updateReturn);
+          timer.stop();
+
+          return this;
+        }
+      });
+
       Object.defineProperty(api, 'records', {
         enumerable: true,
         value: () => {

@@ -90,7 +90,7 @@ export default class InstanceOptions {
     if (!isArray(input)) {
       throw new TypeError(`exportAttributes must be an array.`);
     }
-    this.pvt_exportAttributes.flush(); // .push(DEFAULT_ATTRIBUTE);
+    this.pvt_exportAttributes.flush().push(DEFAULT_ATTRIBUTE);
     input.forEach(attribute => {
       this.pvt_exportAttributes.push(attribute);
     });
@@ -151,7 +151,7 @@ export default class InstanceOptions {
     if (!isString(input)) {
       throw new TypeError(`idColumnName must be a string.`);
     }
-    this.pvt_idColumnName = input;
+    this.pvt_idColumnName = input.trim();
     return this;
   }
 
