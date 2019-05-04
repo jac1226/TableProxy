@@ -91,4 +91,5 @@ export function writeToRecordProxy(recordProxy, updateObject) {
       Object.assign(recordProxy[columnName], updateObject[columnName]);
     }
   });
+  return recordProxy;
 }

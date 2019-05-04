@@ -5,8 +5,9 @@ import { expSpreadsheetApp as SpreadsheetApp } from './simulation-utils';
 import InstanceOptions from './instance-options';
 import SheetAccessor from './sheet-accessor';
 import MainCursor from './main-cursor';
+import { Map } from './map-unique';
 import Timer from './timer';
-import { getUnique, runQuery, getExportObject } from './operations';
+import { getUnique, runQuery, runUpdate, getExportObject } from './operations';
 import {
   TOP,
   BOTTOM,
@@ -24,6 +25,7 @@ const TableProxy = () => {
       const instanceOptions = new InstanceOptions(sheetNameOrOptions, headerAnchorToken);
       const sheetAccessor = new SheetAccessor(instanceOptions);
       const mainCursor = new MainCursor(sheetAccessor);
+      const lastResults = new Map();
 
       if (!instanceOptions.uniqueIdColumnName) {
         instanceOptions.idColumnName = sheetAccessor.getDefaultIdColumn();
@@ -40,10 +42,15 @@ const TableProxy = () => {
       Object.defineProperty(api, 'query', {
         enumerable: true,
         value: (query, withRecords) => {
-          const timer = new Timer(`API query call`);
+          const timer = new Timer(`API query`);
           const queryReturn = runQuery(core, query, withRecords);
           mainCursor.consumeReturn(queryReturn);
-          timer.stop();
+          lastResults
+            .clear()
+            .set('operation', 'query')
+            .set('completed', true)
+            .set('count', queryReturn.count)
+            .set('duration', timer.stop());
 
           return this;
         }
@@ -52,16 +59,22 @@ const TableProxy = () => {
       Object.defineProperty(api, 'update', {
         enumerable: true,
         value: (records, matchColumnName, matchAttributeName, matchUnique) => {
-          const timer = new Timer(`API update call`);
-          const updateReturn = runUpdate(
+          const timer = new Timer(`API update`);
+          const queryReturn = runUpdate(
             core,
             records,
             matchColumnName,
             matchAttributeName,
             matchUnique
           );
-          mainCursor.consumeReturn(updateReturn);
-          timer.stop();
+          lastResults
+            .clear()
+            .set('operation', 'update')
+            .set('completed', true)
+            .set('updated', queryReturn.resultSet.entries())
+            .set('warnings', queryReturn.warnings.entries())
+            .set('errors', queryReturn.errors.entries())
+            .set('duration', timer.stop());
 
           return this;
         }
@@ -70,12 +83,18 @@ const TableProxy = () => {
       Object.defineProperty(api, 'records', {
         enumerable: true,
         value: () => {
-          const timer = new Timer(`API retrieve records`);
+          const timer = new Timer(`API records`);
+          console.log(mainCursor.attributesSet.entries());
           if (mainCursor.isDirty) {
             const queryReturn = runQuery(core, () => true, true, mainCursor.attributesSet);
             mainCursor.consumeReturn(queryReturn);
           }
-          timer.stop();
+          lastResults
+            .clear()
+            .set('operation', 'records')
+            .set('completed', true)
+            .set('count', mainCursor.length)
+            .set('duration', timer.stop());
 
           return mainCursor.values();
         }
@@ -84,9 +103,14 @@ const TableProxy = () => {
       Object.defineProperty(api, 'unique', {
         enumerable: true,
         value: (columnName, attribute) => {
-          const timer = new Timer(`API unique call`);
+          const timer = new Timer(`API unique`);
           const uniqueValues = getUnique(core, columnName, attribute);
-          timer.stop();
+          lastResults
+            .clear()
+            .set('operation', 'unique')
+            .set('completed', true)
+            .set('count', uniqueValues.length)
+            .set('duration', timer.stop());
 
           return uniqueValues;
         }
@@ -95,9 +119,13 @@ const TableProxy = () => {
       Object.defineProperty(api, 'flush', {
         enumerable: true,
         value: () => {
-          const timer = new Timer(`API flush call`);
+          const timer = new Timer(`API flush`);
           mainCursor.flush();
-          timer.stop();
+          lastResults
+            .clear()
+            .set('operation', 'flush')
+            .set('completed', true)
+            .set('duration', timer.stop());
 
           return this;
         }
@@ -106,11 +134,22 @@ const TableProxy = () => {
       Object.defineProperty(api, 'getExportObject', {
         enumerable: true,
         value: withRawData => {
-          const timer = new Timer(`API retrieve exportObject`);
+          const timer = new Timer(`API getExportObject`);
           const exportObject = getExportObject(core, withRawData);
-          timer.stop();
+          lastResults
+            .clear()
+            .set('operation', 'getExportObject')
+            .set('completed', true)
+            .set('duration', timer.stop());
 
           return exportObject;
+        }
+      });
+
+      Object.defineProperty(api, 'getLastResults', {
+        enumerable: true,
+        value: () => {
+          return lastResults.entries();
         }
       });
 
@@ -136,6 +175,13 @@ const TableProxy = () => {
           enumerable: true,
           value: input => {
             instanceOptions.exportAttributes = input;
+            return api;
+          }
+        },
+        exportWithAllAttributes: {
+          enumerable: true,
+          value: () => {
+            instanceOptions.exportWithAllAttributes();
             return api;
           }
         },

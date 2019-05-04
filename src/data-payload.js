@@ -22,6 +22,7 @@ export class DataPayload {
       this.dataObject[DEFAULT_ATTRIBUTE].forEach((row, index) => {
         dataIndex.set(index, index);
       });
+      dataIndex.isUnique = true;
     } else {
       const attr = attribute === undefined ? Object.keys(this.dataObject)[0] : attribute;
       const columnIndex = this.headerRow.indexOf(columnName);
@@ -33,10 +34,12 @@ export class DataPayload {
       }
 
       // eslint-disable-next-line prefer-destructuring
-      const length = this.dataObject[attr].length;
-      for (let i = this.headerRowIndex; i < length; i += 1) {
+      const dataLength = this.dataObject[attr].length;
+      for (let i = this.headerRowIndex; i < dataLength; i += 1) {
         dataIndex.set(this.dataObject[attr][i][columnIndex], i);
       }
+
+      dataIndex.isUnique = dataIndex.length === dataLength;
     }
 
     return dataIndex;

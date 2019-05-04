@@ -153,6 +153,14 @@ export class Map {
     return this;
   }
 
+  getShallowClone() {
+    const clone = new Map();
+    this.pvt_keys.forEach(key => {
+      clone.set(key, this.get(key));
+    });
+    return clone;
+  }
+
   get stringKeyCount() {
     return Object.keys(this.pvt_strings).length;
   }

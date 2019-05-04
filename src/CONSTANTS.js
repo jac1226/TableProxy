@@ -49,4 +49,4 @@ export const SUPPORTED_OPS = [OP_UNIQUE, OP_QUERY, OP_UPDATE];
 
 export const DEFAULT_ATTRIBUTE = 'value';
 
-export const INDEX = ' # ';
+export const INDEX = ' index ';

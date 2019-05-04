@@ -20,5 +20,6 @@ export default class Timer {
     const endText = isString(text) ? `\n${text}` : '';
     this.duration = getTimeDiff(this.startTime, 0);
     log(`${this.text} operation completed in ${this.duration}ms${endText}`);
+    return this.duration;
   }
 }

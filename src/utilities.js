@@ -70,18 +70,3 @@ export const isValidColor = input => {
   }
   return false;
 };
-
-export const getSelectedRowIndices = () => {
-  const activeSheet = SpreadsheetApp.getActiveSheet();
-  const rowAggregator = {};
-  const selectedRanges = activeSheet
-    .getSelection()
-    .getActiveRangeList()
-    .getRanges();
-  selectedRanges.forEach(range => {
-    rowAggregator[range.getRow()] = true;
-  });
-  return Object.keys(rowAggregator).map(key => {
-    return Number(key);
-  });
-};

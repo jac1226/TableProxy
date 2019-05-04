@@ -4,38 +4,41 @@
 
 import { UniqueSet } from './map-unique';
 import QueryDriver from './query-driver';
-import { AttributesSet } from './data-payload';
 import processQuery from './process-query';
-import { inArray, isObject } from './utilities';
-import { DEFAULT_ATTRIBUTE, SUPPORTED_ATTRIBUTES, OP_UNIQUE, OP_QUERY, OP_UPDATE  } from './CONSTANTS';
+import { inArray } from './utilities';
+import {
+  DEFAULT_ATTRIBUTE,
+  SUPPORTED_ATTRIBUTES,
+  OP_UNIQUE,
+  OP_QUERY,
+  OP_UPDATE
+} from './CONSTANTS';
 
 /**
  * runQuery - processes query against indices in mainCursor
- * @param {object} core 
- * @param {function} query 
- * @param {boolean|undefined} returnWithRecords 
- * @param {AttributesSet} attributesSet 
+ * @param {object} core
+ * @param {function} query
+ * @param {boolean} [returnWithRecords]
+ * @param {AttributesSet} [attributesSet]
  */
 export function runQuery(core, query, returnWithRecords, attributesSet) {
-  if (!(attributesSet instanceof AttributesSet)) {
-    throw new TypeError(`runQuery requires an instance of AttributesSet.`);
-  }
+  console.log(attributesSet.entries());
   const queryDriver = new QueryDriver(OP_QUERY)
     .setQuery(query)
-    .setRequestedAttributes(attributesSet)
+    .addAttributes(attributesSet)
     .setReturnWithRecords(returnWithRecords);
   return processQuery(core, queryDriver);
 }
 
 /**
  * runUpdate - processes updates against indices in mainCursor
- * @param {object} core 
- * @param {array} records 
- * @param {string|undefined} matchColumnName 
- * @param {string|undefined} matchAttributeName 
- * @param {boolean|undefined} matchUnique 
+ * @param {object} core
+ * @param {array} records
+ * @param {string} [matchColumnName]
+ * @param {string} [matchAttributeName]
+ * @param {boolean} [matchUnique]
  */
-function runUpdate(core, records, matchColumnName, matchAttributeName, matchUnique) {
+export function runUpdate(core, records, matchColumnName, matchAttributeName, matchUnique) {
   const matchColName = matchColumnName || core.instanceOptions.idColumnName;
   const matchColIndex = core.sheetAccessor.getColumnIndex(matchColName);
   if (matchColIndex === -1) {
@@ -58,9 +61,9 @@ function runUpdate(core, records, matchColumnName, matchAttributeName, matchUniq
 
 /**
  * unique - finds unique values for a columnName, attribute combination
- * @param {object} core 
- * @param {string} columnName 
- * @param {string|undefined} attribute 
+ * @param {object} core
+ * @param {string} columnName
+ * @param {string} [attribute]
  */
 export function getUnique(core, columnName, attribute) {
   if (!core.sheetAccessor.columnExists(columnName)) {
@@ -84,8 +87,8 @@ export function getUnique(core, columnName, attribute) {
 
 /**
  * getExportObject - builds object for export
- * @param {object} core 
- * @param {boolean|undefined} withRawData 
+ * @param {object} core
+ * @param {boolean} [withRawData]
  */
 export function getExportObject(core, withRawData) {
   let records;

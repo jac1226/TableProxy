@@ -20,19 +20,27 @@ export default class QueryReturn {
     this.otherResults = queryDriver.otherResults;
     this.attributesSet = new AttributesSet().copyValues(queryDriver.requestedAttributesSet);
     this.returnWithRecords = queryDriver.returnWithRecords;
+    this.errors = new Map();
+    this.warnings = new Map();
   }
 
   get count() {
     return this.resultSet.length;
   }
 
-  push(index, record) {
+  pushResult(index, record) {
     this.resultSet.set(index, record);
     return this;
   }
 
-  has(index) {
-    return this.resultSet.has(index);
+  pushWarning(index, content) {
+    this.warnings.set(index, content);
+    return this;
+  }
+
+  pushError(index, content) {
+    this.errors.set(index, content);
+    return this;
   }
 
   done() {

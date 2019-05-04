@@ -8,7 +8,7 @@ import SheetAccessor from './sheet-accessor';
 import DataController from './data-controller';
 import MainCursor from './main-cursor';
 import QueryReturn from './query-return';
-import { getRecordProxy } from './record-proxy';
+import { getRecordProxy, writeToRecordProxy } from './record-proxy';
 import clone from './clone';
 import { inArray } from './utilities';
 import { OP_UNIQUE, OP_QUERY, OP_UPDATE, SUPPORTED_OPS } from './CONSTANTS';
@@ -59,46 +59,48 @@ export default function processQuery(core, queryDriver) {
       dataController.setRowIndex(index);
       if (query(recordProxy, index)) {
         if (queryDriver.returnWithRecords) {
-          queryReturn.resultSet.set(index, clone(recordProxy));
+          queryReturn.pushResult(index, clone(recordProxy));
         } else {
-          queryReturn.resultSet.set(index);
+          queryReturn.pushResult(index);
         }
       }
     });
   }
-  
+
   if (inArray(queryDriver.type, [OP_UPDATE])) {
-    const dataIndex = dataController
-      .getDataIndex(queryDriver.matchColumnName, queryDriver.matchAttributeName);
+    const matchCol = queryDriver.matchColumnName;
+    const matchAttr = queryDriver.matchAttributeName;
+    const dataIndex = dataController.getDataIndex(matchCol, matchAttr);
 
-    // this.recordsToWrite = null;
-    // this.writeIffIndexUnique = true;
-    // writeToRecordProxy
-    // this.withRecords = false;
-    // this.requestedAttributesSet = new UniqueSet();
-    // this.indexColumnName;
-    // this.indexAttribute;
+    if (queryDriver.matchUnique && !dataIndex.isUnique) {
+      throw new Error(`update failed because${matchCol}.${matchAttr} is not a unique index.`);
+    }
 
-    this.query = null;
-    this.returnWithRecords = false;
-    this.requestedAttributesSet = new AttributesSet();
-    this.matchColumnName = null;
-    this.matchAttributeName = null;
-    this.matchUnique = true;
-    this.recordsToWrite = null;
-    this.otherResults = new Map();
+    queryDriver.recordsToWrite.forEach((record, index) => {
+      if (!Object.prototype.hasOwnProperty.call(record, matchCol)) {
+        queryReturn.pushError(`input at index ${index} missing "${matchCol}" column.`);
+        return;
+      }
+      if (!Object.prototype.hasOwnProperty.call(record[matchCol], matchAttr)) {
+        queryReturn.pushError(`input at index ${index} missing "${matchAttr}" attribute.`);
+        return;
+      }
 
-    core.mainCursor.forEach(index => {
-      dataController.setRowIndex(index);
-      if (query(recordProxy, index)) {
-        if (queryDriver.withRecords) {
-          queryReturn.recordsContainer.push(index, clone(recordProxy));
-        } else {
-          queryReturn.push(index);
-        }
+      const localIndex = dataIndex.get(record[matchCol][matchAttr]);
+
+      if (!localIndex) {
+        queryReturn.pushWarning(`input at index ${index} had no match.`);
+        return;
+      }
+
+      dataController.setRowIndex(localIndex);
+
+      if (queryDriver.returnWithRecords) {
+        queryReturn.pushResult(localIndex, clone(writeToRecordProxy(recordProxy, record)));
+      } else {
+        queryReturn.pushResult(localIndex);
       }
     });
-    return indexer;
   }
 
   /**

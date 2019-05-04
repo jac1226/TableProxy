@@ -537,8 +537,8 @@ export const expBrowser = IS_TEST_MODE ? BrowserFake : Browser;
 
 const LoggerFake = {
   log: note => {
-    noop(note);
-    // console.log(note);
+    // noop(note);
+    console.log(note);
   }
 };
 export const expLogger = IS_TEST_MODE ? LoggerFake : Logger;

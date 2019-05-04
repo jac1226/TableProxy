@@ -6,7 +6,7 @@
 import { SUPPORTED_ATTRIBUTES, SUPPORTED_OPS } from './CONSTANTS';
 import { Map } from './map-unique';
 import { AttributesSet } from './data-payload';
-import { isFunction, inArray } from './utilities';
+import { isFunction, inArray, isArray, isObject } from './utilities';
 
 export default class QueryDriver {
   constructor(type) {
@@ -55,14 +55,22 @@ export default class QueryDriver {
     }
     arrayOfRecords.forEach((record, index) => {
       if (!isObject(record)) {
-        throw new TypeError(`record object array contained ${toString.call(record)} at index ${index}.`);
+        throw new TypeError(
+          `record object array contained ${toString.call(record)} at index ${index}.`
+        );
+      }
+    });
+    const json = JSON.stringify(arrayOfRecords);
+    SUPPORTED_ATTRIBUTES.forEach(attribute => {
+      if (new RegExp(`"${attribute}":`, 'g').test(json)) {
+        this.requestedAttributesSet.push(attribute);
       }
     });
     this.recordsToWrite = arrayOfRecords;
     return this;
   }
 
-  setRequestedAttributes(attributesSet) {
+  addAttributes(attributesSet) {
     if (attributesSet) {
       if (!(attributesSet instanceof AttributesSet)) {
         throw new TypeError(`setRequestedAttributes accepts AttributeSet instances.`);

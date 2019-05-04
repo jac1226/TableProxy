@@ -82,6 +82,10 @@ export default class InstanceOptions {
     return this.pvt_columnFilter;
   }
 
+  exportWithAllAttributes() {
+    return this.pvt_exportAttributes.withAll();
+  }
+
   get exportAttributes() {
     return this.pvt_exportAttributes;
   }
