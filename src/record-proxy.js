@@ -30,15 +30,26 @@ export function getRecordProxy(core, dataController, requestedAttributesSet) {
     );
   }
 
-  const { columnFilter } = core.instanceOptions;
-  function columnIsValid(column) {
-    if (column === null || column === undefined) {
-      return false;
-    }
-    if (columnFilter.length > 0 && !inArray(column, columnFilter)) {
-      return false;
-    }
-    return true;
+  const { columnFilter, applyColumnFilter } = core.instanceOptions;
+
+  let columnIsValid;
+  if (applyColumnFilter) {
+    columnIsValid = function testColumn(column) {
+      if (column === null || column === undefined) {
+        return false;
+      }
+      if (!inArray(column, columnFilter)) {
+        return false;
+      }
+      return true;
+    };
+  } else {
+    columnIsValid = function testColumn(column) {
+      if (column === null || column === undefined) {
+        return false;
+      }
+      return true;
+    };
   }
 
   const recordProxy = {};

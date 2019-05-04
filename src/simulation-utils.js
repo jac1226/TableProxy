@@ -38,8 +38,8 @@ const fontcolors = [
 
 defaults.notes = '';
 const notes = [
+  ['HEADER_ANCHOR', '', '', '', ''],
   ['', '', '', '', ''],
-  ['', '', 'HEADER_ANCHOR', '', ''],
   ['', '', '', '', ''],
   ['', '', '', '', ''],
   ['', '', '', '', ''],

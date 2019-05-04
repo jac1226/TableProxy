@@ -13,7 +13,15 @@ import {
   SUPPORTED_ATTRIBUTES
 } from './CONSTANTS';
 import { isSpreadsheet, isSheet } from './sheets-utilities';
-import { isString, isArray, isBoolean, isObject, inArray, isFunction } from './utilities';
+import {
+  isString,
+  isArray,
+  isBoolean,
+  isObject,
+  inArray,
+  isFunction,
+  isNumeric
+} from './utilities';
 import clone from './clone';
 
 export default class InstanceOptions {
@@ -21,6 +29,7 @@ export default class InstanceOptions {
     this.pvt_sheetName = null;
     this.pvt_headerAnchorToken = null;
     this.pvt_columnFilter = [];
+    this.pvt_applyColumnFilter = false;
     this.pvt_exportAttributes = new AttributesSet().push(DEFAULT_ATTRIBUTE);
     this.pvt_exportOnlySelected = true;
     this.pvt_writeLevel = DEFAULT_WRITE_LEVEL;
@@ -75,11 +84,21 @@ export default class InstanceOptions {
   }
 
   set columnFilter(input) {
-    if (!isArray(input)) {
-      throw new TypeError(`columnFilter must be an array.`);
+    let columnFilter;
+    if (isArray(input)) {
+      columnFilter = clone(input);
+    } else if (isString(input) || isNumeric(input)) {
+      columnFilter = [input];
+    } else {
+      columnFilter = [];
     }
-    this.pvt_columnFilter = clone(input);
+    this.pvt_applyColumnFilter = true;
+    this.pvt_columnFilter = columnFilter;
     return this.pvt_columnFilter;
+  }
+
+  get applyColumnFilter() {
+    return this.pvt_applyColumnFilter;
   }
 
   exportWithAllAttributes() {
@@ -91,12 +110,12 @@ export default class InstanceOptions {
   }
 
   set exportAttributes(input) {
-    if (!isArray(input)) {
-      throw new TypeError(`exportAttributes must be an array.`);
-    }
-    this.pvt_exportAttributes.flush().push(DEFAULT_ATTRIBUTE);
-    input.forEach(attribute => {
-      this.pvt_exportAttributes.push(attribute);
+    const attributes = isArray(input) ? input : [input];
+    this.pvt_exportAttributes.flush();
+    attributes.forEach(attribute => {
+      if (attribute !== undefined) {
+        this.pvt_exportAttributes.push(attribute);
+      }
     });
     return this.pvt_exportAttributes;
   }

@@ -11,7 +11,7 @@ import { isFunction, inArray, isArray, isObject } from './utilities';
 export default class QueryDriver {
   constructor(type) {
     this.type = type.toUpperCase();
-    this.query = null;
+    this.query = () => true;
     this.returnWithRecords = false;
     this.requestedAttributesSet = new AttributesSet();
     this.matchColumnName = null;

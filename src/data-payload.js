@@ -9,10 +9,10 @@ import { SUPPORTED_ATTRIBUTES, DEFAULT_ATTRIBUTE } from './CONSTANTS';
 
 export class DataPayload {
   constructor(dataObject, headerRowIndex, headerColumnIndex, headerRow) {
+    this.dataObject = dataObject;
     this.headerRowIndex = headerRowIndex;
     this.headerColumnIndex = headerColumnIndex;
     this.headerRow = headerRow;
-    this.dataObject = dataObject;
   }
 
   getDataIndex(columnName, attribute) {
@@ -26,6 +26,7 @@ export class DataPayload {
     } else {
       const attr = attribute === undefined ? Object.keys(this.dataObject)[0] : attribute;
       const columnIndex = this.headerRow.indexOf(columnName);
+
       if (columnIndex === -1) {
         throw new Error(`failed to get dataIndex on invalid column ${columnName}.`);
       }

@@ -110,7 +110,11 @@ export class Map {
   }
 
   keys() {
-    return this.pvt_keys;
+    const keys = [];
+    this.pvt_keys.forEach(key => {
+      keys.push(key);
+    });
+    return keys;
   }
 
   values() {
@@ -154,7 +158,7 @@ export class Map {
   }
 
   getShallowClone() {
-    const clone = new Map();
+    const clone = Object.create(this);
     this.pvt_keys.forEach(key => {
       clone.set(key, this.get(key));
     });
@@ -247,6 +251,14 @@ export class UniqueSet extends Map {
       }
     });
     return hasSame;
+  }
+
+  getClone() {
+    const clone = Object.create(this);
+    this.pvt_keys.forEach(key => {
+      clone.push(key);
+    });
+    return clone;
   }
 
   get values() {

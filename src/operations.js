@@ -6,6 +6,7 @@ import { UniqueSet } from './map-unique';
 import QueryDriver from './query-driver';
 import processQuery from './process-query';
 import { inArray } from './utilities';
+import clone from './clone';
 import {
   DEFAULT_ATTRIBUTE,
   SUPPORTED_ATTRIBUTES,
@@ -22,7 +23,6 @@ import {
  * @param {AttributesSet} [attributesSet]
  */
 export function runQuery(core, query, returnWithRecords, attributesSet) {
-  console.log(attributesSet.entries());
   const queryDriver = new QueryDriver(OP_QUERY)
     .setQuery(query)
     .addAttributes(attributesSet)
@@ -56,7 +56,7 @@ export function runUpdate(core, records, matchColumnName, matchAttributeName, ma
     .setMatchUnique(matchUnique)
     .setRecordObjectsToWrite(records);
 
-  return processQuery(queryDriver);
+  return processQuery(core, queryDriver);
 }
 
 /**
@@ -103,13 +103,13 @@ export function getExportObject(core, withRawData) {
       core.instanceOptions.exportAttributes
     ).resultSet.values();
   } else {
-    records = core.mainCursor.values();
+    records = clone(core.mainCursor.values());
   }
 
   return {
     records,
     rawData: withRawData
-      ? core.sheetAccessor.getDataPayload(core.instanceOptions.exportAttributes)
+      ? clone(core.sheetAccessor.getDataPayload(core.instanceOptions.exportAttributes))
       : 'rawData not requested'
   };
 }

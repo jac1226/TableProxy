@@ -5,7 +5,7 @@ import { expSpreadsheetApp as SpreadsheetApp } from './simulation-utils';
 import InstanceOptions from './instance-options';
 import SheetAccessor from './sheet-accessor';
 import MainCursor from './main-cursor';
-import { Map } from './map-unique';
+import { Map, UniqueSet } from './map-unique';
 import Timer from './timer';
 import { getUnique, runQuery, runUpdate, getExportObject } from './operations';
 import {
@@ -25,7 +25,6 @@ const TableProxy = () => {
       const instanceOptions = new InstanceOptions(sheetNameOrOptions, headerAnchorToken);
       const sheetAccessor = new SheetAccessor(instanceOptions);
       const mainCursor = new MainCursor(sheetAccessor);
-      const lastResults = new Map();
 
       if (!instanceOptions.uniqueIdColumnName) {
         instanceOptions.idColumnName = sheetAccessor.getDefaultIdColumn();
@@ -36,6 +35,8 @@ const TableProxy = () => {
         sheetAccessor,
         mainCursor
       };
+
+      const lastResults = new Map();
 
       const api = {};
 
@@ -80,11 +81,28 @@ const TableProxy = () => {
         }
       });
 
+      Object.defineProperty(api, 'write', {
+        enumerable: true,
+        value: () => {
+          const timer = new Timer(`API write`);
+          const queryReturn = runUpdate(core, this.records());
+          lastResults
+            .clear()
+            .set('operation', 'write')
+            .set('completed', true)
+            .set('updated', queryReturn.resultSet.entries())
+            .set('warnings', queryReturn.warnings.entries())
+            .set('errors', queryReturn.errors.entries())
+            .set('duration', timer.stop());
+
+          return this;
+        }
+      });
+
       Object.defineProperty(api, 'records', {
         enumerable: true,
         value: () => {
           const timer = new Timer(`API records`);
-          console.log(mainCursor.attributesSet.entries());
           if (mainCursor.isDirty) {
             const queryReturn = runQuery(core, () => true, true, mainCursor.attributesSet);
             mainCursor.consumeReturn(queryReturn);
@@ -235,8 +253,15 @@ const TableProxy = () => {
     WRITE_LEVEL_CELL,
     WRITE_LEVEL_ROW,
     WRITE_LEVEL_TABLE,
-    COLORS
+    COLORS,
+    Map,
+    UniqueSet
   };
 };
 
-global.TableProxy = TableProxy();
+const $initTableProxy = function $initTableProxy(asName) {
+  const globalName = asName === undefined ? 'TableProxy' : asName;
+  global[globalName] = TableProxy();
+};
+
+global.$initTableProxy = $initTableProxy;

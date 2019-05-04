@@ -13,15 +13,13 @@ import { WRITE_LEVEL_CELL, WRITE_LEVEL_ROW, WRITE_LEVEL_TABLE } from './CONSTANT
 export default class DataController {
   constructor(sheetAccessor, instanceOptions, requestedAttributesSet) {
     if (!(sheetAccessor instanceof SheetAccessor)) {
-      throw new TypeError(`DataController requires an instance of InstanceOptions object.`);
+      throw new TypeError(`DataController requires an instance of SheetAccessor.`);
     }
     if (!(instanceOptions instanceof InstanceOptions)) {
-      throw new TypeError(`DataController requires an instance of InstanceOptions object.`);
+      throw new TypeError(`DataController requires an instance of InstanceOptions.`);
     }
-    if (!(requestedAttributesSet instanceof AttributesSet) || requestedAttributesSet.length < 1) {
-      throw new TypeError(
-        `DataController requires a RequestedAttributesSet instance containing at least one attribute.`
-      );
+    if (!(requestedAttributesSet instanceof AttributesSet)) {
+      throw new TypeError(`DataController requires an instance of AttributesSet.`);
     }
 
     this.sheetAccessor = sheetAccessor;
@@ -80,7 +78,7 @@ export default class DataController {
     }
   }
 
-  get getDataIndex() {
-    return this.dataPayload.getDataIndex;
+  getDataIndex(columnName, attribute) {
+    return this.dataPayload.getDataIndex(columnName, attribute);
   }
 }

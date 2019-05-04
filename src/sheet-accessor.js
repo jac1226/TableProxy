@@ -7,7 +7,6 @@ import InstanceOptions from './instance-options';
 import { Map } from './map-unique';
 import { isNumeric } from './utilities';
 import { DataPayload, AttributesSet } from './data-payload';
-import { DEFAULT_ATTRIBUTE } from './CONSTANTS';
 
 export default class SheetAccessor {
   constructor(instanceOptions) {
@@ -174,9 +173,6 @@ export default class SheetAccessor {
     this.getDataPayload = requestedAttributesSet => {
       if (!(requestedAttributesSet instanceof AttributesSet)) {
         throw new TypeError(`getDataPayload expects a AttributesSet instance.`);
-      }
-      if (requestedAttributesSet.length === 0) {
-        requestedAttributesSet.push(DEFAULT_ATTRIBUTE);
       }
       return new DataPayload(
         requestedAttributesSet.values.reduce((dataObject, attribute) => {

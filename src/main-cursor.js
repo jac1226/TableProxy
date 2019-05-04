@@ -43,7 +43,6 @@ export default class MainCursor extends Map {
     }
     this.dirty = !queryReturn.returnWithRecords;
     this.attributesSet.copyValues(queryReturn.attributesSet);
-    console.log(this.attributesSet.entries());
     this.clear().copyItems(queryReturn.resultSet);
     return this;
   }
