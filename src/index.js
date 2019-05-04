@@ -260,8 +260,11 @@ const TableProxy = () => {
 };
 
 const $initTableProxy = function $initTableProxy(asName) {
-  const globalName = asName === undefined ? 'TableProxy' : asName;
-  global[globalName] = TableProxy();
+  if (asName) {
+    global[asName] = TableProxy();
+  } else {
+    global.TableProxy = TableProxy();
+  }
 };
 
 global.$initTableProxy = $initTableProxy;

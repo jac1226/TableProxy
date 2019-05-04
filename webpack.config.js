@@ -22,7 +22,7 @@ module.exports = {
   context: __dirname,
   entry: './src/index.js',
   output: {
-    filename: `code-${version}.js`,
+    filename: `TableProxy-${version}.js`,
     path: path.resolve(__dirname, destination),
     libraryTarget: 'this'
   },
@@ -72,11 +72,6 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin([
-      {
-        from: './src/**/*.html',
-        flatten: true,
-        to: path.resolve(__dirname, destination)
-      },
       {
         from: './appsscript.json',
         to: path.resolve(__dirname, destination)

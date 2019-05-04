@@ -1,7 +1,5 @@
 function SpreadsheetApp() {
 }
-function globalName() {
-}
 function $initTableProxy() {
 }!function(e, a) {
     for (var i in a) e[i] = a[i];
@@ -1890,8 +1888,7 @@ function $initTableProxy() {
                 UniqueSet: _map_unique__WEBPACK_IMPORTED_MODULE_4__["b"]
             };
         }, $initTableProxy = function $initTableProxy(asName) {
-            var globalName = asName === undefined ? "TableProxy" : asName;
-            global[globalName] = TableProxy();
+            asName ? global[asName] = TableProxy() : global.TableProxy = TableProxy();
         };
         global.$initTableProxy = $initTableProxy;
     }.call(this, __webpack_require__(15));
