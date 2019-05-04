@@ -11,7 +11,8 @@
             SpreadsheetApp.div = document.getElementById('table');
             SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test');
 
-            const t = TableProxy.mount('Test').setExportAttributes(['value','fontcolor']);
+            $initTableProxy('TP');
+            const t = TP.mount('Test').setExportAttributes(['value','fontcolor']);
             const query = function (r) {
                 // console.log(JSON.parse(JSON.stringify(r)));
                 if (r['2-4 Value'].value.indexOf('-4') !== -1) {
