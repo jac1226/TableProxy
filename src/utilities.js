@@ -25,6 +25,10 @@ export const isObject = input => {
   return toString.call(input) === '[object Object]' && input !== null && input !== undefined;
 };
 
+export const isDate = input => {
+  return toString.call(input) === '[object Date]';
+};
+
 export const isBoolean = input => {
   return toString.call(input) === '[object Boolean]';
 };
