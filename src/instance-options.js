@@ -4,8 +4,8 @@
  */
 
 import { AttributesSet } from './data-payload';
+// import { expSpreadsheetApp as SpreadsheetApp } from './simulation-utils';
 import {
-  DEFAULT_HEADER_ANCHOR,
   VALID_WRITE_LEVELS,
   DEFAULT_WRITE_LEVEL,
   IS_TEST_MODE,
@@ -20,7 +20,8 @@ import {
   isObject,
   inArray,
   isFunction,
-  isNumeric
+  isNumeric,
+  isDate
 } from './utilities';
 import clone from './clone';
 
@@ -30,7 +31,7 @@ export default class InstanceOptions {
     this.pvt_headerAnchorToken = null;
     this.pvt_columnFilter = [];
     this.pvt_applyColumnFilter = false;
-    this.pvt_exportAttributes = new AttributesSet().push(DEFAULT_ATTRIBUTE);
+    this.pvt_exportAttributes = new AttributesSet();
     this.pvt_exportOnlySelected = true;
     this.pvt_writeLevel = DEFAULT_WRITE_LEVEL;
     this.pvt_autoResizeColumns = false;
@@ -45,13 +46,13 @@ export default class InstanceOptions {
   }
 
   setHeaderAnchorToken(input) {
-    if (isString(this.pvt_headerAnchorToken)) {
+    if (this.pvt_headerAnchorToken !== null) {
       throw new Error(`headerAnchorToken can only be set at mount.`);
     }
     if (input !== undefined && !isString(input)) {
       throw new TypeError(`headerAnchorToken must be a string.`);
     }
-    this.pvt_headerAnchorToken = input === undefined ? DEFAULT_HEADER_ANCHOR : input;
+    this.pvt_headerAnchorToken = input;
     return this;
   }
 
@@ -171,8 +172,8 @@ export default class InstanceOptions {
   }
 
   set idColumnName(input) {
-    if (!isString(input)) {
-      throw new TypeError(`idColumnName must be a string.`);
+    if (!isString(input) && !isNumeric(input) && !isDate(input)) {
+      throw new TypeError(`idColumnName value must be string, number, date.`);
     }
     this.pvt_idColumnName = input.trim();
     return this;
@@ -212,6 +213,7 @@ export default class InstanceOptions {
   }
 
   processInput(sheetNameOrOptions) {
+    this.pvt_exportAttributes.push(DEFAULT_ATTRIBUTE);
     const errMsg =
       'requires a string sheetName or an options object which at least define a valid sheetName';
 
@@ -219,19 +221,16 @@ export default class InstanceOptions {
       throw new Error(errMsg);
     }
 
-    switch (toString.call(sheetNameOrOptions)) {
-      case '[object String]':
-        this.sheetName = sheetNameOrOptions;
-        break;
-      case '[object Object]':
-        Object.keys(sheetNameOrOptions).forEach(key => {
-          if (key.indexOf('pvt_') === -1) {
-            this[key] = sheetNameOrOptions[key];
-          }
-        });
-        break;
-      default:
-        throw new Error(errMsg);
+    if (isString(sheetNameOrOptions)) {
+      this.sheetName = sheetNameOrOptions;
+    } else if (isObject(sheetNameOrOptions)) {
+      Object.keys(sheetNameOrOptions).forEach(key => {
+        if (key.indexOf('pvt_') === -1) {
+          this[key] = sheetNameOrOptions[key];
+        }
+      });
+    } else {
+      throw new Error(errMsg);
     }
 
     if (!this.sheetIsSet()) {

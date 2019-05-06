@@ -60,28 +60,24 @@ export class Map {
         }
       }
     });
-    let entries = [];
-    if (input instanceof Map) {
-      entries = input.entries();
-    } else {
-      switch (toString.call(input)) {
-        case '[object Array]':
-          entries = input;
-          break;
-        case '[object Object]':
-          Object.keys(input).forEach(key => {
-            entries.push([key, input[key]]);
-          });
-          break;
-        case '[object Undefined]':
-          break;
-        default:
-          throw new Error(`${toString.call(input)} not valid for Map constructor.`);
+
+    if (input !== undefined && input !== null) {
+      let entries;
+      if (toString.call(input) === '[object Array]') {
+        entries = input;
+      } else if (toString.call(input) === '[object Object]') {
+        Object.keys(input).forEach(key => {
+          entries.push([key, input[key]]);
+        });
+      } else if (input instanceof Map) {
+        entries = input.entries();
+      } else {
+        throw new Error(`${toString.call(input)} not valid input for Map constructor.`);
       }
+      entries.forEach(entry => {
+        this.set(entry[0], entry[1]);
+      });
     }
-    entries.forEach(entry => {
-      this.set(entry[0], entry[1]);
-    });
   }
 
   has(key) {

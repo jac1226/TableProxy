@@ -22,15 +22,52 @@ export const isFunction = input => {
 };
 
 export const isObject = input => {
-  return toString.call(input) === '[object Object]';
+  return toString.call(input) === '[object Object]' && input !== null && input !== undefined;
 };
 
 export const isBoolean = input => {
   return toString.call(input) === '[object Boolean]';
 };
 
+export const isNull = input => {
+  return input === null;
+};
+
+export const isUndefined = input => {
+  return input === undefined;
+};
+
 export const inArray = (needle, haystack) => {
   return haystack.indexOf(needle) !== -1;
+};
+
+export const getType = input => {
+  const ts = toString.call(input);
+  let type;
+  switch (ts) {
+    case '[object Boolean]':
+    case '[object String]':
+    case '[object Number]':
+    case '[object Array]':
+    case '[object Function]':
+    case '[object Date]':
+    case '[object Undefined]':
+    case '[object Null]':
+      type = ts;
+      break;
+    case '[object Object]':
+      if (isNull(input)) {
+        type = '[object Null]';
+      } else if (isUndefined(input)) {
+        type = '[object Undefined]';
+      } else {
+        type = '[object Object]';
+      }
+      break;
+    default:
+      throw new Error(`getType resolved to unknown for ${input}`);
+  }
+  return type;
 };
 
 export const toBool = value => {

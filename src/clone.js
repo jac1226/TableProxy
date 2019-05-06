@@ -20,10 +20,14 @@ export default function clone(input) {
       });
       break;
     case '[object Object]':
-      copy = {};
-      Object.keys(input).forEach(property => {
-        copy[property] = clone(input[property]);
-      });
+      if (input === undefined || input === null) {
+        copy = input;
+      } else {
+        copy = {};
+        Object.keys(input).forEach(property => {
+          copy[property] = clone(input[property]);
+        });
+      }
       break;
     case '[object Date]':
       copy = new Date();

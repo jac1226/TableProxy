@@ -50,6 +50,17 @@ export function isRange(input) {
 }
 
 /**
+ * Tests if data is string, number, date
+ * @param {*} input
+ * @returns {boolean}
+ */
+export function isSupportedType(input) {
+  return (
+    ['[object String]', '[object Number]', '[object Date]'].indexOf(toString.call(input)) !== -1
+  );
+}
+
+/**
  * log
  * @param {string} input - Logs to Logger
  * @returns {void}

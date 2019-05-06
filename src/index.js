@@ -1,13 +1,12 @@
 /**
  * Main
  */
-import { expSpreadsheetApp as SpreadsheetApp } from './simulation-utils';
 import InstanceOptions from './instance-options';
 import SheetAccessor from './sheet-accessor';
 import MainCursor from './main-cursor';
 import { Map, UniqueSet } from './map-unique';
-import Timer from './timer';
 import { getUnique, runQuery, runUpdate, getExportObject } from './operations';
+import Timer from './timer';
 import {
   TOP,
   BOTTOM,
@@ -17,18 +16,13 @@ import {
   COLORS
 } from './CONSTANTS';
 
-global.SpreadsheetApp = SpreadsheetApp;
-
 const TableProxy = () => {
   function mount(sheetNameOrOptions, headerAnchorToken) {
     try {
       const instanceOptions = new InstanceOptions(sheetNameOrOptions, headerAnchorToken);
       const sheetAccessor = new SheetAccessor(instanceOptions);
       const mainCursor = new MainCursor(sheetAccessor);
-
-      if (!instanceOptions.uniqueIdColumnName) {
-        instanceOptions.idColumnName = sheetAccessor.getDefaultIdColumn();
-      }
+      const lastResults = new Map();
 
       const core = {
         instanceOptions,
@@ -36,7 +30,9 @@ const TableProxy = () => {
         mainCursor
       };
 
-      const lastResults = new Map();
+      if (!instanceOptions.uniqueIdColumnName) {
+        instanceOptions.idColumnName = sheetAccessor.getDefaultIdColumn();
+      }
 
       const api = {};
 

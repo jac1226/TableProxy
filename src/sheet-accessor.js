@@ -34,30 +34,27 @@ export default class SheetAccessor {
     this.getDataPayload = null;
 
     /**
-     * flesh out headerRowIndex, headerColumnIndex, headerRow
+     * find headerRowIndex, headerColumnIndex if headerAnchorToken
      */
-    let notesData = this.sheet.getDataRange().getNotes();
-    let rowCount = notesData.length;
-    let columnCount = notesData[0].length;
-    for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
-      if (notesData[rowIndex].join('').indexOf(instanceOptions.headerAnchorToken) !== -1) {
-        this.headerRowIndex = rowIndex;
-        break;
+    if (instanceOptions.headerAnchorToken) {
+      const rowCount = this.sheet.getDataRange().getNumRows();
+      for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+        this.sheet
+          .getRange(rowIndex + 1, 1, 1)
+          .getNotes()
+          .forEach((note, columnIndex) => {
+            if (note.indexOf(instanceOptions.headerAnchorToken) !== -1) {
+              this.headerRowIndex = rowIndex;
+              this.headerColumnIndex = columnIndex;
+              rowIndex = rowCount;
+            }
+          });
       }
     }
-    for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
-      if (
-        notesData[this.headerRowIndex][columnIndex].indexOf(instanceOptions.headerAnchorToken) !==
-        -1
-      ) {
-        this.headerColumnIndex = columnIndex;
-        break;
-      }
-    }
-    notesData = null;
-    rowCount = null;
-    columnCount = null;
 
+    /**
+     * set headerRow
+     */
     this.headerRow = this.sheet.getDataRange().getValues()[this.headerRowIndex];
 
     /**
