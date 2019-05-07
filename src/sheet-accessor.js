@@ -4,7 +4,7 @@
  */
 
 import InstanceOptions from './instance-options';
-import { Map } from './map-unique';
+import { Map, testUnique } from './map-unique';
 import { isNumeric } from './utilities';
 import { DataPayload, AttributesSet } from './data-payload';
 
@@ -57,6 +57,9 @@ export default class SheetAccessor {
      * set headerRow
      */
     this.headerRow = this.sheet.getDataRange().getValues()[this.headerRowIndex];
+    if (!testUnique(this.headerRow)) {
+      throw new Error(`Sheet "${this.sheet.getName()}" has duplicate column headers`);
+    }
 
     /**
      * flesh out range retrievers

@@ -258,6 +258,8 @@ function $initTableProxy() {
         return Map;
     }), __webpack_require__.d(__webpack_exports__, "b", function() {
         return UniqueSet;
+    }), __webpack_require__.d(__webpack_exports__, "c", function() {
+        return testUnique;
     });
     var Map = function() {
         function Map(input) {
@@ -467,7 +469,8 @@ function $initTableProxy() {
         }(UniqueSet, Map), _createClass(UniqueSet, [ {
             key: "push",
             value: function(item) {
-                return this.set(item), this;
+                var ret = !0;
+                return this.has(item) ? ret = !1 : this.set(item), ret;
             }
         }, {
             key: "remove",
@@ -521,6 +524,17 @@ function $initTableProxy() {
             }
         } ]), UniqueSet;
     }();
+    function getDuplicates() {
+        for (var d = new Map(), _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) args[_key] = arguments[_key];
+        var i = "[object Array]" === toString.call(args[0]) ? args[0] : args, t = new Map();
+        return i.forEach(function(v) {
+            t.has(v) ? d.set(v) : t.set(v);
+        }), d.keys();
+    }
+    function testUnique() {
+        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) args[_key2] = arguments[_key2];
+        return "[object Array]" === toString.call(args[0]) ? 0 === getDuplicates(args[0]).length : 0 === getDuplicates(args).length;
+    }
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
     __webpack_require__.d(__webpack_exports__, "b", function() {
@@ -674,7 +688,7 @@ function $initTableProxy() {
         if (function _classCallCheck(instance, Constructor) {
             if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
         }(this, SheetAccessor), !(instanceOptions instanceof _instance_options__WEBPACK_IMPORTED_MODULE_0__["a"])) throw new TypeError("DataController requires an instance of InstanceOptions object.");
-        this.sheet = instanceOptions.sheet, this.range = {}, this.value = {}, this.background = {}, 
+        if (this.sheet = instanceOptions.sheet, this.range = {}, this.value = {}, this.background = {}, 
         this.fontcolor = {}, this.note = {}, this.fontfamily = {}, this.fontsize = {}, this.fontstyle = {}, 
         this.fontweight = {}, this.numberformat = {}, this.headerRowIndex = 0, this.headerColumnIndex = 0, 
         this.headerRow = null, this.getColumnIndex = null, this.columnExists = null, this.getAllRecordIndices = null, 
@@ -686,6 +700,7 @@ function $initTableProxy() {
                 }), rowIndex = _rowIndex;
             }, rowIndex = 0; rowIndex < rowCount; rowIndex += 1) _loop(rowIndex);
         }(), this.headerRow = this.sheet.getDataRange().getValues()[this.headerRowIndex], 
+        !Object(_map_unique__WEBPACK_IMPORTED_MODULE_1__["c"])(this.headerRow)) throw new Error('Sheet "'.concat(this.sheet.getName(), '" has duplicate column headers'));
         this.range = {
             getCell: function(rowIndex, columnIndex) {
                 return _this.sheet.getRange(rowIndex + 1, columnIndex + 1);
@@ -1678,9 +1693,7 @@ function $initTableProxy() {
         if (!(core.sheetAccessor instanceof sheet_accessor["a"])) throw new Error("queryProcessor requires a SheetAccessor instance.");
         if (!(core.mainCursor instanceof main_cursor["a"])) throw new Error("queryProcessor requires a MainCursor instance.");
         if (!Object(utilities["c"])(queryDriver.type, CONSTANTS["P"])) throw new Error('queryDriver had invalid type "'.concat(queryDriver.type, '"'));
-        var dataController = new data_controller_DataController(core.sheetAccessor, core.instanceOptions, queryDriver.requestedAttributesSet);
-        Browser.msgBox(JSON.stringify(dataController));
-        var recordProxy = function getRecordProxy(core, dataController, requestedAttributesSet) {
+        var dataController = new data_controller_DataController(core.sheetAccessor, core.instanceOptions, queryDriver.requestedAttributesSet), recordProxy = function getRecordProxy(core, dataController, requestedAttributesSet) {
             if (!(core.sheetAccessor instanceof sheet_accessor["a"])) throw new Error("getRecordProxy requires a SheetAccessor instance.");
             if (!(core.instanceOptions instanceof instance_options["a"])) throw new Error("getRecordProxy requires an InstanceOptions instance.");
             if (!(dataController instanceof data_controller_DataController)) throw new Error("getRecordProxy requires a DataController instance.");

@@ -1,8 +1,8 @@
-![Google Apps Script Development with ES6](https://digitalinspiration.com/images/google-apps-script-development.png)
+![TableProxy](https://digitalinspiration.com/images/google-apps-script-development.png)
 
-## Google Apps Script 💯
+## TableProxy
 
-Use the Apps Script Starter kit to quickly build Google add-ons and web applications with next-generation JavaScript.
+Use gas to perform various operations on your google sheets.
 
 The starter kit is used by [Digital Inspiration](https://digitalinspiration.com/) for building Google add-ons include [Gmail Mail Merge](https://chrome.google.com/webstore/detail/mail-merge-with-attachmen/nifmcbjailaccmombpjjpijjbfoicppp), [Google Forms Notifications](https://chrome.google.com/webstore/detail/email-notifications-for-f/acknfdkglemcidajjmehljifccmflhkm) and [Document Studio](https://chrome.google.com/webstore/detail/document-studio/nhgeilcelhkmajkfgmgldbinmgjjajlb).
 

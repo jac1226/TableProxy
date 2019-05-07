@@ -42,7 +42,6 @@ export default function processQuery(core, queryDriver) {
     queryDriver.requestedAttributesSet
   );
 
-  Browser.msgBox(JSON.stringify(dataController));
   /**
    * Build recordProxy
    */

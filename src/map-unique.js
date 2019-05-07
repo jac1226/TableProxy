@@ -218,8 +218,13 @@ export class Map {
 
 export class UniqueSet extends Map {
   push(item) {
-    this.set(item);
-    return this;
+    let ret = true;
+    if (this.has(item)) {
+      ret = false;
+    } else {
+      this.set(item);
+    }
+    return ret;
   }
 
   remove(item) {
