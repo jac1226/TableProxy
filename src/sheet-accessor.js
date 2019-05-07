@@ -24,6 +24,7 @@ export default class SheetAccessor {
     this.fontsize = {};
     this.fontstyle = {};
     this.fontweight = {};
+    this.numberformat = {};
     this.headerRowIndex = 0;
     this.headerColumnIndex = 0;
     this.headerRow = null;
@@ -109,7 +110,8 @@ export default class SheetAccessor {
       fontfamily: { get: 'getFontFamilies', set: 'setFontFamilies' },
       fontsize: { get: 'getFontSizes', set: 'setFontSizes' },
       fontstyle: { get: 'getFontStyles', set: 'setFontStyles' },
-      fontweight: { get: 'getFontWeights', set: 'setFontWeights' }
+      fontweight: { get: 'getFontWeights', set: 'setFontWeights' },
+      numberformat: { get: 'getNumberFormats', set: 'setNumberFormats' }
     };
     Object.keys(mapping).forEach(attribute => {
       this[attribute] = {};
@@ -167,14 +169,19 @@ export default class SheetAccessor {
     /**
      * flesh out getDataPayload method
      */
-    this.getDataPayload = requestedAttributesSet => {
+    this.getDataPayload = (requestedAttributesSet, rowIndex) => {
       if (!(requestedAttributesSet instanceof AttributesSet)) {
-        throw new TypeError(`getDataPayload expects a AttributesSet instance.`);
+        throw new TypeError(`getDataPayload expects an AttributesSet instance.`);
       }
       return new DataPayload(
         requestedAttributesSet.values.reduce((dataObject, attribute) => {
-          // eslint-disable-next-line no-param-reassign
-          dataObject[attribute] = this[attribute].getAll();
+          if (isNumeric(rowIndex)) {
+            // eslint-disable-next-line no-param-reassign
+            dataObject[attribute] = this[attribute].getRow(rowIndex);
+          } else {
+            // eslint-disable-next-line no-param-reassign
+            dataObject[attribute] = this[attribute].getAll();
+          }
           return dataObject;
         }, {}),
         this.headerRowIndex,

@@ -9,7 +9,7 @@
 import { Map } from './map-unique';
 import SheetAccessor from './sheet-accessor';
 import { AttributesSet } from './data-payload';
-import QueryReturn from './query-return';
+import QueryDriver from './query-driver';
 
 export default class MainCursor extends Map {
   constructor(sheetAccessor) {
@@ -38,11 +38,11 @@ export default class MainCursor extends Map {
   }
 
   consumeReturn(queryReturn) {
-    if (!(queryReturn instanceof QueryReturn)) {
-      throw new TypeError('consumeSelections accepts QueryReturn input.');
+    if (!(queryReturn instanceof QueryDriver)) {
+      throw new TypeError('consumeSelections accepts QueryDriver input.');
     }
     this.dirty = !queryReturn.returnWithRecords;
-    this.attributesSet.copyValues(queryReturn.attributesSet);
+    this.attributesSet.copyValues(queryReturn.requestedAttributesSet);
     this.clear().copyItems(queryReturn.resultSet);
     return this;
   }

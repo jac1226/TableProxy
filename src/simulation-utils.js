@@ -493,9 +493,14 @@ class Sheet {
 class ActiveSpreadsheet {
   constructor(div) {
     this.div = div;
+    this.id = 123;
     this.sheets = {
       Test: new Sheet('Test')
     };
+  }
+
+  getId() {
+    return this.id;
   }
 
   getActiveSheet() {
@@ -518,6 +523,12 @@ const SpreadsheetAppFake = {
   div: null,
   getActiveSpreadsheet: () => {
     return new ActiveSpreadsheet(SpreadsheetAppFake.div);
+  },
+  openById: id => {
+    if (id !== 123) {
+      throw new Error(`can't find spreadsheet with id ${id}`);
+    }
+    return new ActiveSpreadsheet(SpreadsheetAppFake.div);
   }
 };
 export const expSpreadsheetApp = IS_TEST_MODE ? SpreadsheetAppFake : SpreadsheetApp;
@@ -529,8 +540,8 @@ export const expNoop = noop;
 
 const BrowserFake = {
   msgBox: note => {
-    noop(note);
-    // console.log(note);
+    // noop(note);
+    console.log(note);
   }
 };
 export const expBrowser = IS_TEST_MODE ? BrowserFake : Browser;

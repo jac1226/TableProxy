@@ -3,29 +3,37 @@
  * @return {Object}
  */
 
-import { SUPPORTED_ATTRIBUTES, SUPPORTED_OPS } from './CONSTANTS';
+import { INDEX_PROP, SUPPORTED_ATTRIBUTES } from './CONSTANTS';
 import { Map } from './map-unique';
 import { AttributesSet } from './data-payload';
+import Timer from './timer';
 import { isFunction, inArray, isArray, isObject } from './utilities';
 
 export default class QueryDriver {
-  constructor(type) {
+  constructor(type, noteForLogging) {
     this.type = type.toUpperCase();
     this.query = () => true;
     this.returnWithRecords = false;
+    this.withSelect = false;
     this.requestedAttributesSet = new AttributesSet();
     this.matchColumnName = null;
     this.matchAttributeName = null;
-    this.matchUnique = true;
-    this.recordsToWrite = null;
+    this.recordObjectsToWrite = null;
+    this.usesIndexProp = false;
     this.otherResults = new Map();
+    this.noteForLogging = noteForLogging;
+
+    this.timer = new Timer(`${this.getTimerText()}`);
+    this.resultSet = new Map();
+    this.errors = new Map();
+    this.warnings = new Map();
+    this.updatedRecordIndices = [];
   }
 
-  setType(type) {
-    if (!inArray(type.toUpperCase(), SUPPORTED_OPS)) {
-      throw new Error(`invalid query type: ${type}.`);
-    }
-    this.type = type.toUpperCase();
+  getTimerText() {
+    let text = this.type;
+    text += this.noteForLogging ? ` (${this.noteForLogging})` : '';
+    return text;
   }
 
   setQuery(query) {
@@ -49,9 +57,17 @@ export default class QueryDriver {
     return this;
   }
 
+  setWithSelect(bool) {
+    this.withSelect = bool === true;
+    return this;
+  }
+
   setRecordObjectsToWrite(arrayOfRecords) {
     if (!isArray(arrayOfRecords)) {
       throw new TypeError(`expecting an array of record objects.`);
+    }
+    if (Object.prototype.hasOwnProperty.call(arrayOfRecords[0], INDEX_PROP)) {
+      this.usesIndexProp = true;
     }
     arrayOfRecords.forEach((record, index) => {
       if (!isObject(record)) {
@@ -66,8 +82,12 @@ export default class QueryDriver {
         this.requestedAttributesSet.push(attribute);
       }
     });
-    this.recordsToWrite = arrayOfRecords;
+    this.recordObjectsToWrite = arrayOfRecords;
     return this;
+  }
+
+  getRecordObjectsToWrite() {
+    return this.recordObjectsToWrite;
   }
 
   addAttributes(attributesSet) {
@@ -98,8 +118,35 @@ export default class QueryDriver {
     return this;
   }
 
-  setMatchUnique(bool) {
-    this.matchUnique = bool !== false;
+  get resultCount() {
+    return this.resultSet.length;
+  }
+
+  get updatedCount() {
+    return this.updatedRecordIndices.length;
+  }
+
+  get updatedIndices() {
+    return this.updatedRecordIndices.map(i => i);
+  }
+
+  pushResult(index, record) {
+    this.resultSet.set(index, record);
+    return this;
+  }
+
+  pushWarning(index, content) {
+    this.warnings.set(index, content);
+    return this;
+  }
+
+  pushError(index, content) {
+    this.errors.set(index, content);
+    return this;
+  }
+
+  done() {
+    this.timer.stop(this.query.toString());
     return this;
   }
 }

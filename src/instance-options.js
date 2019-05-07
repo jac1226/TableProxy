@@ -4,15 +4,16 @@
  */
 
 import { AttributesSet } from './data-payload';
-// import { expSpreadsheetApp as SpreadsheetApp } from './simulation-utils';
+import { expSpreadsheetApp as SpreadsheetApp } from './simulation-utils';
 import {
+  VALID_READ_LEVELS,
+  DEFAULT_READ_LEVEL,
   VALID_WRITE_LEVELS,
   DEFAULT_WRITE_LEVEL,
-  IS_TEST_MODE,
   DEFAULT_ATTRIBUTE,
-  SUPPORTED_ATTRIBUTES
+  SUPPORTED_ATTRIBUTES,
+  IS_TEST_MODE
 } from './CONSTANTS';
-import { isSpreadsheet, isSheet } from './sheets-utilities';
 import {
   isString,
   isArray,
@@ -21,43 +22,65 @@ import {
   inArray,
   isFunction,
   isNumeric,
-  isDate
+  isDate1
 } from './utilities';
 import clone from './clone';
 
+if (IS_TEST_MODE) {
+  global.SpreadsheetApp = SpreadsheetApp;
+}
+
 export default class InstanceOptions {
   constructor(sheetNameOrOptions, headerAnchorToken) {
+    this.pvt_spreadsheetId = null;
     this.pvt_sheetName = null;
     this.pvt_headerAnchorToken = null;
-    this.pvt_columnFilter = [];
-    this.pvt_applyColumnFilter = false;
     this.pvt_exportAttributes = new AttributesSet();
-    this.pvt_exportOnlySelected = true;
+    this.pvt_readLevel = DEFAULT_READ_LEVEL;
     this.pvt_writeLevel = DEFAULT_WRITE_LEVEL;
     this.pvt_autoResizeColumns = false;
     this.pvt_computedProperties = {};
     this.pvt_idColumnName = null;
     this.pvt_idAttributeName = DEFAULT_ATTRIBUTE;
-    this.pvt_spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+    this.pvt_columnFilter = null;
+    this.pvt_applyColumnFilter = false;
+    this.pvt_spreadsheet = null;
     this.pvt_sheet = null;
 
-    this.setHeaderAnchorToken(headerAnchorToken);
+    this.headerAnchorToken = headerAnchorToken;
     this.processInput(sheetNameOrOptions);
   }
 
-  setHeaderAnchorToken(input) {
+  set headerAnchorToken(input) {
     if (this.pvt_headerAnchorToken !== null) {
-      throw new Error(`headerAnchorToken can only be set at mount.`);
+      throw new Error(`headerAnchorToken can only be once.`);
     }
-    if (input !== undefined && !isString(input)) {
+    if (input && !isString(input)) {
       throw new TypeError(`headerAnchorToken must be a string.`);
     }
-    this.pvt_headerAnchorToken = input;
-    return this;
+    this.pvt_headerAnchorToken = input || null;
+    return this.pvt_headerAnchorToken;
   }
 
   get headerAnchorToken() {
     return this.pvt_headerAnchorToken;
+  }
+
+  get spreadsheetId() {
+    return this.pvt_spreadsheetId;
+  }
+
+  set spreadsheetId(input) {
+    if (!isString(input) && !isNumeric(input)) {
+      throw new TypeError(`invalid spreadsheetId.`);
+    }
+    if (this.pvt_spreadsheet) {
+      throw new Error(
+        `spreadsheetId was already set to ${this.pvt_spreadsheetId} and cannot be changed.`
+      );
+    }
+    this.pvt_spreadsheet = SpreadsheetApp.openById(input);
+    this.pvt_spreadsheetId = input;
   }
 
   get sheetName() {
@@ -121,14 +144,23 @@ export default class InstanceOptions {
     return this.pvt_exportAttributes;
   }
 
+  get readLevel() {
+    return this.pvt_readLevel;
+  }
+
+  set readLevel(input) {
+    if (!inArray(input, VALID_READ_LEVELS)) {
+      throw new Error(`readLevel must be one of ${VALID_READ_LEVELS.toString()} received ${input}`);
+    }
+    this.pvt_readLevel = input;
+    return this.pvt_readLevel;
+  }
+
   get writeLevel() {
     return this.pvt_writeLevel;
   }
 
   set writeLevel(input) {
-    if (!isString(input)) {
-      throw new TypeError(`exportOnlySelected must be a string.`);
-    }
     if (!inArray(input, VALID_WRITE_LEVELS)) {
       throw new Error(
         `writeLevel must be one of ${VALID_WRITE_LEVELS.toString()} received ${input}`
@@ -172,10 +204,10 @@ export default class InstanceOptions {
   }
 
   set idColumnName(input) {
-    if (!isString(input) && !isNumeric(input) && !isDate(input)) {
+    if (!isString(input) && !isNumeric(input) && !isDate1(input)) {
       throw new TypeError(`idColumnName value must be string, number, date.`);
     }
-    this.pvt_idColumnName = input.trim();
+    this.pvt_idColumnName = isString(input) ? input.trim() : input;
     return this;
   }
 
@@ -194,22 +226,12 @@ export default class InstanceOptions {
     return this;
   }
 
-  set spreadsheet(input) {
-    if (!IS_TEST_MODE) {
-      if (!isSpreadsheet(input)) {
-        throw new TypeError(`spreadsheet must be a spreadsheet object.`);
-      }
-    }
-    this.pvt_spreadsheet = input;
-    return this.pvt_spreadsheet;
-  }
-
   get sheet() {
     return this.pvt_sheet;
   }
 
-  sheetIsSet() {
-    return IS_TEST_MODE ? true : isSheet(this.pvt_sheet);
+  get spreadsheet() {
+    return this.pvt_spreadsheet;
   }
 
   processInput(sheetNameOrOptions) {
@@ -222,21 +244,43 @@ export default class InstanceOptions {
     }
 
     if (isString(sheetNameOrOptions)) {
+      this.spreadsheetId = SpreadsheetApp.getActiveSpreadsheet().getId();
       this.sheetName = sheetNameOrOptions;
     } else if (isObject(sheetNameOrOptions)) {
+      if (sheetNameOrOptions.spreadsheetId) {
+        this.spreadsheetId = sheetNameOrOptions.spreadsheetId;
+      } else {
+        this.spreadsheetId = SpreadsheetApp.getActiveSpreadsheet().getId();
+      }
       Object.keys(sheetNameOrOptions).forEach(key => {
-        if (key.indexOf('pvt_') === -1) {
+        if (key.indexOf('pvt_') === -1 && key.indexOf('spreadsheetId') === -1) {
           this[key] = sheetNameOrOptions[key];
         }
       });
+      if (!this.sheet) {
+        this.sheetName = this.pvt_spreadsheet.getActiveSheet().getName();
+      }
     } else {
       throw new Error(errMsg);
     }
 
-    if (!this.sheetIsSet()) {
-      throw new Error(errMsg);
-    }
-
     return this;
+  }
+
+  getSettingsExport() {
+    const retObj = {};
+    retObj.spreadsheetId = this.spreadsheetId;
+    retObj.sheetName = this.sheetName;
+    retObj.headerAnchorToken = this.headerAnchorToken;
+    retObj.exportAttributes = this.exportAttributes.values;
+    retObj.writeLevel = this.writeLevel;
+    retObj.autoResizeColumns = this.autoResizeColumns;
+    retObj.computedProperties = this.computedProperties;
+    retObj.idColumnName = this.idColumnName;
+    retObj.idAttributeName = this.idAttributeName;
+    if (this.applyColumnFilter) {
+      retObj.columnFilter = clone(this.columnFilter);
+    }
+    return retObj;
   }
 }

@@ -6,74 +6,44 @@
 
 <body>
     <div id='table'></div>
+    <div id='New Sheet'></div>
     <script>
+        var t;
         window.addEventListener("load", function () {
             SpreadsheetApp.div = document.getElementById('table');
             SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test');
 
+
             $initTableProxy('TP');
-            const t = TP.mount('Test').setExportAttributes(['value','fontcolor']);
-            const query = function (r) {
-                // console.log(JSON.parse(JSON.stringify(r)));
-                if (r['2-4 Value'].value.indexOf('-4') !== -1) {
-                    r['2-5 Value'].background = 'red'; //OK
-                    r['2-5 Value'].fontsize = 20; //OK
-                    r['2-5 Value'].fontweight = 'bold'; //OK
-                    r['2-5 Value'].note = 'fuckoff';
-                    r['2-5 Value'].fontfamily = 'Georgia'; //OK
-                    r['2-5 Value'].fontstyle = 'italic'; //OK
-                    r['2-5 Value'].fontcolor = 'green';
+            var opts = JSON.parse('{"spreadsheetId":123,"sheetName":"Test","headerAnchorToken":null,"exportAttributes":["value","fontcolor","fontsize"],"writeLevel":"WRITE_LEVEL_CELL","autoResizeColumns":false,"computedProperties":{},"idColumnName":"C1","idAttributeName":"value"}');
+            t = TP.mount(opts);
+            //t = TP.mount('Test').setExportAttributes(['value','fontcolor']).setComputedProperties({
+            //    fart: function(){return `${this.C2.value} + ${this.C3.value}`;}
+            //});
+            var query = function (r) {
+                if (this.C3.value.indexOf('4-3') !== -1) {
+                    
+                    r.C3.value = new Date();
+                    r['C3'].background = 'red'; //OK
+                    r['C3'].fontsize = 20; //OK
+                    r['C3'].fontweight = 'bold'; //OK
+                    r['C5'].note = 'fuckoff';
+                    r['C3'].fontfamily = 'Georgia'; //OK
+                    r['C3'].fontstyle = 'italic'; //OK
+                    r['C4'].fontcolor = 'green';
 
                     return true;
                 }
             }
-
-/*             t.query(query, true);
-            console.log(JSON.stringify(t.getLastResults()));
-            t.flush();
-            console.log(JSON.stringify(t.getLastResults()));
+            //t.select(query,true);
+            //console.log(JSON.stringify(t.getExportObject()));
 
 
+            var records = JSON.parse('[{" index ":1,"C1":{"value":"2-1 Value","fontcolor":"red","fontsize":10},"C2":{"value":"B","fontcolor":"blue","fontsize":10},"C3":{"value":"C","fontcolor":"green","fontsize":150},"C4":{"value":"D","fontcolor":"purple","fontsize":10},"C5":{"value":"E","fontcolor":"grey","fontsize":10}},{" index ":2,"C1":{"value":"3-1 Value","fontcolor":"#000000","fontsize":10},"C2":{"value":"3-2 Value","fontcolor":"#000000","fontsize":10},"C3":{"value":"3-3 Value","fontcolor":"#000000","fontsize":10},"C4":{"value":"3-4 Value","fontcolor":"#000000","fontsize":10},"C5":{"value":"3-5 Value","fontcolor":"#000000","fontsize":10}},{" index ":3,"C1":{"value":"4-1 Value","fontcolor":"#000000","fontsize":10},"C2":{"value":"4-2 Value","fontcolor":"#000000","fontsize":10},"C3":{"value":"4-3 Value","fontcolor":"#000000","fontsize":10},"C4":{"value":"4-4 Value","fontcolor":"#000000","fontsize":10},"C5":{"value":"4-5 Value","fontcolor":"#000000","fontsize":10}},{" index ":4,"C1":{"value":"5-1 Value","fontcolor":"#000000","fontsize":10},"C2":{"value":"5-2 Value","fontcolor":"#000000","fontsize":10},"C3":{"value":"5-3 Value","fontcolor":"#000000","fontsize":10},"C4":{"value":"5-4 Value","fontcolor":"#000000","fontsize":10},"C5":{"value":"5-5 Value","fontcolor":"#000000","fontsize":10}},{" index ":5,"C1":{"value":"6-1 Value","fontcolor":"#000000","fontsize":10},"C2":{"value":"6-2 Value","fontcolor":"#000000","fontsize":10},"C3":{"value":"6-3 Value","fontcolor":"#000000","fontsize":10},"C4":{"value":"6-4 Value","fontcolor":"#000000","fontsize":10},"C5":{"value":"6-5 Value","fontcolor":"#000000","fontsize":20}}]');
+            console.log(JSON.stringify(t.writeRecords(records)));
 
-            console.log(t.unique('2-4 Value'));
-            console.log(JSON.stringify(t.getLastResults())); 
+            //console.log(JSON.stringify(t.writeRecords(records).getExportObject(true)));
 
-
-            console.log(t.records());
-            console.log(JSON.stringify(t.getLastResults())); */
-
-            const records = JSON.parse(JSON.stringify(t.getExportObject().records));
-            records[1]['C2'].value = 'poop';
-            records[1]['C2'].fontcolor = 'red';
-            records[2]['C3'].value = 'turd';
-            records[4]['C3'].background = 'orange';
-
-            t.update(records);
-            console.log(t.getLastResults());
-
-            /* t.setWriteLevel(TableProxy.WRITE_LEVEL_CELL);
-            const st1 = Date.now()
-            for(let i = 0; i< iterations; i++){
-                t.query(query, true);
-            }
-            console.log(`${iterations} at cell write in ${Date.now()-st1}`);
-            
-
-            t.setWriteLevel(TableProxy.WRITE_LEVEL_ROW);
-            const st2 = Date.now()
-            for(let i = 0; i< iterations; i++){
-                t.query(query, true);
-            }
-            console.log(`${iterations} at row write in ${Date.now()-st2}`);
-
-
-            t.setWriteLevel(TableProxy.WRITE_LEVEL_TABLE);
-            const st3 = Date.now()
-            for(let i = 0; i< iterations; i++){
-                t.query(query, true);
-            }
-            console.log(`${iterations} at row write in ${Date.now()-st3}`);
- */
         });
 
         function z() {

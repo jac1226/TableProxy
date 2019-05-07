@@ -12,7 +12,7 @@ import DataController from './data-controller';
 import InstanceOptions from './instance-options';
 import { AttributesSet } from './data-payload';
 import { inArray } from './utilities';
-import { INDEX } from './CONSTANTS';
+import { INDEX_PROP } from './CONSTANTS';
 
 export function getRecordProxy(core, dataController, requestedAttributesSet) {
   if (!(core.sheetAccessor instanceof SheetAccessor)) {
@@ -54,7 +54,7 @@ export function getRecordProxy(core, dataController, requestedAttributesSet) {
 
   const recordProxy = {};
 
-  Object.defineProperty(recordProxy, INDEX, {
+  Object.defineProperty(recordProxy, INDEX_PROP, {
     enumerable: true,
     get: () => {
       return dataController.getRowIndex();

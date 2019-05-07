@@ -11,8 +11,8 @@ import {
   DEFAULT_ATTRIBUTE,
   SUPPORTED_ATTRIBUTES,
   OP_UNIQUE,
-  OP_QUERY,
-  OP_UPDATE
+  OP_SELECT,
+  OP_WRITE_RECORDS
 } from './CONSTANTS';
 
 /**
@@ -22,23 +22,25 @@ import {
  * @param {boolean} [returnWithRecords]
  * @param {AttributesSet} [attributesSet]
  */
-export function runQuery(core, query, returnWithRecords, attributesSet) {
-  const queryDriver = new QueryDriver(OP_QUERY)
+export function runQuery(core, query, withSelect, returnWithRecords, attributesSet) {
+  const queryDriver = new QueryDriver(OP_SELECT)
     .setQuery(query)
     .addAttributes(attributesSet)
-    .setReturnWithRecords(returnWithRecords);
+    .setReturnWithRecords(returnWithRecords)
+    .setWithSelect(withSelect);
+
   return processQuery(core, queryDriver);
 }
 
 /**
- * runUpdate - processes updates against indices in mainCursor
+ * runObjUpdate - processes updates against indices in mainCursor
  * @param {object} core
  * @param {array} records
  * @param {string} [matchColumnName]
  * @param {string} [matchAttributeName]
  * @param {boolean} [matchUnique]
  */
-export function runUpdate(core, records, matchColumnName, matchAttributeName, matchUnique) {
+export function runObjUpdate(core, records, matchColumnName, matchAttributeName) {
   const matchColName = matchColumnName || core.instanceOptions.idColumnName;
   const matchColIndex = core.sheetAccessor.getColumnIndex(matchColName);
   if (matchColIndex === -1) {
@@ -49,11 +51,10 @@ export function runUpdate(core, records, matchColumnName, matchAttributeName, ma
     throw new Error(`update failed: ${matchAttrName} is an invalid attribute name.`);
   }
 
-  const queryDriver = new QueryDriver(OP_UPDATE)
+  const queryDriver = new QueryDriver(OP_WRITE_RECORDS)
     .setReturnWithRecords(true)
     .setMatchColumnName(matchColName)
     .setMatchAttributeName(matchAttrName)
-    .setMatchUnique(matchUnique)
     .setRecordObjectsToWrite(records);
 
   return processQuery(core, queryDriver);
@@ -79,7 +80,9 @@ export function getUnique(core, columnName, attribute) {
     aggregator.push(r[columnName][attr]);
   };
 
-  const queryDriver = new QueryDriver(OP_UNIQUE).setQuery(query).addAttribute(attr);
+  const queryDriver = new QueryDriver(OP_UNIQUE, `column:"${columnName}",attribute:"${attr}"`)
+    .setQuery(query)
+    .addAttribute(attr);
   processQuery(core, queryDriver);
 
   return aggregator.values;
@@ -100,6 +103,7 @@ export function getExportObject(core, withRawData) {
       core,
       () => true,
       true,
+      true,
       core.instanceOptions.exportAttributes
     ).resultSet.values();
   } else {
@@ -110,6 +114,6 @@ export function getExportObject(core, withRawData) {
     records,
     rawData: withRawData
       ? clone(core.sheetAccessor.getDataPayload(core.instanceOptions.exportAttributes))
-      : 'rawData not requested'
+      : false
   };
 }

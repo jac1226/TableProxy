@@ -3,7 +3,11 @@
  * @desc Various utilities
  */
 
-import { COLORS } from './CONSTANTS';
+import { F } from './CONSTANTS';
+
+export const isDate1 = input => {
+  return toString.call(input) === '[object Date]';
+};
 
 export const isArray = input => {
   return toString.call(input) === '[object Array]';
@@ -23,10 +27,6 @@ export const isFunction = input => {
 
 export const isObject = input => {
   return toString.call(input) === '[object Object]' && input !== null && input !== undefined;
-};
-
-export const isDate = input => {
-  return toString.call(input) === '[object Date]';
 };
 
 export const isBoolean = input => {
@@ -103,11 +103,24 @@ export const getTimeDiff = (oldTime, precision) => {
 };
 
 export const isValidColor = input => {
-  if (COLORS[input]) {
+  if (F.C[input]) {
     return true;
   }
   if (/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(input)) {
     return true;
   }
   return false;
+};
+
+export const strContains = (string, test) => {
+  if (!isArray(test) && !isString(test) && !isNumeric(test)) {
+    throw new TypeError(`strContains accepts arrays, strings, numbers.`);
+  }
+  let contains = false;
+  (isArray(test) ? test : [test]).forEach(t => {
+    if (string.indexOf(t) !== -1) {
+      contains = true;
+    }
+  });
+  return contains;
 };

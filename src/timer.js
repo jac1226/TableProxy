@@ -7,13 +7,18 @@ import { getTimeStamp, getTimeDiff, isString } from './utilities';
 import { log } from './sheets-utilities';
 
 export default class Timer {
-  constructor(text) {
+  constructor(text, suppressLogStart) {
     if (!isString(text)) {
       throw new Error(`Timer requires text.`);
     }
+
     this.text = text;
     this.startTime = getTimeStamp();
     this.duration = null;
+
+    if (suppressLogStart !== true) {
+      log(`${this.text} operation started`);
+    }
   }
 
   stop(text) {

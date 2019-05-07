@@ -7,7 +7,7 @@
 
 /**
  * Map - same api as native Map plus a few other computed properties
- * @desc Supports ONLY String, Number, Date - the types that sheets supports
+ * @desc Supports ONLY String, Number, Date, Boolean - the types that sheets supports
  * @desc Could be enhanced for regexp, if needed.
  * @desc Handling objects & arrays keys is not possible.
  * @desc Is about 10 times slower than native JS Map for about 100,000 elements
@@ -24,6 +24,11 @@ export class Map {
         value: {}
       },
       pvt_numbers: {
+        enumerable: false,
+        writable: true,
+        value: {}
+      },
+      pvt_booleans: {
         enumerable: false,
         writable: true,
         value: {}
@@ -52,6 +57,9 @@ export class Map {
               break;
             case '[object Date]':
               result = this.pvt_dates;
+              break;
+            case '[object Boolean]':
+              result = this.pvt_booleans;
               break;
             default:
               throw new TypeError(`Map can't accept ${toString.call(key)} keys.`);
@@ -133,6 +141,7 @@ export class Map {
     this.pvt_strings = {};
     this.pvt_numbers = {};
     this.pvt_dates = {};
+    this.pvt_booleans = {};
     this.pvt_keys = [];
     return this;
   }
@@ -173,6 +182,10 @@ export class Map {
     return Object.keys(this.pvt_dates).length;
   }
 
+  get booleanKeyCount() {
+    return Object.keys(this.pvt_booleans).length;
+  }
+
   get keyTypes() {
     const result = [];
     if (this.stringKeyCount > 0) {
@@ -183,6 +196,9 @@ export class Map {
     }
     if (this.dateKeyCount > 0) {
       result.push('dates');
+    }
+    if (this.booleanKeyCount > 0) {
+      result.push('boolean');
     }
     return result;
   }

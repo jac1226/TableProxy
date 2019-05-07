@@ -1,20 +1,55 @@
 /**
  * Main
  */
+import { expSpreadsheetApp as SpreadsheetApp } from './simulation-utils';
 import InstanceOptions from './instance-options';
 import SheetAccessor from './sheet-accessor';
 import MainCursor from './main-cursor';
 import { Map, UniqueSet } from './map-unique';
-import { getUnique, runQuery, runUpdate, getExportObject } from './operations';
+import { getUnique, runQuery, runObjUpdate, getExportObject } from './operations';
+import { strContains } from './utilities';
 import Timer from './timer';
 import {
-  TOP,
-  BOTTOM,
-  WRITE_LEVEL_CELL,
-  WRITE_LEVEL_ROW,
-  WRITE_LEVEL_TABLE,
-  COLORS
+  IS_TEST_MODE,
+  $,
+  RT,
+  RR,
+  WC,
+  WR,
+  WT,
+  T,
+  B,
+  AV,
+  AB,
+  AC,
+  AN,
+  AZ,
+  AS,
+  AF,
+  AW,
+  AD,
+  DS,
+  DST,
+  NINT,
+  NP1,
+  NP2,
+  SUCCESS,
+  FAILURE,
+  WARNING,
+  RED,
+  WHITE,
+  BLUE,
+  GREEN,
+  ORANGE,
+  BLACK,
+  GREY,
+  YELLOW,
+  LIGHT_GREY
 } from './CONSTANTS';
+
+if (IS_TEST_MODE) {
+  global.SpreadsheetApp = SpreadsheetApp;
+}
 
 const TableProxy = () => {
   function mount(sheetNameOrOptions, headerAnchorToken) {
@@ -36,62 +71,75 @@ const TableProxy = () => {
 
       const api = {};
 
-      Object.defineProperty(api, 'query', {
+      Object.defineProperty(api, 'select', {
         enumerable: true,
         value: (query, withRecords) => {
-          const timer = new Timer(`API query`);
-          const queryReturn = runQuery(core, query, withRecords);
+          const timer = new Timer(`API select`);
+          const queryReturn = runQuery(core, query, true, withRecords);
           mainCursor.consumeReturn(queryReturn);
           lastResults
             .clear()
-            .set('operation', 'query')
+            .set('operation', 'select')
             .set('completed', true)
-            .set('count', queryReturn.count)
+            .set('selected count', queryReturn.resultCount)
+            .set('updated row count', queryReturn.updatedCount)
+            .set('updated row indices', queryReturn.updatedIndices)
             .set('duration', timer.stop());
 
-          return this;
+          return api;
         }
       });
 
       Object.defineProperty(api, 'update', {
         enumerable: true,
-        value: (records, matchColumnName, matchAttributeName, matchUnique) => {
+        value: (query, withRecords) => {
           const timer = new Timer(`API update`);
-          const queryReturn = runUpdate(
-            core,
-            records,
-            matchColumnName,
-            matchAttributeName,
-            matchUnique
-          );
+          const queryReturn = runQuery(core, query, false, withRecords);
           lastResults
             .clear()
             .set('operation', 'update')
             .set('completed', true)
-            .set('updated', queryReturn.resultSet.entries())
-            .set('warnings', queryReturn.warnings.entries())
-            .set('errors', queryReturn.errors.entries())
+            .set('updated row count', queryReturn.updatedCount)
+            .set('updated row indices', queryReturn.updatedIndices)
             .set('duration', timer.stop());
 
-          return this;
+          return api;
         }
       });
 
-      Object.defineProperty(api, 'write', {
+      Object.defineProperty(api, 'writeRecords', {
         enumerable: true,
-        value: () => {
-          const timer = new Timer(`API write`);
-          const queryReturn = runUpdate(core, this.records());
+        value: (records, matchColumnName, matchAttributeName) => {
+          const timer = new Timer(`API writeRecords`);
+          const queryReturn = runObjUpdate(core, records, matchColumnName, matchAttributeName);
           lastResults
             .clear()
-            .set('operation', 'write')
+            .set('operation', 'writeRecords')
             .set('completed', true)
             .set('updated', queryReturn.resultSet.entries())
             .set('warnings', queryReturn.warnings.entries())
             .set('errors', queryReturn.errors.entries())
             .set('duration', timer.stop());
 
-          return this;
+          return api;
+        }
+      });
+
+      Object.defineProperty(api, 'writeCursor', {
+        enumerable: true,
+        value: () => {
+          const timer = new Timer(`API writeCursor`);
+          const queryReturn = runObjUpdate(core, api.records());
+          lastResults
+            .clear()
+            .set('operation', 'writeCursor')
+            .set('completed', true)
+            .set('updated', queryReturn.resultSet.entries())
+            .set('warnings', queryReturn.warnings.entries())
+            .set('errors', queryReturn.errors.entries())
+            .set('duration', timer.stop());
+
+          return api;
         }
       });
 
@@ -100,7 +148,7 @@ const TableProxy = () => {
         value: () => {
           const timer = new Timer(`API records`);
           if (mainCursor.isDirty) {
-            const queryReturn = runQuery(core, () => true, true, mainCursor.attributesSet);
+            const queryReturn = runQuery(core, () => true, true, true, mainCursor.attributesSet);
             mainCursor.consumeReturn(queryReturn);
           }
           lastResults
@@ -141,7 +189,7 @@ const TableProxy = () => {
             .set('completed', true)
             .set('duration', timer.stop());
 
-          return this;
+          return api;
         }
       });
 
@@ -157,6 +205,13 @@ const TableProxy = () => {
             .set('duration', timer.stop());
 
           return exportObject;
+        }
+      });
+
+      Object.defineProperty(api, 'getOptions', {
+        enumerable: true,
+        value: () => {
+          return instanceOptions.getSettingsExport();
         }
       });
 
@@ -196,6 +251,13 @@ const TableProxy = () => {
           enumerable: true,
           value: () => {
             instanceOptions.exportWithAllAttributes();
+            return api;
+          }
+        },
+        setReadLevel: {
+          enumerable: true,
+          value: input => {
+            instanceOptions.readLevel = input;
             return api;
           }
         },
@@ -244,14 +306,43 @@ const TableProxy = () => {
 
   return {
     mount,
-    TOP,
-    BOTTOM,
-    WRITE_LEVEL_CELL,
-    WRITE_LEVEL_ROW,
-    WRITE_LEVEL_TABLE,
-    COLORS,
     Map,
-    UniqueSet
+    UniqueSet,
+    strContains,
+    $,
+    RT,
+    RR,
+    WC,
+    WR,
+    WT,
+    T,
+    B,
+    AV,
+    AB,
+    AC,
+    AN,
+    AZ,
+    AS,
+    AF,
+    AW,
+    AD,
+    DS,
+    DST,
+    NINT,
+    NP1,
+    NP2,
+    SUCCESS,
+    FAILURE,
+    WARNING,
+    RED,
+    WHITE,
+    BLUE,
+    GREEN,
+    ORANGE,
+    BLACK,
+    GREY,
+    YELLOW,
+    LIGHT_GREY
   };
 };
 
