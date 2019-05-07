@@ -36,11 +36,10 @@ export class DataPayload {
 
       // eslint-disable-next-line prefer-destructuring
       const dataLength = this.dataObject[attr].length;
-      for (let i = this.headerRowIndex; i < dataLength; i += 1) {
+      for (let i = this.headerRowIndex + 1; i < dataLength; i += 1) {
         dataIndex.set(this.dataObject[attr][i][columnIndex], i);
       }
-
-      dataIndex.isUnique = dataIndex.length === dataLength;
+      dataIndex.isUnique = dataIndex.length === dataLength - this.headerRowIndex - 1;
     }
 
     return dataIndex;

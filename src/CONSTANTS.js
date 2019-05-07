@@ -3,7 +3,7 @@
  */
 
 // Test Toggle
-export const IS_TEST_MODE = true;
+export const IS_TEST_MODE = false;
 
 // Row Indexing
 export const $ = ' index ';
