@@ -1,7 +1,8 @@
 <html>
 
 <head>
-    <script src="../dist/TableProxy-0.9.0.js"></script>
+        <script src="../data/wahoo.js"></script>
+        <script src="../dist/TableProxy-0.9.0.js"></script>
 </head>
 
 <body>
@@ -11,6 +12,7 @@
         var t;
         window.addEventListener("load", function () {
             SpreadsheetApp.div = document.getElementById('table');
+            SpreadsheetApp.setFakeData(DATA.rawData.dataObject);
             SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test');
 
 
@@ -36,11 +38,11 @@
                 }
             }
             //t.select(query,true);
-            console.log(JSON.stringify(t.getExportObject()));
+            //console.log(JSON.stringify(t.getExportObject()));
 
 
-            var records = JSON.parse('[{"C1":{"value":"2-1 Value","fontcolor":"blue","fontsize":10},"2-2 Value":{"value":"3-2 Value","fontcolor":"#000000","fontsize":10},"2-3 Value":{"value":"3-3 Value","fontcolor":"#000000","fontsize":10},"2-4 Value":{"value":"3-4 Value","fontcolor":"#000000","fontsize":10},"2-5 Value":{"value":"3-5 Value","fontcolor":"#000000","fontsize":10}},{"2-1 Value":{"value":"4-1 Value","fontcolor":"#000000","fontsize":10},"2-2 Value":{"value":"4-2 Value","fontcolor":"#000000","fontsize":10},"2-3 Value":{"value":"4-3 Value","fontcolor":"#000000","fontsize":10},"2-4 Value":{"value":"4-4 Value","fontcolor":"#000000","fontsize":10},"2-5 Value":{"value":"4-5 Value","fontcolor":"#000000","fontsize":10}},{"2-1 Value":{"value":"5-1 Value","fontcolor":"#000000","fontsize":10},"2-2 Value":{"value":"5-2 Value","fontcolor":"#000000","fontsize":10},"2-3 Value":{"value":"5-3 Value","fontcolor":"#000000","fontsize":10},"2-4 Value":{"value":"5-4 Value","fontcolor":"#000000","fontsize":10},"2-5 Value":{"value":"5-5 Value","fontcolor":"#000000","fontsize":10}},{"2-1 Value":{"value":"6-1 Value","fontcolor":"#000000","fontsize":10},"2-2 Value":{"value":"6-2 Value","fontcolor":"#000000","fontsize":10},"2-3 Value":{"value":"6-3 Value","fontcolor":"#000000","fontsize":10},"2-4 Value":{"value":"6-4 Value","fontcolor":"#000000","fontsize":10},"2-5 Value":{"value":"6-5 Value","fontcolor":"#000000","fontsize":20}}]');
-            console.log(JSON.stringify(t.writeRecords(records)));
+            //var records = JSON.parse('[{"C1":{"value":"2-1 Value","fontcolor":"blue","fontsize":10},"2-2 Value":{"value":"3-2 Value","fontcolor":"#000000","fontsize":10},"2-3 Value":{"value":"3-3 Value","fontcolor":"#000000","fontsize":10},"2-4 Value":{"value":"3-4 Value","fontcolor":"#000000","fontsize":10},"2-5 Value":{"value":"3-5 Value","fontcolor":"#000000","fontsize":10}},{"2-1 Value":{"value":"4-1 Value","fontcolor":"#000000","fontsize":10},"2-2 Value":{"value":"4-2 Value","fontcolor":"#000000","fontsize":10},"2-3 Value":{"value":"4-3 Value","fontcolor":"#000000","fontsize":10},"2-4 Value":{"value":"4-4 Value","fontcolor":"#000000","fontsize":10},"2-5 Value":{"value":"4-5 Value","fontcolor":"#000000","fontsize":10}},{"2-1 Value":{"value":"5-1 Value","fontcolor":"#000000","fontsize":10},"2-2 Value":{"value":"5-2 Value","fontcolor":"#000000","fontsize":10},"2-3 Value":{"value":"5-3 Value","fontcolor":"#000000","fontsize":10},"2-4 Value":{"value":"5-4 Value","fontcolor":"#000000","fontsize":10},"2-5 Value":{"value":"5-5 Value","fontcolor":"#000000","fontsize":10}},{"2-1 Value":{"value":"6-1 Value","fontcolor":"#000000","fontsize":10},"2-2 Value":{"value":"6-2 Value","fontcolor":"#000000","fontsize":10},"2-3 Value":{"value":"6-3 Value","fontcolor":"#000000","fontsize":10},"2-4 Value":{"value":"6-4 Value","fontcolor":"#000000","fontsize":10},"2-5 Value":{"value":"6-5 Value","fontcolor":"#000000","fontsize":20}}]');
+            //console.log(JSON.stringify(t.writeRecords(records)));
 
             //console.log(JSON.stringify(t.writeRecords(records).getExportObject(true)));
 

@@ -5,9 +5,10 @@
 import { UniqueSet } from './map-unique';
 import QueryDriver from './query-driver';
 import processQuery from './process-query';
-import { inArray } from './utilities';
+import { inArray, getType, isObject } from './utilities';
 import clone from './clone';
 import {
+  INDEX_PROP,
   DEFAULT_ATTRIBUTE,
   SUPPORTED_ATTRIBUTES,
   OP_UNIQUE,
@@ -93,13 +94,15 @@ export function getUnique(core, columnName, attribute) {
  * @param {object} core
  * @param {boolean} [withRawData]
  */
-export function getExportObject(core, withRawData) {
-  let records;
-  if (
+export function getExportObject(core, rawDataOnly) {
+  let selected;
+  if (rawDataOnly === true) {
+    selected = core.mainCursor.keys();
+  } else if (
     core.mainCursor.isDirty ||
     !core.mainCursor.attributesSet.hasSame(core.instanceOptions.exportAttributes)
   ) {
-    records = runQuery(
+    selected = runQuery(
       core,
       () => true,
       true,
@@ -107,13 +110,35 @@ export function getExportObject(core, withRawData) {
       core.instanceOptions.exportAttributes
     ).resultSet.values();
   } else {
-    records = clone(core.mainCursor.values());
+    selected = clone(core.mainCursor.values());
   }
 
   return {
-    records,
-    rawData: withRawData
-      ? clone(core.sheetAccessor.getDataPayload(core.instanceOptions.exportAttributes))
+    selected,
+    rawData: rawDataOnly
+      ? core.sheetAccessor.getDataPayload(core.instanceOptions.exportAttributes)
       : false
   };
+}
+
+export function insertRow(core, topOrBottom, dataObject) {
+  if (dataObject && !isObject(dataObject)) {
+    throw new TypeError(`insertRow only accepts objects. Type ${getType(dataObject)} invalid`);
+  }
+  const position = core.sheetAccessor.insertRow(topOrBottom);
+  if (dataObject) {
+    // eslint-disable-next-line no-param-reassign
+    dataObject[INDEX_PROP] = position;
+    runObjUpdate(core, [dataObject]);
+  }
+
+  return position;
+}
+
+export function deleteRow(core, rowPosition) {
+  if (rowPosition - 1 <= core.sheetAccessor.headerRowIndex) {
+    throw new Error(`unable to delete the header row.`);
+  }
+
+  return core.sheetAccessor.deleteRow(rowPosition);
 }

@@ -91,15 +91,16 @@ const isInteger = input => {
 };
 
 class DataContainer {
-  constructor() {
-    this.values = values;
-    this.backgrounds = backgrounds;
-    this.fontcolors = fontcolors;
-    this.notes = notes;
-    this.fontweights = fontweights;
-    this.fontstyles = fontstyles;
-    this.fontsizes = fontsizes;
-    this.fontfamilies = fontfamilies;
+  constructor(fakeData) {
+    this.values = fakeData ? fakeData.value : values;
+    this.backgrounds = fakeData ? fakeData.background : backgrounds;
+    this.fontcolors = fakeData ? fakeData.fontcolor : fontcolors;
+    this.notes = fakeData ? fakeData.note : notes;
+    this.fontweights = fakeData ? fakeData.fontweight : fontweights;
+    this.fontstyles = fakeData ? fakeData.fontstyle : fontstyles;
+    this.fontsizes = fakeData ? fakeData.fontsize : fontsizes;
+    this.fontfamilies = fakeData ? fakeData.fontfamily : fontfamilies;
+    console.log(this);
   }
 
   filterDataArray(dataAttribute, startRow, startColumn, numRows, numColumns) {
@@ -408,9 +409,9 @@ class Range {
 }
 
 class Sheet {
-  constructor(name) {
+  constructor(name, fakeData) {
     this.name = name;
-    this.dataContainer = new DataContainer();
+    this.dataContainer = new DataContainer(fakeData);
     this.div = null;
   }
 
@@ -444,6 +445,12 @@ class Sheet {
 
   insertRows(rowPosition, numRows) {
     this.dataContainer.insertRows(rowPosition, numRows);
+    this.writeHtml();
+    return this;
+  }
+
+  insertRowAfter(rowPosition) {
+    this.dataContainer.insertRows(rowPosition, 1);
     this.writeHtml();
     return this;
   }
@@ -491,11 +498,11 @@ class Sheet {
 }
 
 class ActiveSpreadsheet {
-  constructor(div) {
+  constructor(div, fakeData) {
     this.div = div;
     this.id = 123;
     this.sheets = {
-      Test: new Sheet('Test')
+      Test: new Sheet('Test', fakeData)
     };
   }
 
@@ -521,14 +528,18 @@ class ActiveSpreadsheet {
 
 const SpreadsheetAppFake = {
   div: null,
+  data: null,
+  setFakeData: data => {
+    SpreadsheetAppFake.data = data;
+  },
   getActiveSpreadsheet: () => {
-    return new ActiveSpreadsheet(SpreadsheetAppFake.div);
+    return new ActiveSpreadsheet(SpreadsheetAppFake.div, SpreadsheetAppFake.data);
   },
   openById: id => {
     if (id !== 123) {
       throw new Error(`can't find spreadsheet with id ${id}`);
     }
-    return new ActiveSpreadsheet(SpreadsheetAppFake.div);
+    return new ActiveSpreadsheet(SpreadsheetAppFake.div, SpreadsheetAppFake.data);
   }
 };
 export const expSpreadsheetApp = IS_TEST_MODE ? SpreadsheetAppFake : SpreadsheetApp;

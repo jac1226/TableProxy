@@ -4,9 +4,10 @@
  */
 
 import InstanceOptions from './instance-options';
-import { Map, testUnique } from './map-unique';
+import { Map, getDuplicates } from './map-unique';
 import { isNumeric } from './utilities';
 import { DataPayload, AttributesSet } from './data-payload';
+import { TOP } from './CONSTANTS';
 
 export default class SheetAccessor {
   constructor(instanceOptions) {
@@ -33,6 +34,8 @@ export default class SheetAccessor {
     this.getAllRecordIndices = null;
     this.resizeColumns = null;
     this.getDataPayload = null;
+    this.insertRows = null;
+    this.deleteRows = null;
 
     /**
      * find headerRowIndex, headerColumnIndex if headerAnchorToken
@@ -57,8 +60,11 @@ export default class SheetAccessor {
      * set headerRow
      */
     this.headerRow = this.sheet.getDataRange().getValues()[this.headerRowIndex];
-    if (!testUnique(this.headerRow)) {
-      throw new Error(`Sheet "${this.sheet.getName()}" has duplicate column headers`);
+    const duplicates = getDuplicates(this.headerRow);
+    if (!duplicates.length > 0) {
+      throw new Error(
+        `Sheet "${this.sheet.getName()}" has duplicate column headers: ${duplicates.toString()}`
+      );
     }
 
     /**
@@ -84,7 +90,6 @@ export default class SheetAccessor {
       getAll: (startRowIndex, startColumnIndex) => {
         const dataRange = this.sheet.getDataRange();
         const startRowIndx = isNumeric(startRowIndex) ? startRowIndex : 0;
-
         const startColumnIndx = isNumeric(startColumnIndex) ? startColumnIndex : 0;
 
         return this.sheet.getRange(
@@ -191,6 +196,23 @@ export default class SheetAccessor {
         this.headerColumnIndex,
         this.headerRow
       );
+    };
+
+    /**
+     * flesh out insertRows and deleteRows
+     */
+    this.insertRow = topOrBottom => {
+      const position =
+        topOrBottom === TOP ? this.headerRowIndex + 1 : this.sheet.getDataRange().getNumRows();
+      this.sheet.insertRowAfter(position);
+      return position;
+    };
+
+    this.deleteRow = rowPosition => {
+      const position =
+        rowPosition === undefined ? this.sheet.getDataRange().getNumRows() : rowPosition;
+      this.sheet.deleteRow(position);
+      return position;
     };
   }
 }

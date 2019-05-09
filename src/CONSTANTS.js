@@ -5,76 +5,74 @@
 // Test Toggle
 export const IS_TEST_MODE = false;
 
-// Row Indexing
-export const $ = ' index ';
-
-// Read Levels
-export const RT = 'READ_LEVEL_TABLE';
-export const RR = 'READ_LEVEL_ROW';
-
-// Write Levels
-export const WC = 'WRITE_LEVEL_CELL';
-export const WR = 'WRITE_LEVEL_ROW';
-export const WT = 'WRITE_LEVEL_TABLE';
-
-// Positional
-export const T = 'TOP';
-export const B = 'BOTTOM';
-
-// Data Attributes
-export const AV = 'value';
-export const AB = 'background';
-export const AC = 'fontcolor';
-export const AN = 'note';
-export const AZ = 'fontsize';
-export const AS = 'fontstyle';
-export const AF = 'fontfamily';
-export const AW = 'fontweight';
-export const AD = 'numberformat';
-
-// Canned formats for convenience
-export const DS = 'mm/dd/yy';
-export const DST = 'mm/dd/yy h:mm';
-export const NINT = '#,##0';
-export const NP1 = '#,##0.0';
-export const NP2 = '#,##0.00';
-
-// Canned colors for convenience
-export const SUCCESS = '#DFFFB4';
-export const FAILURE = '#FFB4B4';
-export const WARNING = '#FFDDB4';
-export const RED = 'red';
-export const WHITE = 'white';
-export const BLUE = 'blue';
-export const GREEN = 'green';
-export const ORANGE = 'orange';
-export const BLACK = 'black';
-export const GREY = 'grey';
-export const YELLOW = 'yellow';
-export const LIGHT_GREY = '#E5DEDE';
+/**
+ * Exposed constants
+ */
+export const C = {
+  $: ' index ',
+  // Read Levels
+  RT: 'READ_LEVEL_TABLE',
+  RR: 'READ_LEVEL_ROW',
+  // Write Levels
+  WC: 'WRITE_LEVEL_CELL',
+  WR: 'WRITE_LEVEL_ROW',
+  WT: 'WRITE_LEVEL_TABLE',
+  // Positional
+  T: 'TOP',
+  B: 'BOTTOM',
+  // Data Attributes
+  AV: 'value',
+  AB: 'background',
+  AC: 'fontcolor',
+  AN: 'note',
+  AZ: 'fontsize',
+  AS: 'fontstyle',
+  AF: 'fontfamily',
+  AW: 'fontweight',
+  AD: 'numberformat',
+  // Canned formats for convenience
+  DS: 'mm/dd/yy',
+  DST: 'mm/dd/yy h:mm',
+  NINT: '#,##0',
+  NP1: '#,##0.0',
+  NP2: '#,##0.00',
+  // Canned colors for convenience
+  SUCCESS: '#DFFFB4',
+  FAILURE: '#FFB4B4',
+  WARNING: '#FFDDB4',
+  RED: 'red',
+  WHITE: 'white',
+  BLUE: 'blue',
+  GREEN: 'green',
+  ORANGE: 'orange',
+  BLACK: 'black',
+  GREY: 'grey',
+  YELLOW: 'yellow',
+  LIGHT_GREY: '#E5DEDE'
+};
 
 /**
- * Internal Usage
+ * Internally used constants
  */
-export const INDEX_PROP = $;
+export const INDEX_PROP = C.$;
 
-export const READ_LEVEL_TABLE = RT;
-export const READ_LEVEL_ROW = RR;
-export const VALID_READ_LEVELS = [RT, RR];
-export const DEFAULT_READ_LEVEL = RT;
+export const READ_LEVEL_TABLE = C.RT;
+export const READ_LEVEL_ROW = C.RR;
+export const VALID_READ_LEVELS = [C.RT, C.RR];
+export const DEFAULT_READ_LEVEL = C.RT;
 
-export const WRITE_LEVEL_CELL = WC;
-export const WRITE_LEVEL_ROW = WR;
-export const WRITE_LEVEL_TABLE = WT;
-export const VALID_WRITE_LEVELS = [WC, WR, WT];
-export const DEFAULT_WRITE_LEVEL = WC;
+export const WRITE_LEVEL_CELL = C.WC;
+export const WRITE_LEVEL_ROW = C.WR;
+export const WRITE_LEVEL_TABLE = C.WT;
+export const VALID_WRITE_LEVELS = [C.WC, C.WR, C.WT];
+export const DEFAULT_WRITE_LEVEL = C.WC;
 
-export const SUPPORTED_ATTRIBUTES = [AV, AB, AC, AN, AZ, AS, AF, AW, AD];
-export const DEFAULT_ATTRIBUTE = AV;
-export const ATTR_NOTE = AN;
+export const SUPPORTED_ATTRIBUTES = [C.AV, C.AB, C.AC, C.AN, C.AZ, C.AS, C.AF, C.AW, C.AD];
+export const DEFAULT_ATTRIBUTE = C.AV;
+export const ATTR_NOTE = C.AN;
 
-export const TOP = T;
-export const BOTTOM = B;
+export const TOP = C.T;
+export const BOTTOM = C.B;
 
 export const OP_UNIQUE = 'UNIQUE';
 export const OP_SELECT = 'SELECT';

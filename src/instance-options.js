@@ -7,7 +7,10 @@ import { AttributesSet } from './data-payload';
 import { expSpreadsheetApp as SpreadsheetApp } from './simulation-utils';
 import {
   VALID_READ_LEVELS,
+  READ_LEVEL_ROW,
   DEFAULT_READ_LEVEL,
+  WRITE_LEVEL_TABLE,
+  WRITE_LEVEL_ROW,
   VALID_WRITE_LEVELS,
   DEFAULT_WRITE_LEVEL,
   DEFAULT_ATTRIBUTE,
@@ -24,6 +27,7 @@ import {
   isNumeric,
   isDate1
 } from './utilities';
+import { log, isSupportedType } from './sheets-utilities';
 import clone from './clone';
 
 if (IS_TEST_MODE) {
@@ -108,16 +112,17 @@ export default class InstanceOptions {
   }
 
   set columnFilter(input) {
-    let columnFilter;
     if (isArray(input)) {
-      columnFilter = clone(input);
-    } else if (isString(input) || isNumeric(input)) {
-      columnFilter = [input];
-    } else {
-      columnFilter = [];
+      clone(input)
+        .filter(i => isSupportedType(i))
+        .map(i => (isString(i) ? i.trim() : i))
+        .forEach(i => {
+          this.pvt_columnFilter.push(i);
+        });
+    } else if (isSupportedType(input)) {
+      this.pvt_columnFilter = [isString(input) ? input.trim() : input];
     }
-    this.pvt_applyColumnFilter = true;
-    this.pvt_columnFilter = columnFilter;
+    this.pvt_applyColumnFilter = this.pvt_columnFilter.length > 0;
     return this.pvt_columnFilter;
   }
 
@@ -157,6 +162,10 @@ export default class InstanceOptions {
   }
 
   get writeLevel() {
+    if (this.pvt_readLevel === READ_LEVEL_ROW && this.pvt_writeLevel === WRITE_LEVEL_TABLE) {
+      log(`Note: write level changed to row from table because read level is row.`);
+      this.pvt_writeLevel = WRITE_LEVEL_ROW;
+    }
     return this.pvt_writeLevel;
   }
 

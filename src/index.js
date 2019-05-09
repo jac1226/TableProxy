@@ -6,46 +6,18 @@ import InstanceOptions from './instance-options';
 import SheetAccessor from './sheet-accessor';
 import MainCursor from './main-cursor';
 import { Map, UniqueSet } from './map-unique';
-import { getUnique, runQuery, runObjUpdate, getExportObject } from './operations';
-import { strContains } from './utilities';
-import Timer from './timer';
 import {
-  IS_TEST_MODE,
-  $,
-  RT,
-  RR,
-  WC,
-  WR,
-  WT,
-  T,
-  B,
-  AV,
-  AB,
-  AC,
-  AN,
-  AZ,
-  AS,
-  AF,
-  AW,
-  AD,
-  DS,
-  DST,
-  NINT,
-  NP1,
-  NP2,
-  SUCCESS,
-  FAILURE,
-  WARNING,
-  RED,
-  WHITE,
-  BLUE,
-  GREEN,
-  ORANGE,
-  BLACK,
-  GREY,
-  YELLOW,
-  LIGHT_GREY
-} from './CONSTANTS';
+  getUnique,
+  runQuery,
+  runObjUpdate,
+  getExportObject,
+  insertRow,
+  deleteRow
+} from './operations';
+import { objAssign, strContains } from './utilities';
+import Timer from './timer';
+import { Utils } from './sheets-utilities';
+import { IS_TEST_MODE, C } from './CONSTANTS';
 
 if (IS_TEST_MODE) {
   global.SpreadsheetApp = SpreadsheetApp;
@@ -107,6 +79,7 @@ const TableProxy = () => {
         }
       });
 
+      // needs enhancement
       Object.defineProperty(api, 'writeRecords', {
         enumerable: true,
         value: (records, matchColumnName, matchAttributeName) => {
@@ -193,11 +166,45 @@ const TableProxy = () => {
         }
       });
 
+      Object.defineProperty(api, 'insertRow', {
+        enumerable: true,
+        value: (topOrBottom, dataObject) => {
+          const timer = new Timer(`API insertRow`);
+          const position = insertRow(core, topOrBottom, dataObject);
+          mainCursor.flush();
+          lastResults
+            .clear()
+            .set('operation', 'insertRow')
+            .set('@ position', position)
+            .set('completed', true)
+            .set('duration', timer.stop());
+
+          return api;
+        }
+      });
+
+      Object.defineProperty(api, 'deleteRow', {
+        enumerable: true,
+        value: rowPosition => {
+          const timer = new Timer(`API insertRow`);
+          const position = deleteRow(core, rowPosition);
+          mainCursor.flush();
+          lastResults
+            .clear()
+            .set('operation', 'deleteRow')
+            .set('@ position', position)
+            .set('completed', true)
+            .set('duration', timer.stop());
+
+          return api;
+        }
+      });
+
       Object.defineProperty(api, 'getExportObject', {
         enumerable: true,
-        value: withRawData => {
+        value: rawDataOnly => {
           const timer = new Timer(`API getExportObject`);
-          const exportObject = getExportObject(core, withRawData);
+          const exportObject = getExportObject(core, rawDataOnly);
           lastResults
             .clear()
             .set('operation', 'getExportObject')
@@ -303,47 +310,7 @@ const TableProxy = () => {
       throw new Error(`TableProxy.mount failed: ${e}`);
     }
   }
-
-  return {
-    mount,
-    Map,
-    UniqueSet,
-    strContains,
-    $,
-    RT,
-    RR,
-    WC,
-    WR,
-    WT,
-    T,
-    B,
-    AV,
-    AB,
-    AC,
-    AN,
-    AZ,
-    AS,
-    AF,
-    AW,
-    AD,
-    DS,
-    DST,
-    NINT,
-    NP1,
-    NP2,
-    SUCCESS,
-    FAILURE,
-    WARNING,
-    RED,
-    WHITE,
-    BLUE,
-    GREEN,
-    ORANGE,
-    BLACK,
-    GREY,
-    YELLOW,
-    LIGHT_GREY
-  };
+  return objAssign({ mount, Map, UniqueSet, strContains }, C);
 };
 
 const $initTableProxy = function $initTableProxy(asName) {
@@ -353,5 +320,13 @@ const $initTableProxy = function $initTableProxy(asName) {
     global.TableProxy = TableProxy();
   }
 };
-
 global.$initTableProxy = $initTableProxy;
+
+const $initUtils = function $initUtils(asName) {
+  if (asName) {
+    global[asName] = Utils;
+  } else {
+    global.TableProxy = Utils;
+  }
+};
+global.$initUtils = $initUtils;

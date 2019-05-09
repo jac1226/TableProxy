@@ -29,7 +29,9 @@ export default class DataController {
       throw new TypeError(`DataController requires an instance of AttributesSet.`);
     }
 
-    this.instanceOptions = instanceOptions;
+    this.readLevel = instanceOptions.readLevel;
+    this.writeLevel = instanceOptions.writeLevel;
+    this.headerAnchorToken = instanceOptions.headerAnchorToken;
     this.sheetAccessor = sheetAccessor;
     this.rowIndex = null;
     this.requestedAttributesSet = requestedAttributesSet;
@@ -41,44 +43,29 @@ export default class DataController {
      * I hate this, but figured it could do away with a lot of potential if evaluations.
      */
     this.setRowIndex = null;
-    if (
-      instanceOptions.readLevel === READ_LEVEL_ROW &&
-      instanceOptions.writeLevel === WRITE_LEVEL_ROW
-    ) {
+    if (this.readLevel === READ_LEVEL_ROW && this.writeLevel === WRITE_LEVEL_ROW) {
       this.setRowIndex = this.setRowIndex1;
-    } else if (
-      instanceOptions.readLevel === READ_LEVEL_ROW &&
-      instanceOptions.writeLevel !== WRITE_LEVEL_ROW
-    ) {
+    } else if (this.readLevel === READ_LEVEL_ROW && this.writeLevel !== WRITE_LEVEL_ROW) {
       this.setRowIndex = this.setRowIndex2;
-    } else if (
-      instanceOptions.readLevel !== READ_LEVEL_ROW &&
-      instanceOptions.writeLevel === WRITE_LEVEL_ROW
-    ) {
+    } else if (this.readLevel !== READ_LEVEL_ROW && this.writeLevel === WRITE_LEVEL_ROW) {
       this.setRowIndex = this.setRowIndex3;
     } else {
       this.setRowIndex = this.setRowIndexBase;
     }
 
     this.updateColumnByIndex = null;
-    if (instanceOptions.headerAnchorToken && instanceOptions.writeLevel === WRITE_LEVEL_CELL) {
+    if (this.headerAnchorToken && this.writeLevel === WRITE_LEVEL_CELL) {
       this.updateColumnByIndex = this.updateColumnByIndex1;
-    } else if (
-      instanceOptions.headerAnchorToken &&
-      instanceOptions.writeLevel !== WRITE_LEVEL_CELL
-    ) {
+    } else if (this.headerAnchorToken && this.writeLevel !== WRITE_LEVEL_CELL) {
       this.updateColumnByIndex = this.updateColumnByIndex2;
-    } else if (
-      !instanceOptions.headerAnchorToken &&
-      instanceOptions.writeLevel === WRITE_LEVEL_CELL
-    ) {
+    } else if (!this.headerAnchorToken && this.writeLevel === WRITE_LEVEL_CELL) {
       this.updateColumnByIndex = this.updateColumnByIndex3;
     } else {
       this.updateColumnByIndex = this.updateColumnByIndex4;
     }
 
     this.getColumnByIndex = null;
-    if (instanceOptions.readLevel === READ_LEVEL_ROW) {
+    if (this.readLevel === READ_LEVEL_ROW) {
       this.getColumnByIndex = this.getColumnByIndex1;
     } else {
       this.getColumnByIndex = this.getColumnByIndex2;
@@ -87,7 +74,7 @@ export default class DataController {
     /**
      * Initialize the data payload.
      */
-    if (instanceOptions.readLevel === READ_LEVEL_TABLE) {
+    if (this.readLevel === READ_LEVEL_TABLE) {
       this.dataPayload = sheetAccessor.getDataPayload(requestedAttributesSet);
     }
   }
@@ -188,14 +175,14 @@ export default class DataController {
 
   capWrite() {
     this.rowUpdated = false;
-    if (this.instanceOptions.writeLevel === WRITE_LEVEL_TABLE) {
+    if (this.writeLevel === WRITE_LEVEL_TABLE) {
       this.changedAttributes.forEach(attribute => {
         this.dataPayload.dataObject[attribute].splice(0, this.sheetAccessor.headerRowIndex + 1);
         this.sheetAccessor[attribute].setAllRecords(this.dataPayload.dataObject[attribute]);
       });
       this.changedAttributes.flush();
     }
-    if (this.instanceOptions.writeLevel === WRITE_LEVEL_ROW) {
+    if (this.writeLevel === WRITE_LEVEL_ROW) {
       this.writeCurrentRow();
     }
   }
