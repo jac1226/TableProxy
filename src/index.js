@@ -171,7 +171,6 @@ const TableProxy = () => {
         value: (topOrBottom, dataObject) => {
           const timer = new Timer(`API insertRow`);
           const position = insertRow(core, topOrBottom, dataObject);
-          mainCursor.flush();
           lastResults
             .clear()
             .set('operation', 'insertRow')
@@ -212,6 +211,30 @@ const TableProxy = () => {
             .set('duration', timer.stop());
 
           return exportObject;
+        }
+      });
+
+      Object.defineProperty(api, 'loadSelectedRows', {
+        enumerable: true,
+        value: () => {
+          const timer = new Timer(`API loadSelectedRows`);
+          mainCursor.setToSelected();
+          lastResults
+            .clear()
+            .set('operation', 'loadSelectedRows')
+            .set('count', mainCursor.length)
+            .set('res', mainCursor.entries())
+            .set('completed', true)
+            .set('duration', timer.stop());
+
+          return api;
+        }
+      });
+
+      Object.defineProperty(api, 'getHeaderRow', {
+        enumerable: true,
+        value: () => {
+          return sheetAccessor.getHeaderRow();
         }
       });
 
@@ -310,13 +333,13 @@ const TableProxy = () => {
       throw new Error(`TableProxy.mount failed: ${e}`);
     }
   }
-  return objAssign({ mount, Map, UniqueSet, strContains }, C);
+  return objAssign({ mount, Map, UniqueSet, Timer, strContains }, C);
 };
 
 const $initTableProxy = function $initTableProxy(asName) {
-  if (asName) {
+  if (asName && !global[asName]) {
     global[asName] = TableProxy();
-  } else {
+  } else if (!global.TableProxy) {
     global.TableProxy = TableProxy();
   }
 };

@@ -90,7 +90,7 @@ export default function processQuery(core, queryDriver) {
         };
       }
       return e;
-    })(queryDriver, recordProxy, dataController);
+    })();
 
     core.mainCursor.indices.forEach(index => {
       evaluator(index);
@@ -103,6 +103,7 @@ export default function processQuery(core, queryDriver) {
     let dataIndex;
 
     if (queryDriver.usesIndexProp) {
+      Logger.log(JSON.stringify(queryDriver.recordObjectsToWrite));
       matchCol = INDEX_PROP;
       matchAttr = null;
       dataIndex = dataController.getDataIndex();
@@ -118,7 +119,6 @@ export default function processQuery(core, queryDriver) {
 
     queryDriver.recordObjectsToWrite.forEach((record, index) => {
       let localIndex;
-
       if (!Object.prototype.hasOwnProperty.call(record, matchCol)) {
         queryDriver.pushError(`input at index ${index} missing "${matchCol}" column.`);
         return;
@@ -133,7 +133,6 @@ export default function processQuery(core, queryDriver) {
       } else {
         localIndex = dataIndex.get(record[matchCol]);
       }
-
       if (!localIndex) {
         queryDriver.pushWarning(`input at index ${index} had no match.`);
         return;
@@ -144,6 +143,7 @@ export default function processQuery(core, queryDriver) {
       if (queryDriver.returnWithRecords) {
         queryDriver.pushResult(localIndex, clone(writeToRecordProxy(recordProxy, record)));
       } else {
+        writeToRecordProxy(recordProxy, record);
         queryDriver.pushResult(localIndex);
       }
     });

@@ -709,7 +709,7 @@ function $initUtils() {
     __webpack_require__.d(__webpack_exports__, "a", function() {
         return Timer;
     });
-    var _utilities__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0), _sheets_utilities__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
+    var _utilities__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0), _sheets_utilities__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
     function _defineProperties(target, props) {
         for (var i = 0; i < props.length; i++) {
             var descriptor = props[i];
@@ -723,27 +723,196 @@ function $initUtils() {
                 if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
             }(this, Timer), !Object(_utilities__WEBPACK_IMPORTED_MODULE_0__["p"])(text)) throw new Error("Timer requires text.");
             this.text = text, this.startTime = Object(_utilities__WEBPACK_IMPORTED_MODULE_0__["c"])(), 
-            !(this.duration = null) !== suppressLogStart && Object(_sheets_utilities__WEBPACK_IMPORTED_MODULE_1__["c"])("".concat(this.text, " operation started"));
+            !(this.duration = null) !== suppressLogStart && Object(_sheets_utilities__WEBPACK_IMPORTED_MODULE_1__["d"])("".concat(this.text, " operation started"));
         }
         return function _createClass(Constructor, protoProps, staticProps) {
             return protoProps && _defineProperties(Constructor.prototype, protoProps), staticProps && _defineProperties(Constructor, staticProps), 
             Constructor;
         }(Timer, [ {
+            key: "getStartTime",
+            value: function() {
+                return this.startTime;
+            }
+        }, {
+            key: "getDuration",
+            value: function() {
+                return this.duration;
+            }
+        }, {
+            key: "getText",
+            value: function() {
+                return this.text;
+            }
+        }, {
             key: "stop",
             value: function(text) {
                 var endText = Object(_utilities__WEBPACK_IMPORTED_MODULE_0__["p"])(text) ? "\n".concat(text) : "";
                 return this.duration = Object(_utilities__WEBPACK_IMPORTED_MODULE_0__["b"])(this.startTime, 0), 
-                Object(_sheets_utilities__WEBPACK_IMPORTED_MODULE_1__["c"])("".concat(this.text, " operation completed in ").concat(this.duration, "ms").concat(endText)), 
+                Object(_sheets_utilities__WEBPACK_IMPORTED_MODULE_1__["d"])("".concat(this.text, " operation completed in ").concat(this.duration, "ms").concat(endText)), 
                 this.duration;
             }
         } ]), Timer;
     }();
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
+    __webpack_require__.d(__webpack_exports__, "c", function() {
+        return isSupportedType;
+    }), __webpack_require__.d(__webpack_exports__, "d", function() {
+        return log;
+    }), __webpack_require__.d(__webpack_exports__, "b", function() {
+        return getSelectedRowIndices;
+    }), __webpack_require__.d(__webpack_exports__, "a", function() {
+        return Utils;
+    });
+    var _simulation_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10), _utilities__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(0), _map_unique__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2);
+    function _typeof(obj) {
+        return (_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function _typeof(obj) {
+            return typeof obj;
+        } : function _typeof(obj) {
+            return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+        })(obj);
+    }
+    function getSheetsObjectType(input) {
+        var returnType;
+        if ("object" === _typeof(input)) try {
+            returnType = input.getGibberish();
+        } catch (e) {
+            returnType = e.message.split(" object ")[1].replace(".", "");
+        }
+        return returnType;
+    }
+    function isSheet(input) {
+        return "Sheet" === getSheetsObjectType(input);
+    }
+    function isRange(input) {
+        return "Range" === getSheetsObjectType(input);
+    }
+    function isSupportedType(input) {
+        return -1 !== [ "[object String]", "[object Number]", "[object Date]", "[object Boolean]" ].indexOf(toString.call(input));
+    }
+    function log(input) {
+        _simulation_utils__WEBPACK_IMPORTED_MODULE_0__["a"].log(input);
+    }
+    var getSelectedRowIndices = function getSelectedRowIndices() {
+        return Object.keys(SpreadsheetApp.getActiveSheet().getSelection().getActiveRangeList().getRanges().reduce(function(a, r) {
+            for (var sr = r.getRow() - 1, er = sr + r.getNumRows(), i = sr; i < er; i += 1) a[i] = !0;
+            return a;
+        }, {})).map(function(k) {
+            return Number(k);
+        });
+    }, getSheetByName = function getSheetByName(sheetName) {
+        var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+        if (!sheet) throw new Error('getSheetByName was unable to find a sheet with name "'.concat(sheetName, '"'));
+        return sheet;
+    }, getSheet = function getSheet(sheetOrSheetName) {
+        if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_1__["p"])(sheetOrSheetName)) {
+            if (isSheet(sheetOrSheetName)) return sheetOrSheetName;
+            throw new Error('getSheet called with invalid sheetOrSheetName data type: "'.concat(getSheetsObjectType(sheetOrSheetName), '".'));
+        }
+        try {
+            return getSheetByName(sheetOrSheetName);
+        } catch (e) {
+            throw new Error('getSheet could not retrieve sheet with name "'.concat(sheetOrSheetName, '".'));
+        }
+    }, getShape = function getShape(input) {
+        if (Object(_utilities__WEBPACK_IMPORTED_MODULE_1__["g"])(input)) {
+            if (Object(_utilities__WEBPACK_IMPORTED_MODULE_1__["g"])(input[0])) return "".concat(input.length, "x").concat(input[0].length);
+            throw new Error("getShape called on non-2d array");
+        }
+        if (isRange(input)) return "".concat(input.getNumRows(), "x").concat(input.getNumColumns());
+        throw new Error("getShape called on data with type which does not have meaningful 2d shape.");
+    }, getValueByName = function getValueByName(namedRange) {
+        var range = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(namedRange);
+        if (!range) throw new Error('getValueByName failed because the namedRange "'.concat(namedRange, '" does not exist.'));
+        return "1x1" === getShape(range) ? range.getValues()[0][0] : range.getValues();
+    }, Utils = {
+        getSheetsObjectType: getSheetsObjectType,
+        isSpreadsheet: function isSpreadsheet(input) {
+            return "Spreadsheet" === getSheetsObjectType(input);
+        },
+        isSheet: isSheet,
+        isRange: isRange,
+        isSupportedType: isSupportedType,
+        getSelectedRowIndices: getSelectedRowIndices,
+        sendEmail: function sendEmail(toAddress, subject, message) {
+            return MailApp.sendEmail(toAddress, subject, message);
+        },
+        getSheetIndex: function getSheetIndex(sheetName) {
+            for (var sheets = SpreadsheetApp.getActiveSpreadsheet().getSheets(), i = 0; i < sheets.length; i += 1) if (sheets[i] === sheetName) return i;
+            return -1;
+        },
+        getSheet: getSheet,
+        getShape: getShape,
+        namedRangeExists: function namedRangeExists(namedRange) {
+            return SpreadsheetApp.getActiveSpreadsheet().getRangeByName(namedRange) !== undefined;
+        },
+        getValueByName: getValueByName,
+        updateValueByName: function updateValueByName(namedRange, value) {
+            var range = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(namedRange);
+            if (!range) throw new Error('getValueByName failed because the namedRange "'.concat(namedRange, '" does not exist.'));
+            if (!range.isPartOfMerge()) {
+                var updVal = value;
+                switch (Object(_utilities__WEBPACK_IMPORTED_MODULE_1__["e"])(value)) {
+                  case "[object String]":
+                  case "[object Number]":
+                  case "[object Boolean]":
+                  case "[object Date]":
+                    updVal = [ [ value ] ];
+                    break;
+
+                  case "[object Array]":
+                    break;
+
+                  default:
+                    throw new Error("updateValueByName - input value is neither an array or a string");
+                }
+                if (updVal.length !== range.getNumRows()) throw new Error("value is not of the same size as the namedRange: row count incorrect");
+                if (updVal[0].length !== range.getNumColumns()) throw new Error("value is not of the same size as the namedRange: column count problem");
+                return range.setValues(updVal);
+            }
+            if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_1__["p"])(value)) throw new Error("updateValueByName - range to update is merged, update value must be a string.");
+            return range.setValue(value), !0;
+        },
+        getCoordinatesByName: function getCoordinatesByName(namedRange) {
+            var range = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(namedRange);
+            if (!range) throw new Error("getCoordinatesByName failed - input range does not exist.");
+            return {
+                startRow: range.getRow(),
+                endRow: range.getLastRow(),
+                startCol: range.getColumn(),
+                endCol: range.getLastColumn()
+            };
+        },
+        isDate1: _utilities__WEBPACK_IMPORTED_MODULE_1__["i"],
+        isArray: _utilities__WEBPACK_IMPORTED_MODULE_1__["g"],
+        isString: _utilities__WEBPACK_IMPORTED_MODULE_1__["p"],
+        isNumeric: _utilities__WEBPACK_IMPORTED_MODULE_1__["n"],
+        isFunction: _utilities__WEBPACK_IMPORTED_MODULE_1__["k"],
+        isObject: _utilities__WEBPACK_IMPORTED_MODULE_1__["o"],
+        isBoolean: _utilities__WEBPACK_IMPORTED_MODULE_1__["h"],
+        isNull: _utilities__WEBPACK_IMPORTED_MODULE_1__["m"],
+        isUndefined: _utilities__WEBPACK_IMPORTED_MODULE_1__["q"],
+        inArray: _utilities__WEBPACK_IMPORTED_MODULE_1__["f"],
+        getType: _utilities__WEBPACK_IMPORTED_MODULE_1__["e"],
+        toBool: _utilities__WEBPACK_IMPORTED_MODULE_1__["t"],
+        firstToUpper: _utilities__WEBPACK_IMPORTED_MODULE_1__["a"],
+        getTimeStamp: _utilities__WEBPACK_IMPORTED_MODULE_1__["c"],
+        getTimeDiff: _utilities__WEBPACK_IMPORTED_MODULE_1__["b"],
+        isJson: _utilities__WEBPACK_IMPORTED_MODULE_1__["l"],
+        toJson: _utilities__WEBPACK_IMPORTED_MODULE_1__["u"],
+        isEmail: _utilities__WEBPACK_IMPORTED_MODULE_1__["j"],
+        tokenInterpolate: _utilities__WEBPACK_IMPORTED_MODULE_1__["v"],
+        getTokens: _utilities__WEBPACK_IMPORTED_MODULE_1__["d"],
+        removeDuplicates: _map_unique__WEBPACK_IMPORTED_MODULE_2__["d"],
+        getDuplicates: _map_unique__WEBPACK_IMPORTED_MODULE_2__["c"],
+        testUnique: _map_unique__WEBPACK_IMPORTED_MODULE_2__["e"]
+    };
+}, function(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
     __webpack_require__.d(__webpack_exports__, "a", function() {
         return SheetAccessor;
     });
-    var _instance_options__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9), _map_unique__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2), _utilities__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(0), _data_payload__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3), _CONSTANTS__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1);
+    var _instance_options__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9), _map_unique__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2), _utilities__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(0), _sheets_utilities__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5), _data_payload__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3), _clone__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(7), _CONSTANTS__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(1);
     function _toConsumableArray(arr) {
         return function _arrayWithoutHoles(arr) {
             if (Array.isArray(arr)) {
@@ -764,18 +933,23 @@ function $initUtils() {
         this.sheet = instanceOptions.sheet, this.range = {}, this.value = {}, this.background = {}, 
         this.fontcolor = {}, this.note = {}, this.fontfamily = {}, this.fontsize = {}, this.fontstyle = {}, 
         this.fontweight = {}, this.numberformat = {}, this.headerRowIndex = 0, this.headerColumnIndex = 0, 
-        this.headerRow = null, this.getColumnIndex = null, this.columnExists = null, this.getAllRecordIndices = null, 
-        this.resizeColumns = null, this.getDataPayload = null, this.insertRows = null, this.deleteRows = null, 
-        instanceOptions.headerAnchorToken && function() {
-            for (var rowCount = _this.sheet.getDataRange().getNumRows(), _loop = function _loop(_rowIndex) {
-                _this.sheet.getRange(_rowIndex + 1, 1, 1).getNotes().forEach(function(note, columnIndex) {
+        this.headerRow = null, this.getColumnIndex = null, this.columnExists = null, this.getAllRecordIndexer = null, 
+        this.getSelectedRecordIndexer = null, this.resizeColumns = null, this.getDataPayload = null, 
+        this.insertRows = null, this.deleteRows = null, this.getHeaderRow = null, instanceOptions.headerAnchorToken && function() {
+            for (var dataRange = _this.sheet.getDataRange(), rowCount = dataRange.getNumRows(), columnCount = dataRange.getNumColumns(), _loop = function _loop(_rowIndex) {
+                _this.sheet.getRange(_rowIndex + 1, 1, 1, columnCount).getNotes()[0].forEach(function(note, columnIndex) {
                     -1 !== note.indexOf(instanceOptions.headerAnchorToken) && (_this.headerRowIndex = _rowIndex, 
                     _this.headerColumnIndex = columnIndex, _rowIndex = rowCount);
                 }), rowIndex = _rowIndex;
             }, rowIndex = 0; rowIndex < rowCount; rowIndex += 1) _loop(rowIndex);
         }(), this.headerRow = this.sheet.getDataRange().getValues()[this.headerRowIndex];
         var duplicates = Object(_map_unique__WEBPACK_IMPORTED_MODULE_1__["c"])(this.headerRow);
-        if (0 < !duplicates.length) throw new Error('Sheet "'.concat(this.sheet.getName(), '" has duplicate column headers: ').concat(duplicates.toString()));
+        if (0 < duplicates.length) {
+            var msg = null;
+            throw duplicates.forEach(function(d) {
+                msg += msg ? ", ".concat(d) : d;
+            }), new Error('Sheet "'.concat(this.sheet.getName(), '" has duplicate column headers... ').concat(msg));
+        }
         this.range = {
             getCell: function(rowIndex, columnIndex) {
                 return _this.sheet.getRange(rowIndex + 1, columnIndex + 1);
@@ -854,22 +1028,28 @@ function $initUtils() {
             return -1 !== _this.getColumnIndex(columnName);
         }, this.getDefaultIdColumn = function() {
             return _this.headerRow[_this.headerColumnIndex];
+        }, this.getHeaderRow = function() {
+            return Object(_clone__WEBPACK_IMPORTED_MODULE_5__["a"])(_this.headerRow);
         }, this.getAllRecordIndexer = function() {
             for (var indexer = new _map_unique__WEBPACK_IMPORTED_MODULE_1__["a"](), numRows = _this.range.getAll().getNumRows(), i = _this.headerRowIndex + 1; i < numRows; ) indexer.set(i), 
             i += 1;
             return indexer;
+        }, this.getSelectedRecordIndexer = function() {
+            return Object(_sheets_utilities__WEBPACK_IMPORTED_MODULE_3__["b"])().reduce(function(indexer, i) {
+                return indexer.set(i), indexer;
+            }, new _map_unique__WEBPACK_IMPORTED_MODULE_1__["a"]());
         }, this.resizeColumns = function() {
             _this.headerRow.forEach(function(columnName, index) {
                 _this.sheet.autoResizeColumn(index + 1);
             });
         }, this.getDataPayload = function(requestedAttributesSet, rowIndex) {
-            if (!(requestedAttributesSet instanceof _data_payload__WEBPACK_IMPORTED_MODULE_3__["a"])) throw new TypeError("getDataPayload expects an AttributesSet instance.");
-            return new _data_payload__WEBPACK_IMPORTED_MODULE_3__["b"](requestedAttributesSet.values.reduce(function(dataObject, attribute) {
+            if (!(requestedAttributesSet instanceof _data_payload__WEBPACK_IMPORTED_MODULE_4__["a"])) throw new TypeError("getDataPayload expects an AttributesSet instance.");
+            return new _data_payload__WEBPACK_IMPORTED_MODULE_4__["b"](requestedAttributesSet.values.reduce(function(dataObject, attribute) {
                 return Object(_utilities__WEBPACK_IMPORTED_MODULE_2__["n"])(rowIndex) ? dataObject[attribute] = _this[attribute].getRow(rowIndex) : dataObject[attribute] = _this[attribute].getAll(), 
                 dataObject;
             }, {}), _this.headerRowIndex, _this.headerColumnIndex, _this.headerRow);
         }, this.insertRow = function(topOrBottom) {
-            var position = topOrBottom === _CONSTANTS__WEBPACK_IMPORTED_MODULE_4__["p"] ? _this.headerRowIndex + 1 : _this.sheet.getDataRange().getNumRows();
+            var position = topOrBottom === _CONSTANTS__WEBPACK_IMPORTED_MODULE_6__["p"] ? _this.headerRowIndex + 1 : _this.sheet.getDataRange().getNumRows();
             return _this.sheet.insertRowAfter(position), position;
         }, this.deleteRow = function(rowPosition) {
             var position = rowPosition === undefined ? _this.sheet.getDataRange().getNumRows() : rowPosition;
@@ -878,159 +1058,44 @@ function $initUtils() {
     };
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
-    __webpack_require__.d(__webpack_exports__, "b", function() {
-        return isSupportedType;
-    }), __webpack_require__.d(__webpack_exports__, "c", function() {
-        return log;
-    }), __webpack_require__.d(__webpack_exports__, "a", function() {
-        return Utils;
-    });
-    var _simulation_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8), _utilities__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(0), _map_unique__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2);
-    function _typeof(obj) {
-        return (_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function _typeof(obj) {
-            return typeof obj;
-        } : function _typeof(obj) {
-            return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-        })(obj);
-    }
-    function getSheetsObjectType(input) {
-        var returnType;
-        if ("object" === _typeof(input)) try {
-            returnType = input.getGibberish();
-        } catch (e) {
-            returnType = e.message.split(" object ")[1].replace(".", "");
-        }
-        return returnType;
-    }
-    function isSheet(input) {
-        return "Sheet" === getSheetsObjectType(input);
-    }
-    function isRange(input) {
-        return "Range" === getSheetsObjectType(input);
-    }
-    function isSupportedType(input) {
-        return -1 !== [ "[object String]", "[object Number]", "[object Date]", "[object Boolean]" ].indexOf(toString.call(input));
-    }
-    function log(input) {
-        _simulation_utils__WEBPACK_IMPORTED_MODULE_0__["a"].log(input);
-    }
-    var getSheetByName = function getSheetByName(sheetName) {
-        var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
-        if (!sheet) throw new Error('getSheetByName was unable to find a sheet with name "'.concat(sheetName, '"'));
-        return sheet;
-    }, getSheet = function getSheet(sheetOrSheetName) {
-        if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_1__["p"])(sheetOrSheetName)) {
-            if (isSheet(sheetOrSheetName)) return sheetOrSheetName;
-            throw new Error('getSheet called with invalid sheetOrSheetName data type: "'.concat(getSheetsObjectType(sheetOrSheetName), '".'));
-        }
-        try {
-            return getSheetByName(sheetOrSheetName);
-        } catch (e) {
-            throw new Error('getSheet could not retrieve sheet with name "'.concat(sheetOrSheetName, '".'));
-        }
-    }, getShape = function getShape(input) {
-        if (Object(_utilities__WEBPACK_IMPORTED_MODULE_1__["g"])(input)) {
-            if (Object(_utilities__WEBPACK_IMPORTED_MODULE_1__["g"])(input[0])) return "".concat(input.length, "x").concat(input[0].length);
-            throw new Error("getShape called on non-2d array");
-        }
-        if (isRange(input)) return "".concat(input.getNumRows(), "x").concat(input.getNumColumns());
-        throw new Error("getShape called on data with type which does not have meaningful 2d shape.");
-    }, getValueByName = function getValueByName(namedRange) {
-        var range = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(namedRange);
-        if (!range) throw new Error('getValueByName failed because the namedRange "'.concat(namedRange, '" does not exist.'));
-        return "1x1" === getShape(range) ? range.getValues()[0][0] : range.getValues();
-    }, Utils = {
-        getSheetsObjectType: getSheetsObjectType,
-        isSpreadsheet: function isSpreadsheet(input) {
-            return "Spreadsheet" === getSheetsObjectType(input);
-        },
-        isSheet: isSheet,
-        isRange: isRange,
-        isSupportedType: isSupportedType,
-        getSelectedRowIndices: function getSelectedRowIndices() {
-            var activeSheet = SpreadsheetApp.getActiveSheet(), rowAggregator = {};
-            return activeSheet.getSelection().getActiveRangeList().getRanges().forEach(function(range) {
-                rowAggregator[range.getRow()] = !0;
-            }), Object.keys(rowAggregator).map(function(key) {
-                return Number(key);
+    function clone(input) {
+        var copy, toStringType = toString.call(input);
+        switch (toStringType) {
+          case "[object Undefined]":
+          case "[object Null]":
+          case "[object Number]":
+          case "[object String]":
+          case "[object Boolean]":
+            copy = input;
+            break;
+
+          case "[object Array]":
+            copy = input.map(function(i) {
+                return clone(i);
             });
-        },
-        sendEmail: function sendEmail(toAddress, subject, message) {
-            return MailApp.sendEmail(toAddress, subject, message);
-        },
-        getSheetIndex: function getSheetIndex(sheetName) {
-            for (var sheets = SpreadsheetApp.getActiveSpreadsheet().getSheets(), i = 0; i < sheets.length; i += 1) if (sheets[i] === sheetName) return i;
-            return -1;
-        },
-        getSheet: getSheet,
-        getShape: getShape,
-        namedRangeExists: function namedRangeExists(namedRange) {
-            return SpreadsheetApp.getActiveSpreadsheet().getRangeByName(namedRange) !== undefined;
-        },
-        getValueByName: getValueByName,
-        updateValueByName: function updateValueByName(namedRange, value) {
-            var range = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(namedRange);
-            if (!range) throw new Error('getValueByName failed because the namedRange "'.concat(namedRange, '" does not exist.'));
-            if (!range.isPartOfMerge()) {
-                var updVal = value;
-                switch (Object(_utilities__WEBPACK_IMPORTED_MODULE_1__["e"])(value)) {
-                  case "[object String]":
-                  case "[object Number]":
-                  case "[object Boolean]":
-                  case "[object Date]":
-                    updVal = [ [ value ] ];
-                    break;
+            break;
 
-                  case "[object Array]":
-                    break;
+          case "[object Object]":
+            input === undefined || null === input ? copy = input : (copy = {}, Object.keys(input).forEach(function(property) {
+                copy[property] = clone(input[property]);
+            }));
+            break;
 
-                  default:
-                    throw new Error("updateValueByName - input value is neither an array or a string");
-                }
-                if (updVal.length !== range.getNumRows()) throw new Error("value is not of the same size as the namedRange: row count incorrect");
-                if (updVal[0].length !== range.getNumColumns()) throw new Error("value is not of the same size as the namedRange: column count problem");
-                return range.setValues(updVal);
-            }
-            if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_1__["p"])(value)) throw new Error("updateValueByName - range to update is merged, update value must be a string.");
-            return range.setValue(value), !0;
-        },
-        getCoordinatesByName: function getCoordinatesByName(namedRange) {
-            var range = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(namedRange);
-            if (!range) throw new Error("getCoordinatesByName failed - input range does not exist.");
-            return {
-                startRow: range.getRow(),
-                endRow: range.getLastRow(),
-                startCol: range.getColumn(),
-                endCol: range.getLastColumn()
-            };
-        },
-        isDate1: _utilities__WEBPACK_IMPORTED_MODULE_1__["i"],
-        isArray: _utilities__WEBPACK_IMPORTED_MODULE_1__["g"],
-        isString: _utilities__WEBPACK_IMPORTED_MODULE_1__["p"],
-        isNumeric: _utilities__WEBPACK_IMPORTED_MODULE_1__["n"],
-        isFunction: _utilities__WEBPACK_IMPORTED_MODULE_1__["k"],
-        isObject: _utilities__WEBPACK_IMPORTED_MODULE_1__["o"],
-        isBoolean: _utilities__WEBPACK_IMPORTED_MODULE_1__["h"],
-        isNull: _utilities__WEBPACK_IMPORTED_MODULE_1__["m"],
-        isUndefined: _utilities__WEBPACK_IMPORTED_MODULE_1__["q"],
-        inArray: _utilities__WEBPACK_IMPORTED_MODULE_1__["f"],
-        getType: _utilities__WEBPACK_IMPORTED_MODULE_1__["e"],
-        toBool: _utilities__WEBPACK_IMPORTED_MODULE_1__["t"],
-        firstToUpper: _utilities__WEBPACK_IMPORTED_MODULE_1__["a"],
-        getTimeStamp: _utilities__WEBPACK_IMPORTED_MODULE_1__["c"],
-        getTimeDiff: _utilities__WEBPACK_IMPORTED_MODULE_1__["b"],
-        isJson: _utilities__WEBPACK_IMPORTED_MODULE_1__["l"],
-        toJson: _utilities__WEBPACK_IMPORTED_MODULE_1__["u"],
-        isEmail: _utilities__WEBPACK_IMPORTED_MODULE_1__["j"],
-        tokenInterpolate: _utilities__WEBPACK_IMPORTED_MODULE_1__["v"],
-        getTokens: _utilities__WEBPACK_IMPORTED_MODULE_1__["d"],
-        removeDuplicates: _map_unique__WEBPACK_IMPORTED_MODULE_2__["d"],
-        getDuplicates: _map_unique__WEBPACK_IMPORTED_MODULE_2__["c"],
-        testUnique: _map_unique__WEBPACK_IMPORTED_MODULE_2__["e"]
-    };
+          case "[object Date]":
+            (copy = new Date()).setTime(input.getTime());
+            break;
+
+          default:
+            throw new TypeError("Unable to clone: object type ".concat(toStringType, " is unsupported."));
+        }
+        return copy;
+    }
+    __webpack_require__.d(__webpack_exports__, "a", function() {
+        return clone;
+    });
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
-    var map_unique = __webpack_require__(2), query_driver = __webpack_require__(11), sheet_accessor = __webpack_require__(5), instance_options = __webpack_require__(9), data_payload = __webpack_require__(3), CONSTANTS = __webpack_require__(1);
+    var map_unique = __webpack_require__(2), query_driver = __webpack_require__(11), sheet_accessor = __webpack_require__(6), instance_options = __webpack_require__(9), data_payload = __webpack_require__(3), CONSTANTS = __webpack_require__(1);
     function _defineProperties(target, props) {
         for (var i = 0; i < props.length; i++) {
             var descriptor = props[i];
@@ -1159,7 +1224,12 @@ function $initUtils() {
             return target;
         }).apply(this, arguments);
     }
-    var clone = __webpack_require__(10);
+    function writeToRecordProxy(recordProxy, updateObject) {
+        return Object.keys(recordProxy).forEach(function(columnName) {
+            Object.prototype.hasOwnProperty.call(updateObject, columnName) && _extends(recordProxy[columnName], updateObject[columnName]);
+        }), recordProxy;
+    }
+    var clone = __webpack_require__(7);
     function processQuery(core, queryDriver) {
         if (!(queryDriver instanceof query_driver["a"])) throw new Error("queryProcessor requires a QueryDriver instance.");
         if (!(core.sheetAccessor instanceof sheet_accessor["a"])) throw new Error("queryProcessor requires a SheetAccessor instance.");
@@ -1226,7 +1296,8 @@ function $initUtils() {
         }
         if (Object(utilities["f"])(queryDriver.type, [ CONSTANTS["k"] ])) {
             var matchCol, matchAttr, dataIndex;
-            if (queryDriver.usesIndexProp) matchCol = CONSTANTS["f"], matchAttr = null, dataIndex = dataController.getDataIndex(); else if (matchCol = queryDriver.matchColumnName, 
+            if (queryDriver.usesIndexProp) Logger.log(JSON.stringify(queryDriver.recordObjectsToWrite)), 
+            matchCol = CONSTANTS["f"], matchAttr = null, dataIndex = dataController.getDataIndex(); else if (matchCol = queryDriver.matchColumnName, 
             matchAttr = queryDriver.matchAttributeName, !(dataIndex = dataController.getDataIndex(matchCol, matchAttr)).isUnique) throw new Error("update failed because ".concat(matchCol, ".").concat(matchAttr, " is not a unique index."));
             queryDriver.recordObjectsToWrite.forEach(function(record, index) {
                 var localIndex;
@@ -1235,11 +1306,8 @@ function $initUtils() {
                         if (!Object.prototype.hasOwnProperty.call(record[matchCol], matchAttr)) return void queryDriver.pushError("input at index ".concat(index, ' missing "').concat(matchAttr, '" attribute.'));
                         localIndex = dataIndex.get(record[matchCol][matchAttr]);
                     } else localIndex = dataIndex.get(record[matchCol]);
-                    localIndex ? (dataController.setRowIndex(localIndex), queryDriver.returnWithRecords ? queryDriver.pushResult(localIndex, Object(clone["a"])(function writeToRecordProxy(recordProxy, updateObject) {
-                        return Object.keys(recordProxy).forEach(function(columnName) {
-                            Object.prototype.hasOwnProperty.call(updateObject, columnName) && _extends(recordProxy[columnName], updateObject[columnName]);
-                        }), recordProxy;
-                    }(recordProxy, record))) : queryDriver.pushResult(localIndex)) : queryDriver.pushWarning("input at index ".concat(index, " had no match."));
+                    localIndex ? (dataController.setRowIndex(localIndex), queryDriver.returnWithRecords ? queryDriver.pushResult(localIndex, Object(clone["a"])(writeToRecordProxy(recordProxy, record))) : (writeToRecordProxy(recordProxy, record), 
+                    queryDriver.pushResult(localIndex))) : queryDriver.pushWarning("input at index ".concat(index, " had no match."));
                 } else queryDriver.pushError("input at index ".concat(index, ' missing "').concat(matchCol, '" column.'));
             });
         }
@@ -1276,8 +1344,8 @@ function $initUtils() {
     function insertRow(core, topOrBottom, dataObject) {
         if (dataObject && !Object(utilities["o"])(dataObject)) throw new TypeError("insertRow only accepts objects. Type ".concat(Object(utilities["e"])(dataObject), " invalid"));
         var position = core.sheetAccessor.insertRow(topOrBottom);
-        return dataObject && (dataObject[CONSTANTS["f"]] = position, runObjUpdate(core, [ dataObject ])), 
-        position;
+        return core.mainCursor.flush(), dataObject && (dataObject[CONSTANTS["f"]] = position, 
+        runObjUpdate(core, [ dataObject ])), position;
     }
     function deleteRow(core, rowPosition) {
         if (rowPosition - 1 <= core.sheetAccessor.headerRowIndex) throw new Error("unable to delete the header row.");
@@ -1296,6 +1364,209 @@ function $initUtils() {
     }), __webpack_require__.d(__webpack_exports__, "a", function() {
         return deleteRow;
     });
+}, function(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
+    (function(global) {
+        __webpack_require__.d(__webpack_exports__, "a", function() {
+            return InstanceOptions;
+        });
+        var _data_payload__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3), _simulation_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(10), _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1), _utilities__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(0), _sheets_utilities__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5), _clone__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(7);
+        function _defineProperties(target, props) {
+            for (var i = 0; i < props.length; i++) {
+                var descriptor = props[i];
+                descriptor.enumerable = descriptor.enumerable || !1, descriptor.configurable = !0, 
+                "value" in descriptor && (descriptor.writable = !0), Object.defineProperty(target, descriptor.key, descriptor);
+            }
+        }
+        _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["g"] && (global.SpreadsheetApp = _simulation_utils__WEBPACK_IMPORTED_MODULE_1__["b"]);
+        var InstanceOptions = function() {
+            function InstanceOptions(sheetNameOrOptions, headerAnchorToken) {
+                !function _classCallCheck(instance, Constructor) {
+                    if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
+                }(this, InstanceOptions), this.pvt_spreadsheetId = null, this.pvt_sheetName = null, 
+                this.pvt_headerAnchorToken = null, this.pvt_exportAttributes = new _data_payload__WEBPACK_IMPORTED_MODULE_0__["a"](), 
+                this.pvt_readLevel = _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["d"], this.pvt_writeLevel = _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["e"], 
+                this.pvt_autoResizeColumns = !1, this.pvt_computedProperties = {}, this.pvt_idColumnName = null, 
+                this.pvt_idAttributeName = _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["c"], this.pvt_columnFilter = [], 
+                this.pvt_applyColumnFilter = !1, this.pvt_spreadsheet = null, this.pvt_sheet = null, 
+                this.headerAnchorToken = headerAnchorToken, this.processInput(sheetNameOrOptions);
+            }
+            return function _createClass(Constructor, protoProps, staticProps) {
+                return protoProps && _defineProperties(Constructor.prototype, protoProps), staticProps && _defineProperties(Constructor, staticProps), 
+                Constructor;
+            }(InstanceOptions, [ {
+                key: "exportWithAllAttributes",
+                value: function() {
+                    return this.pvt_exportAttributes.withAll();
+                }
+            }, {
+                key: "processInput",
+                value: function(sheetNameOrOptions) {
+                    var _this = this;
+                    this.pvt_exportAttributes.push(_CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["c"]);
+                    var errMsg = "requires a string sheetName or an options object which at least define a valid sheetName";
+                    if (sheetNameOrOptions === undefined || null === sheetNameOrOptions) throw new Error(errMsg);
+                    if (Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["p"])(sheetNameOrOptions)) this.spreadsheetId = "TPACTIVE", 
+                    this.sheetName = sheetNameOrOptions; else {
+                        if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["o"])(sheetNameOrOptions)) throw new Error(errMsg);
+                        sheetNameOrOptions.spreadsheetId ? this.spreadsheetId = sheetNameOrOptions.spreadsheetId : this.spreadsheetId = "TPACTIVE", 
+                        Object.keys(sheetNameOrOptions).forEach(function(key) {
+                            -1 === key.indexOf("pvt_") && -1 === key.indexOf("spreadsheetId") && (_this[key] = sheetNameOrOptions[key]);
+                        }), this.sheet || (this.sheetName = this.pvt_spreadsheet.getActiveSheet().getName());
+                    }
+                    return this;
+                }
+            }, {
+                key: "getSettingsExport",
+                value: function() {
+                    var retObj = {};
+                    return retObj.spreadsheetId = this.spreadsheetId, retObj.sheetName = this.sheetName, 
+                    retObj.headerAnchorToken = this.headerAnchorToken, retObj.exportAttributes = this.exportAttributes.values, 
+                    retObj.writeLevel = this.writeLevel, retObj.autoResizeColumns = this.autoResizeColumns, 
+                    retObj.computedProperties = this.computedProperties, retObj.idColumnName = this.idColumnName, 
+                    retObj.idAttributeName = this.idAttributeName, this.applyColumnFilter && (retObj.columnFilter = Object(_clone__WEBPACK_IMPORTED_MODULE_5__["a"])(this.columnFilter)), 
+                    retObj;
+                }
+            }, {
+                key: "headerAnchorToken",
+                set: function(input) {
+                    if (null !== this.pvt_headerAnchorToken) throw new Error("headerAnchorToken can only be once.");
+                    if (input && !Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["p"])(input)) throw new TypeError("headerAnchorToken must be a string.");
+                    return this.pvt_headerAnchorToken = input || null, this.pvt_headerAnchorToken;
+                },
+                get: function() {
+                    return this.pvt_headerAnchorToken;
+                }
+            }, {
+                key: "spreadsheetId",
+                get: function() {
+                    return this.pvt_spreadsheetId;
+                },
+                set: function(input) {
+                    if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["p"])(input) && !Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["n"])(input)) throw new TypeError("invalid spreadsheetId.");
+                    if (this.pvt_spreadsheet) throw new Error("spreadsheetId was already set to ".concat(this.pvt_spreadsheetId, " and cannot be changed."));
+                    this.pvt_spreadsheet = "TPACTIVE" === input ? _simulation_utils__WEBPACK_IMPORTED_MODULE_1__["b"].getActiveSpreadsheet().getId() : _simulation_utils__WEBPACK_IMPORTED_MODULE_1__["b"].openById(input), 
+                    this.pvt_spreadsheetId = input;
+                }
+            }, {
+                key: "sheetName",
+                get: function() {
+                    return this.pvt_sheetName;
+                },
+                set: function(input) {
+                    if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["p"])(input)) throw new TypeError("sheetName must be a string.");
+                    if (this.pvt_sheet) throw new Error("sheetName was already set to ".concat(this.pvt_sheetName, " and cannot be changed."));
+                    try {
+                        Browser.msgBox(JSON.stringify(Object.keys(this.pvt_sheet))), this.pvt_sheet = this.pvt_spreadsheet.getSheetByName(input);
+                    } catch (e) {
+                        throw new Error("set sheetName exception: ".concat(e, "."));
+                    }
+                    return this.pvt_sheetName = input, this.pvt_sheetName;
+                }
+            }, {
+                key: "columnFilter",
+                get: function() {
+                    return this.pvt_columnFilter;
+                },
+                set: function(input) {
+                    var _this2 = this;
+                    return Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["g"])(input) ? Object(_clone__WEBPACK_IMPORTED_MODULE_5__["a"])(input).filter(function(i) {
+                        return Object(_sheets_utilities__WEBPACK_IMPORTED_MODULE_4__["c"])(i);
+                    }).map(function(i) {
+                        return Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["p"])(i) ? i.trim() : i;
+                    }).forEach(function(i) {
+                        _this2.pvt_columnFilter.push(i);
+                    }) : Object(_sheets_utilities__WEBPACK_IMPORTED_MODULE_4__["c"])(input) && (this.pvt_columnFilter = [ Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["p"])(input) ? input.trim() : input ]), 
+                    this.pvt_applyColumnFilter = 0 < this.pvt_columnFilter.length, this.pvt_columnFilter;
+                }
+            }, {
+                key: "applyColumnFilter",
+                get: function() {
+                    return this.pvt_applyColumnFilter;
+                }
+            }, {
+                key: "exportAttributes",
+                get: function() {
+                    return this.pvt_exportAttributes;
+                },
+                set: function(input) {
+                    var _this3 = this, attributes = Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["g"])(input) ? input : [ input ];
+                    return this.pvt_exportAttributes.flush(), attributes.forEach(function(attribute) {
+                        attribute !== undefined && _this3.pvt_exportAttributes.push(attribute);
+                    }), this.pvt_exportAttributes;
+                }
+            }, {
+                key: "readLevel",
+                get: function() {
+                    return this.pvt_readLevel;
+                },
+                set: function(input) {
+                    if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["f"])(input, _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["q"])) throw new Error("readLevel must be one of ".concat(_CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["q"].toString(), " received ").concat(input));
+                    return this.pvt_readLevel = input, this.pvt_readLevel;
+                }
+            }, {
+                key: "writeLevel",
+                get: function() {
+                    return this.pvt_readLevel === _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["l"] && this.pvt_writeLevel === _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["u"] && (Object(_sheets_utilities__WEBPACK_IMPORTED_MODULE_4__["d"])("Note: write level changed to row from table because read level is row."), 
+                    this.pvt_writeLevel = _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["t"]), this.pvt_writeLevel;
+                },
+                set: function(input) {
+                    if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["f"])(input, _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["r"])) throw new Error("writeLevel must be one of ".concat(_CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["r"].toString(), " received ").concat(input));
+                    return this.pvt_writeLevel = input, this.pvt_writeLevel;
+                }
+            }, {
+                key: "autoResizeColumns",
+                get: function() {
+                    return this.pvt_autoResizeColumns;
+                },
+                set: function(input) {
+                    if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["h"])(input)) throw new TypeError("autoResizeColumns must be a boolean.");
+                    return this.pvt_autoResizeColumns = input, this.pvt_autoResizeColumns;
+                }
+            }, {
+                key: "computedProperties",
+                get: function() {
+                    return this.pvt_computedProperties;
+                },
+                set: function(input) {
+                    if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["o"])(input)) throw new TypeError("computedProperties must be an object.");
+                    return Object.keys(input).forEach(function(key) {
+                        if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["k"])(input[key])) throw new Error("non-function provided for computedProperty value.");
+                    }), this.pvt_computedProperties = input, this.pvt_computedProperties;
+                }
+            }, {
+                key: "idColumnName",
+                get: function() {
+                    return this.pvt_idColumnName;
+                },
+                set: function(input) {
+                    if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["p"])(input) && !Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["n"])(input) && !Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["i"])(input)) throw new TypeError("idColumnName value must be string, number, date.");
+                    return this.pvt_idColumnName = Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["p"])(input) ? input.trim() : input, 
+                    this;
+                }
+            }, {
+                key: "idAttributeName",
+                get: function() {
+                    return this.pvt_idAttributeName;
+                },
+                set: function(input) {
+                    if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["p"])(input)) throw new TypeError("idAttributeName must be a string.");
+                    if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["f"])(input, _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["n"])) throw new Error("".concat(input, " is not a valid idAttributeName."));
+                    return this.pvt_idAttributeName = input, this;
+                }
+            }, {
+                key: "sheet",
+                get: function() {
+                    return this.pvt_sheet;
+                }
+            }, {
+                key: "spreadsheet",
+                get: function() {
+                    return this.pvt_spreadsheet;
+                }
+            } ]), InstanceOptions;
+        }();
+    }).call(this, __webpack_require__(13));
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
     __webpack_require__.d(__webpack_exports__, "b", function() {
@@ -1699,246 +1970,6 @@ function $initUtils() {
     }), expLogger = _CONSTANTS__WEBPACK_IMPORTED_MODULE_0__["g"] ? LoggerFake : Logger;
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
-    (function(global) {
-        __webpack_require__.d(__webpack_exports__, "a", function() {
-            return InstanceOptions;
-        });
-        var _data_payload__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3), _simulation_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8), _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1), _utilities__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(0), _sheets_utilities__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6), _clone__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(10);
-        function _defineProperties(target, props) {
-            for (var i = 0; i < props.length; i++) {
-                var descriptor = props[i];
-                descriptor.enumerable = descriptor.enumerable || !1, descriptor.configurable = !0, 
-                "value" in descriptor && (descriptor.writable = !0), Object.defineProperty(target, descriptor.key, descriptor);
-            }
-        }
-        _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["g"] && (global.SpreadsheetApp = _simulation_utils__WEBPACK_IMPORTED_MODULE_1__["b"]);
-        var InstanceOptions = function() {
-            function InstanceOptions(sheetNameOrOptions, headerAnchorToken) {
-                !function _classCallCheck(instance, Constructor) {
-                    if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function");
-                }(this, InstanceOptions), this.pvt_spreadsheetId = null, this.pvt_sheetName = null, 
-                this.pvt_headerAnchorToken = null, this.pvt_exportAttributes = new _data_payload__WEBPACK_IMPORTED_MODULE_0__["a"](), 
-                this.pvt_readLevel = _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["d"], this.pvt_writeLevel = _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["e"], 
-                this.pvt_autoResizeColumns = !1, this.pvt_computedProperties = {}, this.pvt_idColumnName = null, 
-                this.pvt_idAttributeName = _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["c"], this.pvt_columnFilter = null, 
-                this.pvt_applyColumnFilter = !1, this.pvt_spreadsheet = null, this.pvt_sheet = null, 
-                this.headerAnchorToken = headerAnchorToken, this.processInput(sheetNameOrOptions);
-            }
-            return function _createClass(Constructor, protoProps, staticProps) {
-                return protoProps && _defineProperties(Constructor.prototype, protoProps), staticProps && _defineProperties(Constructor, staticProps), 
-                Constructor;
-            }(InstanceOptions, [ {
-                key: "exportWithAllAttributes",
-                value: function() {
-                    return this.pvt_exportAttributes.withAll();
-                }
-            }, {
-                key: "processInput",
-                value: function(sheetNameOrOptions) {
-                    var _this = this;
-                    this.pvt_exportAttributes.push(_CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["c"]);
-                    var errMsg = "requires a string sheetName or an options object which at least define a valid sheetName";
-                    if (sheetNameOrOptions === undefined || null === sheetNameOrOptions) throw new Error(errMsg);
-                    if (Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["p"])(sheetNameOrOptions)) this.spreadsheetId = _simulation_utils__WEBPACK_IMPORTED_MODULE_1__["b"].getActiveSpreadsheet().getId(), 
-                    this.sheetName = sheetNameOrOptions; else {
-                        if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["o"])(sheetNameOrOptions)) throw new Error(errMsg);
-                        sheetNameOrOptions.spreadsheetId ? this.spreadsheetId = sheetNameOrOptions.spreadsheetId : this.spreadsheetId = _simulation_utils__WEBPACK_IMPORTED_MODULE_1__["b"].getActiveSpreadsheet().getId(), 
-                        Object.keys(sheetNameOrOptions).forEach(function(key) {
-                            -1 === key.indexOf("pvt_") && -1 === key.indexOf("spreadsheetId") && (_this[key] = sheetNameOrOptions[key]);
-                        }), this.sheet || (this.sheetName = this.pvt_spreadsheet.getActiveSheet().getName());
-                    }
-                    return this;
-                }
-            }, {
-                key: "getSettingsExport",
-                value: function() {
-                    var retObj = {};
-                    return retObj.spreadsheetId = this.spreadsheetId, retObj.sheetName = this.sheetName, 
-                    retObj.headerAnchorToken = this.headerAnchorToken, retObj.exportAttributes = this.exportAttributes.values, 
-                    retObj.writeLevel = this.writeLevel, retObj.autoResizeColumns = this.autoResizeColumns, 
-                    retObj.computedProperties = this.computedProperties, retObj.idColumnName = this.idColumnName, 
-                    retObj.idAttributeName = this.idAttributeName, this.applyColumnFilter && (retObj.columnFilter = Object(_clone__WEBPACK_IMPORTED_MODULE_5__["a"])(this.columnFilter)), 
-                    retObj;
-                }
-            }, {
-                key: "headerAnchorToken",
-                set: function(input) {
-                    if (null !== this.pvt_headerAnchorToken) throw new Error("headerAnchorToken can only be once.");
-                    if (input && !Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["p"])(input)) throw new TypeError("headerAnchorToken must be a string.");
-                    return this.pvt_headerAnchorToken = input || null, this.pvt_headerAnchorToken;
-                },
-                get: function() {
-                    return this.pvt_headerAnchorToken;
-                }
-            }, {
-                key: "spreadsheetId",
-                get: function() {
-                    return this.pvt_spreadsheetId;
-                },
-                set: function(input) {
-                    if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["p"])(input) && !Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["n"])(input)) throw new TypeError("invalid spreadsheetId.");
-                    if (this.pvt_spreadsheet) throw new Error("spreadsheetId was already set to ".concat(this.pvt_spreadsheetId, " and cannot be changed."));
-                    this.pvt_spreadsheet = _simulation_utils__WEBPACK_IMPORTED_MODULE_1__["b"].openById(input), 
-                    this.pvt_spreadsheetId = input;
-                }
-            }, {
-                key: "sheetName",
-                get: function() {
-                    return this.pvt_sheetName;
-                },
-                set: function(input) {
-                    if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["p"])(input)) throw new TypeError("sheetName must be a string.");
-                    if (this.pvt_sheet) throw new Error("sheetName was already set to ".concat(this.pvt_sheetName, " and cannot be changed."));
-                    try {
-                        this.pvt_sheet = this.pvt_spreadsheet.getSheetByName(input);
-                    } catch (e) {
-                        throw new Error("set sheetName exception: ".concat(e, "."));
-                    }
-                    return this.pvt_sheetName = input, this.pvt_sheetName;
-                }
-            }, {
-                key: "columnFilter",
-                get: function() {
-                    return this.pvt_columnFilter;
-                },
-                set: function(input) {
-                    var _this2 = this;
-                    return Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["g"])(input) ? Object(_clone__WEBPACK_IMPORTED_MODULE_5__["a"])(input).filter(function(i) {
-                        return Object(_sheets_utilities__WEBPACK_IMPORTED_MODULE_4__["b"])(i);
-                    }).map(function(i) {
-                        return Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["p"])(i) ? i.trim() : i;
-                    }).forEach(function(i) {
-                        _this2.pvt_columnFilter.push(i);
-                    }) : Object(_sheets_utilities__WEBPACK_IMPORTED_MODULE_4__["b"])(input) && (this.pvt_columnFilter = [ Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["p"])(input) ? input.trim() : input ]), 
-                    this.pvt_applyColumnFilter = 0 < this.pvt_columnFilter.length, this.pvt_columnFilter;
-                }
-            }, {
-                key: "applyColumnFilter",
-                get: function() {
-                    return this.pvt_applyColumnFilter;
-                }
-            }, {
-                key: "exportAttributes",
-                get: function() {
-                    return this.pvt_exportAttributes;
-                },
-                set: function(input) {
-                    var _this3 = this, attributes = Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["g"])(input) ? input : [ input ];
-                    return this.pvt_exportAttributes.flush(), attributes.forEach(function(attribute) {
-                        attribute !== undefined && _this3.pvt_exportAttributes.push(attribute);
-                    }), this.pvt_exportAttributes;
-                }
-            }, {
-                key: "readLevel",
-                get: function() {
-                    return this.pvt_readLevel;
-                },
-                set: function(input) {
-                    if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["f"])(input, _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["q"])) throw new Error("readLevel must be one of ".concat(_CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["q"].toString(), " received ").concat(input));
-                    return this.pvt_readLevel = input, this.pvt_readLevel;
-                }
-            }, {
-                key: "writeLevel",
-                get: function() {
-                    return this.pvt_readLevel === _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["l"] && this.pvt_writeLevel === _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["u"] && (Object(_sheets_utilities__WEBPACK_IMPORTED_MODULE_4__["c"])("Note: write level changed to row from table because read level is row."), 
-                    this.pvt_writeLevel = _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["t"]), this.pvt_writeLevel;
-                },
-                set: function(input) {
-                    if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["f"])(input, _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["r"])) throw new Error("writeLevel must be one of ".concat(_CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["r"].toString(), " received ").concat(input));
-                    return this.pvt_writeLevel = input, this.pvt_writeLevel;
-                }
-            }, {
-                key: "autoResizeColumns",
-                get: function() {
-                    return this.pvt_autoResizeColumns;
-                },
-                set: function(input) {
-                    if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["h"])(input)) throw new TypeError("autoResizeColumns must be a boolean.");
-                    return this.pvt_autoResizeColumns = input, this.pvt_autoResizeColumns;
-                }
-            }, {
-                key: "computedProperties",
-                get: function() {
-                    return this.pvt_computedProperties;
-                },
-                set: function(input) {
-                    if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["o"])(input)) throw new TypeError("computedProperties must be an object.");
-                    return Object.keys(input).forEach(function(key) {
-                        if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["k"])(input[key])) throw new Error("non-function provided for computedProperty value.");
-                    }), this.pvt_computedProperties = input, this.pvt_computedProperties;
-                }
-            }, {
-                key: "idColumnName",
-                get: function() {
-                    return this.pvt_idColumnName;
-                },
-                set: function(input) {
-                    if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["p"])(input) && !Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["n"])(input) && !Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["i"])(input)) throw new TypeError("idColumnName value must be string, number, date.");
-                    return this.pvt_idColumnName = Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["p"])(input) ? input.trim() : input, 
-                    this;
-                }
-            }, {
-                key: "idAttributeName",
-                get: function() {
-                    return this.pvt_idAttributeName;
-                },
-                set: function(input) {
-                    if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["p"])(input)) throw new TypeError("idAttributeName must be a string.");
-                    if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["f"])(input, _CONSTANTS__WEBPACK_IMPORTED_MODULE_2__["n"])) throw new Error("".concat(input, " is not a valid idAttributeName."));
-                    return this.pvt_idAttributeName = input, this;
-                }
-            }, {
-                key: "sheet",
-                get: function() {
-                    return this.pvt_sheet;
-                }
-            }, {
-                key: "spreadsheet",
-                get: function() {
-                    return this.pvt_spreadsheet;
-                }
-            } ]), InstanceOptions;
-        }();
-    }).call(this, __webpack_require__(13));
-}, function(module, __webpack_exports__, __webpack_require__) {
-    "use strict";
-    function clone(input) {
-        var copy, toStringType = toString.call(input);
-        switch (toStringType) {
-          case "[object Undefined]":
-          case "[object Null]":
-          case "[object Number]":
-          case "[object String]":
-          case "[object Boolean]":
-            copy = input;
-            break;
-
-          case "[object Array]":
-            copy = input.map(function(i) {
-                return clone(i);
-            });
-            break;
-
-          case "[object Object]":
-            input === undefined || null === input ? copy = input : (copy = {}, Object.keys(input).forEach(function(property) {
-                copy[property] = clone(input[property]);
-            }));
-            break;
-
-          case "[object Date]":
-            (copy = new Date()).setTime(input.getTime());
-            break;
-
-          default:
-            throw new TypeError("Unable to clone: object type ".concat(toStringType, " is unsupported."));
-        }
-        return copy;
-    }
-    __webpack_require__.d(__webpack_exports__, "a", function() {
-        return clone;
-    });
-}, function(module, __webpack_exports__, __webpack_require__) {
-    "use strict";
     __webpack_require__.d(__webpack_exports__, "a", function() {
         return QueryDriver;
     });
@@ -2081,7 +2112,7 @@ function $initUtils() {
     __webpack_require__.d(__webpack_exports__, "a", function() {
         return MainCursor;
     });
-    var _map_unique__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2), _sheet_accessor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5), _data_payload__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3), _query_driver__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(11);
+    var _map_unique__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2), _sheet_accessor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6), _data_payload__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3), _query_driver__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(11);
     function _typeof(obj) {
         return (_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function _typeof(obj) {
             return typeof obj;
@@ -2140,6 +2171,11 @@ function $initUtils() {
                 return this.attributesSet.flush(), this.dirty = !0, this.clear().copyItems(this.sheetAccessor.getAllRecordIndexer());
             }
         }, {
+            key: "setToSelected",
+            value: function() {
+                return this.attributesSet.flush(), this.dirty = !0, this.clear().copyItems(this.sheetAccessor.getSelectedRecordIndexer());
+            }
+        }, {
             key: "consumeReturn",
             value: function(queryReturn) {
                 if (!(queryReturn instanceof _query_driver__WEBPACK_IMPORTED_MODULE_3__["a"])) throw new TypeError("consumeSelections accepts QueryDriver input.");
@@ -2172,7 +2208,7 @@ function $initUtils() {
 }, function(module, __webpack_exports__, __webpack_require__) {
     "use strict";
     __webpack_require__.r(__webpack_exports__), function(global) {
-        var _simulation_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8), _instance_options__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9), _sheet_accessor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5), _main_cursor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(12), _map_unique__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(2), _operations__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(7), _utilities__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(0), _timer__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(4), _sheets_utilities__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(6), _CONSTANTS__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(1);
+        var _simulation_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10), _instance_options__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9), _sheet_accessor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6), _main_cursor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(12), _map_unique__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(2), _operations__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8), _utilities__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(0), _timer__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(4), _sheets_utilities__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(5), _CONSTANTS__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(1);
         _CONSTANTS__WEBPACK_IMPORTED_MODULE_9__["g"] && (global.SpreadsheetApp = _simulation_utils__WEBPACK_IMPORTED_MODULE_0__["b"]);
         var TableProxy = function TableProxy() {
             return Object(_utilities__WEBPACK_IMPORTED_MODULE_6__["r"])({
@@ -2244,7 +2280,7 @@ function $initUtils() {
                             enumerable: !0,
                             value: function(topOrBottom, dataObject) {
                                 var timer = new _timer__WEBPACK_IMPORTED_MODULE_7__["a"]("API insertRow"), position = Object(_operations__WEBPACK_IMPORTED_MODULE_5__["d"])(core, topOrBottom, dataObject);
-                                return mainCursor.flush(), lastResults.clear().set("operation", "insertRow").set("@ position", position).set("completed", !0).set("duration", timer.stop()), 
+                                return lastResults.clear().set("operation", "insertRow").set("@ position", position).set("completed", !0).set("duration", timer.stop()), 
                                 api;
                             }
                         }), Object.defineProperty(api, "deleteRow", {
@@ -2260,6 +2296,18 @@ function $initUtils() {
                                 var timer = new _timer__WEBPACK_IMPORTED_MODULE_7__["a"]("API getExportObject"), exportObject = Object(_operations__WEBPACK_IMPORTED_MODULE_5__["b"])(core, rawDataOnly);
                                 return lastResults.clear().set("operation", "getExportObject").set("completed", !0).set("duration", timer.stop()), 
                                 exportObject;
+                            }
+                        }), Object.defineProperty(api, "loadSelectedRows", {
+                            enumerable: !0,
+                            value: function() {
+                                var timer = new _timer__WEBPACK_IMPORTED_MODULE_7__["a"]("API loadSelectedRows");
+                                return mainCursor.setToSelected(), lastResults.clear().set("operation", "loadSelectedRows").set("count", mainCursor.length).set("res", mainCursor.entries()).set("completed", !0).set("duration", timer.stop()), 
+                                api;
+                            }
+                        }), Object.defineProperty(api, "getHeaderRow", {
+                            enumerable: !0,
+                            value: function() {
+                                return sheetAccessor.getHeaderRow();
                             }
                         }), Object.defineProperty(api, "getOptions", {
                             enumerable: !0,
@@ -2339,10 +2387,11 @@ function $initUtils() {
                 },
                 Map: _map_unique__WEBPACK_IMPORTED_MODULE_4__["a"],
                 UniqueSet: _map_unique__WEBPACK_IMPORTED_MODULE_4__["b"],
+                Timer: _timer__WEBPACK_IMPORTED_MODULE_7__["a"],
                 strContains: _utilities__WEBPACK_IMPORTED_MODULE_6__["s"]
             }, _CONSTANTS__WEBPACK_IMPORTED_MODULE_9__["b"]);
         }, $initTableProxy = function $initTableProxy(asName) {
-            asName ? global[asName] = TableProxy() : global.TableProxy = TableProxy();
+            asName && !global[asName] ? global[asName] = TableProxy() : global.TableProxy || (global.TableProxy = TableProxy());
         };
         global.$initTableProxy = $initTableProxy;
         var $initUtils = function $initUtils(asName) {

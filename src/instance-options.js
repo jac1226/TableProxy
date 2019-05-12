@@ -46,7 +46,7 @@ export default class InstanceOptions {
     this.pvt_computedProperties = {};
     this.pvt_idColumnName = null;
     this.pvt_idAttributeName = DEFAULT_ATTRIBUTE;
-    this.pvt_columnFilter = null;
+    this.pvt_columnFilter = [];
     this.pvt_applyColumnFilter = false;
     this.pvt_spreadsheet = null;
     this.pvt_sheet = null;
@@ -83,7 +83,11 @@ export default class InstanceOptions {
         `spreadsheetId was already set to ${this.pvt_spreadsheetId} and cannot be changed.`
       );
     }
-    this.pvt_spreadsheet = SpreadsheetApp.openById(input);
+    if (input === 'TPACTIVE') {
+      this.pvt_spreadsheet = SpreadsheetApp.getActiveSpreadsheet().getId();
+    } else {
+      this.pvt_spreadsheet = SpreadsheetApp.openById(input);
+    }
     this.pvt_spreadsheetId = input;
   }
 
@@ -99,6 +103,7 @@ export default class InstanceOptions {
       throw new Error(`sheetName was already set to ${this.pvt_sheetName} and cannot be changed.`);
     }
     try {
+      Browser.msgBox(JSON.stringify(Object.keys(this.pvt_sheet)));
       this.pvt_sheet = this.pvt_spreadsheet.getSheetByName(input);
     } catch (e) {
       throw new Error(`set sheetName exception: ${e}.`);
@@ -253,13 +258,13 @@ export default class InstanceOptions {
     }
 
     if (isString(sheetNameOrOptions)) {
-      this.spreadsheetId = SpreadsheetApp.getActiveSpreadsheet().getId();
+      this.spreadsheetId = 'TPACTIVE';
       this.sheetName = sheetNameOrOptions;
     } else if (isObject(sheetNameOrOptions)) {
       if (sheetNameOrOptions.spreadsheetId) {
         this.spreadsheetId = sheetNameOrOptions.spreadsheetId;
       } else {
-        this.spreadsheetId = SpreadsheetApp.getActiveSpreadsheet().getId();
+        this.spreadsheetId = 'TPACTIVE';
       }
       Object.keys(sheetNameOrOptions).forEach(key => {
         if (key.indexOf('pvt_') === -1 && key.indexOf('spreadsheetId') === -1) {

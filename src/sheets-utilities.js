@@ -65,18 +65,21 @@ export function log(input) {
 }
 
 export const getSelectedRowIndices = () => {
-  const activeSheet = SpreadsheetApp.getActiveSheet();
-  const rowAggregator = {};
-  const selectedRanges = activeSheet
-    .getSelection()
-    .getActiveRangeList()
-    .getRanges();
-  selectedRanges.forEach(range => {
-    rowAggregator[range.getRow()] = true;
-  });
-  return Object.keys(rowAggregator).map(key => {
-    return Number(key);
-  });
+  return Object.keys(
+    SpreadsheetApp.getActiveSheet()
+      .getSelection()
+      .getActiveRangeList()
+      .getRanges()
+      .reduce((a, r) => {
+        const sr = r.getRow() - 1;
+        const er = sr + r.getNumRows();
+        for (let i = sr; i < er; i += 1) {
+          // eslint-disable-next-line no-param-reassign
+          a[i] = true;
+        }
+        return a;
+      }, {})
+  ).map(k => Number(k));
 };
 
 export const sendEmail = (toAddress, subject, message) => {

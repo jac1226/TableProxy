@@ -21,6 +21,18 @@ export default class Timer {
     }
   }
 
+  getStartTime() {
+    return this.startTime;
+  }
+
+  getDuration() {
+    return this.duration;
+  }
+
+  getText() {
+    return this.text;
+  }
+
   stop(text) {
     const endText = isString(text) ? `\n${text}` : '';
     this.duration = getTimeDiff(this.startTime, 0);

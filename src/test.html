@@ -11,6 +11,7 @@
     <script>
         var t;
         window.addEventListener("load", function () {
+            console.log(DATA);
             SpreadsheetApp.div = document.getElementById('table');
             SpreadsheetApp.setFakeData(DATA.rawData.dataObject);
             SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Test');

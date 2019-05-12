@@ -126,6 +126,7 @@ export function insertRow(core, topOrBottom, dataObject) {
     throw new TypeError(`insertRow only accepts objects. Type ${getType(dataObject)} invalid`);
   }
   const position = core.sheetAccessor.insertRow(topOrBottom);
+  core.mainCursor.flush();
   if (dataObject) {
     // eslint-disable-next-line no-param-reassign
     dataObject[INDEX_PROP] = position;

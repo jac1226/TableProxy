@@ -37,6 +37,12 @@ export default class MainCursor extends Map {
     return this.clear().copyItems(this.sheetAccessor.getAllRecordIndexer());
   }
 
+  setToSelected() {
+    this.attributesSet.flush();
+    this.dirty = true;
+    return this.clear().copyItems(this.sheetAccessor.getSelectedRecordIndexer());
+  }
+
   consumeReturn(queryReturn) {
     if (!(queryReturn instanceof QueryDriver)) {
       throw new TypeError('consumeSelections accepts QueryDriver input.');

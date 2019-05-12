@@ -6,7 +6,9 @@
 import InstanceOptions from './instance-options';
 import { Map, getDuplicates } from './map-unique';
 import { isNumeric } from './utilities';
+import { getSelectedRowIndices } from './sheets-utilities';
 import { DataPayload, AttributesSet } from './data-payload';
+import clone from './clone';
 import { TOP } from './CONSTANTS';
 
 export default class SheetAccessor {
@@ -31,21 +33,25 @@ export default class SheetAccessor {
     this.headerRow = null;
     this.getColumnIndex = null;
     this.columnExists = null;
-    this.getAllRecordIndices = null;
+    this.getAllRecordIndexer = null;
+    this.getSelectedRecordIndexer = null;
     this.resizeColumns = null;
     this.getDataPayload = null;
     this.insertRows = null;
     this.deleteRows = null;
+    this.getHeaderRow = null;
 
     /**
      * find headerRowIndex, headerColumnIndex if headerAnchorToken
      */
     if (instanceOptions.headerAnchorToken) {
-      const rowCount = this.sheet.getDataRange().getNumRows();
+      const dataRange = this.sheet.getDataRange();
+      const rowCount = dataRange.getNumRows();
+      const columnCount = dataRange.getNumColumns();
       for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
         this.sheet
-          .getRange(rowIndex + 1, 1, 1)
-          .getNotes()
+          .getRange(rowIndex + 1, 1, 1, columnCount)
+          .getNotes()[0]
           .forEach((note, columnIndex) => {
             if (note.indexOf(instanceOptions.headerAnchorToken) !== -1) {
               this.headerRowIndex = rowIndex;
@@ -61,10 +67,12 @@ export default class SheetAccessor {
      */
     this.headerRow = this.sheet.getDataRange().getValues()[this.headerRowIndex];
     const duplicates = getDuplicates(this.headerRow);
-    if (!duplicates.length > 0) {
-      throw new Error(
-        `Sheet "${this.sheet.getName()}" has duplicate column headers: ${duplicates.toString()}`
-      );
+    if (duplicates.length > 0) {
+      let msg = null;
+      duplicates.forEach(d => {
+        msg += msg ? `, ${d}` : d;
+      });
+      throw new Error(`Sheet "${this.sheet.getName()}" has duplicate column headers... ${msg}`);
     }
 
     /**
@@ -139,7 +147,7 @@ export default class SheetAccessor {
     });
 
     /**
-     * flesh out getColumnIndex, columnExists methods
+     * flesh out getColumnIndex, columnExists getDefaultIdColumn getHeaderRow methods
      */
     this.getColumnIndex = columnName => {
       return this.headerRow.indexOf(columnName);
@@ -150,9 +158,12 @@ export default class SheetAccessor {
     this.getDefaultIdColumn = () => {
       return this.headerRow[this.headerColumnIndex];
     };
+    this.getHeaderRow = () => {
+      return clone(this.headerRow);
+    };
 
     /**
-     * flesh out getAllRecordIndices method
+     * flesh out getAllRecordIndexer and getSelectedRecordIndexer method
      */
     this.getAllRecordIndexer = () => {
       const indexer = new Map();
@@ -163,6 +174,12 @@ export default class SheetAccessor {
         i += 1;
       }
       return indexer;
+    };
+    this.getSelectedRecordIndexer = () => {
+      return getSelectedRowIndices().reduce((indexer, i) => {
+        indexer.set(i);
+        return indexer;
+      }, new Map());
     };
 
     /**
