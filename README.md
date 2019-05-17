@@ -14,26 +14,86 @@ cell numberformat (i.e. getNumberFormats/setNumberFormats)
 
 Its essentially an ORM inspired by the needs of a personal project. [Similar utilities exist](https://github.com/itmammoth/Tamotsu).
 
-## Methods 🚀
+## Core Methods 🚀
 
-select
-update
-writeRecords
-writeCursor
-getRecords
-getUnique
-flush
-insertRow
-deleteRow
-getExportObject
-loadSelectedRows
-setRows
-getSelectedIndices
-getFullDataIndex
-getHeaderRow
-getOptions
-getLastResults
+select  
+update  
+writeRecords  
+writeCursor  
+getRecords  
+getUnique  
+flush  
+insertRow  
+deleteRow  
+getExportObject  
+loadSelectedRows  
+setRows  
+getSelectedIndices  
+getFullDataIndex  
+getHeaderRow  
+getOptions  
+getLastResults  
 
+## Instance Option Methods 🍿
+
+setColumnFilter  
+setExportAttributes  
+exportWithAllAttributes  
+setReadLevel (table / row)  
+setWriteLevel (table / row / cell)  
+setAutoResizeColumns  
+setComputedProperties  
+setIdColumnName  
+setIdAttributeName  
+
+## Bundled Utilities / Helpers ⚙️
+
+getSheetsObjectType  
+isSpreadsheet  
+isSheet  
+isRange  
+isSupportedType  
+getSelectedRowIndices  
+sendEmail  
+getSpreadsheet  
+getSheetIndex  
+getSheet  
+getShape  
+namedRangeExists  
+getValueByName  
+updateValueByName  
+getCoordinatesByName  
+getNamedRangesObject  
+isDate1  
+isArray  
+isString  
+isNumeric  
+isFunction  
+isObject  
+isBoolean  
+isNull  
+isUndefined  
+inArray  
+getType  
+toBool  
+firstToUpper  
+getTimeStamp  
+getTimeDiff  
+isJson  
+toJson  
+isEmail  
+tokenInterpolate  
+getTokens  
+removeDuplicates  
+getDuplicates  
+testUnique  
+strContains
+
+## Bundled Objects 🎷
+
+Map
+UniqueSet
+Timer
 
 ## About the Developer 👨🏼‍💻
 
