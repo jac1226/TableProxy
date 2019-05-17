@@ -167,11 +167,18 @@ export const tokenInterpolate = (tokenizedString, record) => {
   const tokenList = getTokens(tokenizedString);
   let result = tokenizedString;
   for (let i = 0; i < tokenList.length; i += 1) {
-    const replacementValue = record[tokenList[i].replace('{{!', '').replace('}}', '')];
-    if (replacementValue === undefined) {
-      throw Error(`Interpolation failed for: ${JSON.stringify(record)}`);
+    try {
+      result = result.replace(
+        tokenList[i],
+        tokenList[i]
+          .replace('{{!', '')
+          .replace('}}', '')
+          .split('.')
+          .reduce((o, j) => o[j], record)
+      );
+    } catch (e) {
+      throw new Error(`tokenInterpolate failed "${tokenList[i]}" not in ${JSON.stringify(record)}`);
     }
-    result = result.replace(tokenList[i], replacementValue);
   }
   return result;
 };

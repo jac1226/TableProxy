@@ -84,7 +84,7 @@ export default class InstanceOptions {
       );
     }
     if (input === 'TPACTIVE') {
-      this.pvt_spreadsheet = SpreadsheetApp.getActiveSpreadsheet().getId();
+      this.pvt_spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
     } else {
       this.pvt_spreadsheet = SpreadsheetApp.openById(input);
     }
@@ -103,7 +103,6 @@ export default class InstanceOptions {
       throw new Error(`sheetName was already set to ${this.pvt_sheetName} and cannot be changed.`);
     }
     try {
-      Browser.msgBox(JSON.stringify(Object.keys(this.pvt_sheet)));
       this.pvt_sheet = this.pvt_spreadsheet.getSheetByName(input);
     } catch (e) {
       throw new Error(`set sheetName exception: ${e}.`);
@@ -113,7 +112,7 @@ export default class InstanceOptions {
   }
 
   get columnFilter() {
-    return this.pvt_columnFilter;
+    return clone(this.pvt_columnFilter);
   }
 
   set columnFilter(input) {

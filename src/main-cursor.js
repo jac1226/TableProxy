@@ -10,6 +10,7 @@ import { Map } from './map-unique';
 import SheetAccessor from './sheet-accessor';
 import { AttributesSet } from './data-payload';
 import QueryDriver from './query-driver';
+import { isNumeric } from './utilities';
 
 export default class MainCursor extends Map {
   constructor(sheetAccessor) {
@@ -37,10 +38,33 @@ export default class MainCursor extends Map {
     return this.clear().copyItems(this.sheetAccessor.getAllRecordIndexer());
   }
 
+  setToIndices(indices) {
+    this.dirty = true;
+    const indexer = new Map();
+    indices.forEach((i, ind) => {
+      if (isNumeric(i)) {
+        indexer.set(i);
+      } else {
+        throw new Error(
+          `setToIndices can accept only numbers. Recieved ${toString.call(i)} at position ${ind}`
+        );
+      }
+    });
+    return this.clear().copyItems(indexer);
+  }
+
   setToSelected() {
     this.attributesSet.flush();
     this.dirty = true;
     return this.clear().copyItems(this.sheetAccessor.getSelectedRecordIndexer());
+  }
+
+  updateAttributesSet(attributesSet) {
+    if (!(attributesSet instanceof AttributesSet)) {
+      throw new TypeError('updateAttributesSet accepts AttributesSet input.');
+    }
+    this.attributesSet.copyValues(attributesSet);
+    return this;
   }
 
   consumeReturn(queryReturn) {

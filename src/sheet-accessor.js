@@ -5,11 +5,11 @@
 
 import InstanceOptions from './instance-options';
 import { Map, getDuplicates } from './map-unique';
-import { isNumeric } from './utilities';
+import { isNumeric, inArray } from './utilities';
 import { getSelectedRowIndices } from './sheets-utilities';
 import { DataPayload, AttributesSet } from './data-payload';
 import clone from './clone';
-import { TOP } from './CONSTANTS';
+import { TOP, DEFAULT_ATTRIBUTE, SUPPORTED_ATTRIBUTES } from './CONSTANTS';
 
 export default class SheetAccessor {
   constructor(instanceOptions) {
@@ -40,6 +40,7 @@ export default class SheetAccessor {
     this.insertRows = null;
     this.deleteRows = null;
     this.getHeaderRow = null;
+    this.getDataIndex = null;
 
     /**
      * find headerRowIndex, headerColumnIndex if headerAnchorToken
@@ -230,6 +231,40 @@ export default class SheetAccessor {
         rowPosition === undefined ? this.sheet.getDataRange().getNumRows() : rowPosition;
       this.sheet.deleteRow(position);
       return position;
+    };
+
+    /**
+     * flesh out getDataIndex
+     */
+
+    this.getFullDataIndex = (columnName, attribute, oneIndexed) => {
+      let dataIndex;
+      const offset = oneIndexed === true ? 1 : 0;
+
+      if (columnName === undefined && attribute === undefined) {
+        dataIndex = this.getAllRecordIndexer();
+        dataIndex.isUnique = true;
+      } else {
+        const attr = attribute === undefined ? DEFAULT_ATTRIBUTE : attribute;
+        const columnIndex = this.getHeaderRow().indexOf(columnName);
+
+        if (columnIndex === -1) {
+          throw new Error(`failed to get dataIndex on invalid column ${columnName}.`);
+        }
+        if (!inArray(attr, SUPPORTED_ATTRIBUTES)) {
+          throw new Error(`failed to get dataIndex on invalid attribute ${attribute}.`);
+        }
+
+        const data = this[attr].getRecordsColumn(columnIndex);
+        const dataLength = data.length;
+        dataIndex = new Map();
+        data.forEach((item, rowIndex) => {
+          dataIndex.set(item[0], rowIndex + this.headerRowIndex + 1 + offset);
+        });
+        dataIndex.isUnique = dataIndex.length === dataLength;
+      }
+
+      return dataIndex;
     };
   }
 }

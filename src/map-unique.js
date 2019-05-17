@@ -62,6 +62,7 @@ export class Map {
               result = this.pvt_booleans;
               break;
             default:
+              Browser.msgBox(key);
               throw new TypeError(`Map can't accept ${toString.call(key)} keys.`);
           }
           return result;
@@ -70,21 +71,21 @@ export class Map {
     });
 
     if (input !== undefined && input !== null) {
-      let entries;
       if (toString.call(input) === '[object Array]') {
-        entries = input;
+        input.forEach(item => {
+          this.set(item, true);
+        });
       } else if (toString.call(input) === '[object Object]') {
         Object.keys(input).forEach(key => {
-          entries.push([key, input[key]]);
+          this.set([key, input[key]]);
         });
       } else if (input instanceof Map) {
-        entries = input.entries();
+        input.entries().forEach(entry => {
+          this.set(entry[0], entry[1]);
+        });
       } else {
         throw new Error(`${toString.call(input)} not valid input for Map constructor.`);
       }
-      entries.forEach(entry => {
-        this.set(entry[0], entry[1]);
-      });
     }
   }
 
@@ -111,6 +112,10 @@ export class Map {
       delete this.pvt_get_container(key)[key];
     }
     return indexOf !== -1;
+  }
+
+  get del() {
+    return this.delete;
   }
 
   keys() {

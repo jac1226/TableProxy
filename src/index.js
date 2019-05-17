@@ -14,10 +14,11 @@ import {
   insertRow,
   deleteRow
 } from './operations';
-import { objAssign, strContains } from './utilities';
+import { objAssign, strContains, isArray } from './utilities';
 import Timer from './timer';
 import { Utils } from './sheets-utilities';
-import { IS_TEST_MODE, C } from './CONSTANTS';
+import { IS_TEST_MODE, C, DEFAULT_ATTRIBUTE } from './CONSTANTS';
+import { AttributesSet } from './data-payload';
 
 if (IS_TEST_MODE) {
   global.SpreadsheetApp = SpreadsheetApp;
@@ -102,7 +103,7 @@ const TableProxy = () => {
         enumerable: true,
         value: () => {
           const timer = new Timer(`API writeCursor`);
-          const queryReturn = runObjUpdate(core, api.records());
+          const queryReturn = runObjUpdate(core, api.getRecords());
           lastResults
             .clear()
             .set('operation', 'writeCursor')
@@ -116,17 +117,17 @@ const TableProxy = () => {
         }
       });
 
-      Object.defineProperty(api, 'records', {
+      Object.defineProperty(api, 'getRecords', {
         enumerable: true,
         value: () => {
-          const timer = new Timer(`API records`);
+          const timer = new Timer(`API getRecords`);
           if (mainCursor.isDirty) {
             const queryReturn = runQuery(core, () => true, true, true, mainCursor.attributesSet);
             mainCursor.consumeReturn(queryReturn);
           }
           lastResults
             .clear()
-            .set('operation', 'records')
+            .set('operation', 'getRecords')
             .set('completed', true)
             .set('count', mainCursor.length)
             .set('duration', timer.stop());
@@ -135,14 +136,14 @@ const TableProxy = () => {
         }
       });
 
-      Object.defineProperty(api, 'unique', {
+      Object.defineProperty(api, 'getUnique', {
         enumerable: true,
         value: (columnName, attribute) => {
-          const timer = new Timer(`API unique`);
+          const timer = new Timer(`API getUnique`);
           const uniqueValues = getUnique(core, columnName, attribute);
           lastResults
             .clear()
-            .set('operation', 'unique')
+            .set('operation', 'getUnique')
             .set('completed', true)
             .set('count', uniqueValues.length)
             .set('duration', timer.stop());
@@ -216,9 +217,16 @@ const TableProxy = () => {
 
       Object.defineProperty(api, 'loadSelectedRows', {
         enumerable: true,
-        value: () => {
+        value: attrSet => {
           const timer = new Timer(`API loadSelectedRows`);
+          const reqAttSet = new AttributesSet().push(DEFAULT_ATTRIBUTE);
+          if (attrSet !== undefined) {
+            (isArray(attrSet) ? attrSet : [attrSet]).forEach(attr => {
+              reqAttSet.push(attr);
+            });
+          }
           mainCursor.setToSelected();
+          mainCursor.updateAttributesSet(reqAttSet);
           lastResults
             .clear()
             .set('operation', 'loadSelectedRows')
@@ -228,6 +236,42 @@ const TableProxy = () => {
             .set('duration', timer.stop());
 
           return api;
+        }
+      });
+
+      Object.defineProperty(api, 'setRows', {
+        enumerable: true,
+        value: (indices, oneIndexed) => {
+          const offset = oneIndexed === true ? 1 : 0;
+          mainCursor.setToIndices(
+            (isArray(indices) ? indices : [indices]).map(index => index + offset)
+          );
+          return api;
+        }
+      });
+
+      Object.defineProperty(api, 'getSelectedIndices', {
+        enumerable: true,
+        value: asPos => {
+          return asPos === true ? mainCursor.keys().map(i => i + 1) : mainCursor.keys();
+        }
+      });
+
+      Object.defineProperty(api, 'getFullDataIndex', {
+        enumerable: true,
+        value: (columnName, attribute, oneIndexed) => {
+          const timer = new Timer(`API getDataIndex`);
+          const dataIndex = sheetAccessor.getFullDataIndex(columnName, attribute, oneIndexed);
+          lastResults
+            .clear()
+            .set('operation', 'getFullDataIndex')
+            .set('oneIndexed', oneIndexed === true)
+            .set('length', dataIndex.length)
+            .set('unique', dataIndex.isUnique)
+            .set('completed', true)
+            .set('duration', timer.stop());
+
+          return dataIndex;
         }
       });
 
@@ -266,8 +310,15 @@ const TableProxy = () => {
         setColumnFilter: {
           enumerable: true,
           value: input => {
+            mainCursor.isDirty = true;
             instanceOptions.columnFilter = input;
             return api;
+          }
+        },
+        getColumnFilter: {
+          enumerable: true,
+          value: () => {
+            return instanceOptions.columnFilter;
           }
         },
         setExportAttributes: {
