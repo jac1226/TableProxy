@@ -69,11 +69,9 @@ export default class SheetAccessor {
     this.headerRow = this.sheet.getDataRange().getValues()[this.headerRowIndex];
     const duplicates = getDuplicates(this.headerRow);
     if (duplicates.length > 0) {
-      let msg = null;
-      duplicates.forEach(d => {
-        msg += msg ? `, ${d}` : d;
-      });
-      throw new Error(`Sheet "${this.sheet.getName()}" has duplicate column headers... ${msg}`);
+      throw new Error(
+        `Sheet "${this.sheet.getName()}" has duplicate column headers... ${duplicates.join(', ')}`
+      );
     }
 
     /**
