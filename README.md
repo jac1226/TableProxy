@@ -2,15 +2,15 @@
 
 Use gas to perform various operations on your google sheets including queries and updates based on almost any data attribute that defines a Google sheet:
 
-cell value (i.e. getValues/setValues)
-cell background (i.e. getBackgrounds/setBackgrounds)
-cell fontcolor (i.e. getFontColors/setFontColors)
-cell note (i.e. getNotes/setNotes)
-cell fontstyle (i.e. getFontStyles/setFontStyles)
-cell fontfamily (i.e. getFontFamilies/setFontFamilies)
-cell fontweight (i.e. getFontWeights/setFontWeights)
-cell fontsize (i.e. getFontSizes/setFontSizes)
-cell numberformat (i.e. getNumberFormats/setNumberFormats)
+cell value (i.e. getValues/setValues)  
+cell background (i.e. getBackgrounds/setBackgrounds)  
+cell fontcolor (i.e. getFontColors/setFontColors)  
+cell note (i.e. getNotes/setNotes)  
+cell fontstyle (i.e. getFontStyles/setFontStyles)  
+cell fontfamily (i.e. getFontFamilies/setFontFamilies)  
+cell fontweight (i.e. getFontWeights/setFontWeights)  
+cell fontsize (i.e. getFontSizes/setFontSizes)  
+cell numberformat (i.e. getNumberFormats/setNumberFormats)  
 
 Its essentially an ORM inspired by the needs of a personal project. [Similar utilities exist](https://github.com/itmammoth/Tamotsu).
 
