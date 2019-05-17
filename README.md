@@ -39,8 +39,6 @@ getLastResults
 
 jac1226 likes to build utilities.
 
-Reach him on [Twitter](https://twitter.com/labnol) or email amit@labnol.org
-
 #### Thanks To 🙏🏼
 
 [Amit Agarwal](https://digitalinspiration.com/google-developer) for his [apps-script-starter] (https://github.com/labnol/apps-script-starter) which allowed me to write this in ES6.
