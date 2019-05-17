@@ -1,5 +1,3 @@
-![TableProxy]
-
 ## TableProxy
 
 Use gas to perform various operations on your google sheets including queries and updates based on almost any data attribute that defines a Google sheet:
