@@ -257,6 +257,13 @@ const TableProxy = () => {
         }
       });
 
+      Object.defineProperty(api, 'selectionLength', {
+        enumerable: true,
+        value: () => {
+          return this.getSelectedIndices().length;
+        }
+      });
+
       Object.defineProperty(api, 'getFullDataIndex', {
         enumerable: true,
         value: (columnName, attribute, oneIndexed) => {

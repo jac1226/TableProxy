@@ -1009,12 +1009,7 @@ function $initUtils() {
             }, rowIndex = 0; rowIndex < rowCount; rowIndex += 1) _loop(rowIndex);
         }(), this.headerRow = this.sheet.getDataRange().getValues()[this.headerRowIndex];
         var duplicates = Object(_map_unique__WEBPACK_IMPORTED_MODULE_1__["c"])(this.headerRow);
-        if (0 < duplicates.length) {
-            var msg = null;
-            throw duplicates.forEach(function(d) {
-                msg += msg ? ", ".concat(d) : d;
-            }), new Error('Sheet "'.concat(this.sheet.getName(), '" has duplicate column headers... ').concat(msg));
-        }
+        if (0 < duplicates.length) throw new Error('Sheet "'.concat(this.sheet.getName(), '" has duplicate column headers... ').concat(duplicates.join(", ")));
         this.range = {
             getCell: function(rowIndex, columnIndex) {
                 return _this.sheet.getRange(rowIndex + 1, columnIndex + 1);
@@ -1374,10 +1369,13 @@ function $initUtils() {
         aggregator.values;
     }
     function getExportObject(core, rawDataOnly) {
-        return {
-            selected: !0 === rawDataOnly ? core.mainCursor.keys() : core.mainCursor.isDirty || !core.mainCursor.attributesSet.hasSame(core.instanceOptions.exportAttributes) ? runQuery(core, function() {
-                return !0;
-            }, !0, !0, core.instanceOptions.exportAttributes).resultSet.values() : Object(clone["a"])(core.mainCursor.values()),
+        var selected;
+        return selected = !0 === rawDataOnly ? core.mainCursor.keys() : core.mainCursor.isDirty || !core.mainCursor.attributesSet.hasSame(core.instanceOptions.exportAttributes) ? runQuery(core, function() {
+            return !0;
+        }, !0, !0, core.instanceOptions.exportAttributes).resultSet.values() : Object(clone["a"])(core.mainCursor.values()), 
+        {
+            computedProperties: Object.keys(core.instanceOptions.computedProperties),
+            selected: selected,
             rawData: !!rawDataOnly && core.sheetAccessor.getDataPayload(core.instanceOptions.exportAttributes)
         };
     }
@@ -2269,6 +2267,7 @@ function $initUtils() {
         var TableProxy = function TableProxy() {
             return Object(_utilities__WEBPACK_IMPORTED_MODULE_6__["r"])({
                 mount: function mount(sheetNameOrOptions, headerAnchorToken) {
+                    var _this = this;
                     try {
                         var instanceOptions = new _instance_options__WEBPACK_IMPORTED_MODULE_1__["a"](sheetNameOrOptions, headerAnchorToken), sheetAccessor = new _sheet_accessor__WEBPACK_IMPORTED_MODULE_2__["a"](instanceOptions), mainCursor = new _main_cursor__WEBPACK_IMPORTED_MODULE_3__["a"](sheetAccessor), lastResults = new _map_unique__WEBPACK_IMPORTED_MODULE_4__["a"](), core = {
                             instanceOptions: instanceOptions,
@@ -2376,6 +2375,11 @@ function $initUtils() {
                                 return !0 === asPos ? mainCursor.keys().map(function(i) {
                                     return i + 1;
                                 }) : mainCursor.keys();
+                            }
+                        }), Object.defineProperty(api, "selectionLength", {
+                            enumerable: !0,
+                            value: function() {
+                                return _this.getSelectedIndices().length;
                             }
                         }), Object.defineProperty(api, "getFullDataIndex", {
                             enumerable: !0,
