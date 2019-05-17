@@ -114,6 +114,10 @@ export function getExportObject(core, rawDataOnly) {
   }
 
   return {
+    headerRow: core.sheetAccessor.headerRow,
+    headerRowIndex: core.sheetAccessor.headerRowIndex,
+    headerColumnIndex: core.sheetAccessor.headerRowIndex,
+    computedProperties: Object.keys(core.instanceOptions.computedProperties),
     selected,
     rawData: rawDataOnly
       ? core.sheetAccessor.getDataPayload(core.instanceOptions.exportAttributes)
