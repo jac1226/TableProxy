@@ -12,7 +12,7 @@ cell fontweight (i.e. getFontWeights/setFontWeights)
 cell fontsize (i.e. getFontSizes/setFontSizes)  
 cell numberformat (i.e. getNumberFormats/setNumberFormats)  
 
-Its essentially an ORM inspired by the needs of a personal project. [Similar utilities exist](https://github.com/itmammoth/Tamotsu).
+Its essentially an ORM inspired by the needs of a personal project. [Similar utilities exist](https://github.com/itmammoth/Tamotsu), but it seems none allow for the manipulation of attributes other than cell values. TableProxy treats all of the listed attributes (above) the same as cell values.
 
 ## Core Methods 🚀
 
