@@ -68,6 +68,7 @@ const TableProxy = () => {
         value: (query, withRecords) => {
           const timer = new Timer(`API update`);
           const queryReturn = runQuery(core, query, false, withRecords);
+          mainCursor.isDirty = true;
           lastResults
             .clear()
             .set('operation', 'update')
@@ -86,6 +87,7 @@ const TableProxy = () => {
         value: (records, matchColumnName, matchAttributeName) => {
           const timer = new Timer(`API writeRecords`);
           const queryReturn = runObjUpdate(core, records, matchColumnName, matchAttributeName);
+          mainCursor.isDirty = true;
           lastResults
             .clear()
             .set('operation', 'writeRecords')
@@ -172,6 +174,7 @@ const TableProxy = () => {
         value: (topOrBottom, dataObject) => {
           const timer = new Timer(`API insertRow`);
           const position = insertRow(core, topOrBottom, dataObject);
+          mainCursor.flush();
           lastResults
             .clear()
             .set('operation', 'insertRow')
@@ -366,6 +369,7 @@ const TableProxy = () => {
         setComputedProperties: {
           enumerable: true,
           value: input => {
+            mainCursor.isDirty = true;
             instanceOptions.computedProperties = input;
             return api;
           }
